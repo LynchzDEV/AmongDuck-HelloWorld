@@ -8,16 +8,17 @@
 - [Figma](https://www.figma.com/file/De68DsnlzP3zmqom7YBVNx/Among-Goose?type=design&node-id=0%3A1&mode=design&t=MJVE60UIfElF4Rv3-1)
 
 ## Scene Arragement
+```md
 **MainMenu** -> **CutScene1** -> **CutScene2** -> **Forest1** -> **PathSelection** -> 
-                \n**CodingPath** -> **GameDev** 
-                               \nor
-                               \n-> **DevOps**
-                \nor 
-                \n**DesignPath** -> **FrontEnd** 
-                               \nor
-                               \n-> **WebDesign** 
-\n-> **Ending** -> **Summarize**
-
+                **CodingPath** -> **GameDev** 
+                               or
+                               -> **DevOps**
+                or 
+                **DesignPath** -> **FrontEnd** 
+                               or
+                               -> **WebDesign** 
+-> **Ending** -> **Summarize**
+```
 
 ## Setup
 
