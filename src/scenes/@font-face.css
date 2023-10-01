@@ -1,0 +1,9 @@
+@font-face{
+    font-family: "Pixel Operator 8";
+   src: 
+      url("fonts/pixel-operator-8.woff2") format("woff2"), 
+      url("fonts/pixel-operator-8.woff") format("woff"),
+      url("fonts/pixel-operator-8.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
