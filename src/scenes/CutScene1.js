@@ -5,6 +5,7 @@ let background;
 let player;
 let camera;
 let foreground;
+let invisibleWall;
 
 class CutScene1 extends Phaser.Scene {
   constructor() {
@@ -24,7 +25,7 @@ class CutScene1 extends Phaser.Scene {
 
   create() {
     background = this.add
-      .tileSprite(0, 0, 720, 1080, "background")
+      .tileSprite(0, 0, config.width, config.height, "background")
       .setOrigin(0, 0)
       .setScale(1.5)
       .setDepth(-1);
@@ -42,9 +43,9 @@ class CutScene1 extends Phaser.Scene {
       .setDepth(0);
 
     camera = this.cameras.main
-      .setViewport(0, 0, 720, 1080)
-      .setBounds(0, 0, 720, 1080)
-      .setZoom(2);
+      .setViewport(0, 0, config.width, config.height)
+      .setBounds(0, 0, config.width, config.height)
+      .setZoom(1);
 
     this.anims.create({
       key: "walk",
@@ -55,6 +56,8 @@ class CutScene1 extends Phaser.Scene {
       frameRate: 4,
       repeat: -1,
     });
+
+    this.physics.add.collider(player, invisibleWall);
   }
 
   playerMove(player) {
@@ -95,9 +98,14 @@ class CutScene1 extends Phaser.Scene {
     player.anims.play("walk", velocityX !== 0 || velocityY !== 0);
   }
 
+  changeScene() {
+    this.scene.start("Forest1");
+  }
+
   update(delta, time) {
     camera.startFollow(player);
     this.playerMove(player);
+    // this.time.delayedCall(1000, this.changeScene, [], this);
   }
 }
 
