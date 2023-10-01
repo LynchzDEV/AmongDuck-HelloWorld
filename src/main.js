@@ -30,7 +30,7 @@ const config = {
     },
   },
   scene: [
-    // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
+    MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
     CutScene1, //* 1 cutscene 1 of the story mode
     CutScene2, //* 2 cutscene 2 of the story mode
     Forest1, //* 3 forest map that lead to first decision
