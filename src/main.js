@@ -32,7 +32,7 @@ const config = {
   },
 
   scene: [
-    MainMenu,
+    // MainMenu,
     CutScene1,
     CutScene2,
     Forest1,
@@ -51,7 +51,4 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-module.exports = {
-  game,
-  config,
-};
+export default config;

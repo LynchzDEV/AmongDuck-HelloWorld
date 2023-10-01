@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 
+let background;
 class MainMenu extends Phaser.Scene {
   constructor() {
     super({
@@ -7,9 +8,13 @@ class MainMenu extends Phaser.Scene {
     });
   }
 
-  preload() {}
+  preload() {
+    
+  }
 
-  create() {}
+  create() {
+    
+  }
 
   update(delta, time) {}
 }
