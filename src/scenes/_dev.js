@@ -4,7 +4,7 @@ let player;
 let up;
 let down;
 
-class GameScene extends Phaser.Scene {
+class _dev extends Phaser.Scene {
   constructor() {
     super({
       key: 'GameScene',
@@ -66,4 +66,4 @@ class GameScene extends Phaser.Scene {
   }
 }
 
-export default GameScene;
+export default _dev;
