@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 
-let background;
 class MainMenu extends Phaser.Scene {
   constructor() {
     super({
