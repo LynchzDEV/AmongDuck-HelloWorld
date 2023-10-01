@@ -1,6 +1,7 @@
 import 'phaser';
 import Phaser from 'phaser';
 import _dev from './scenes/_dev';
+
 import MainMenu from './scenes/MainMenu';
 import CutScene1 from './scenes/CutScene1';
 import CutScene2 from './scenes/CutScene2';
@@ -29,6 +30,7 @@ const config = {
       debug: true,
     },
   },
+
   scene: [
     MainMenu,
     CutScene1,
@@ -48,3 +50,8 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
+
+module.exports = {
+  game,
+  config,
+};
