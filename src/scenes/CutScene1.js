@@ -2,10 +2,10 @@ import Phaser from "phaser";
 import { config } from "../main";
 
 let background;
-let platforms;
 let player;
 let camera;
-let cursors;
+let foreground;
+
 class CutScene1 extends Phaser.Scene {
   constructor() {
     super({
@@ -15,6 +15,7 @@ class CutScene1 extends Phaser.Scene {
 
   preload() {
     this.load.image("background", "src/image/_dev/backGround.png");
+    this.load.image("foreground", "src/image/_dev/playermeow.jpg");
     this.load.spritesheet("player", "src/image/_dev/playerSpritesheet.png", {
       frameWidth: 669,
       frameHeight: 569,
@@ -25,21 +26,25 @@ class CutScene1 extends Phaser.Scene {
     background = this.add
       .tileSprite(0, 0, 720, 1080, "background")
       .setOrigin(0, 0)
-      .setScale(1.5);
+      .setScale(1.5)
+      .setDepth(-1);
 
+    foreground = this.add
+      .image(0, config.height - 100, "foreground")
+      .setOrigin(0, 0)
+      .setScale(0.5)
+      .setDepth(1);
     player = this.physics.add
       .sprite(config.width / 2, config.height / 2, "player")
       .setScale(0.5)
       .setSize(200, 200)
-      .setCollideWorldBounds(true);
+      .setCollideWorldBounds(true)
+      .setDepth(0);
 
     camera = this.cameras.main
       .setViewport(0, 0, 720, 1080)
-      .setBounds(0, 0, 3000, 1080)
-      .setZoom(1.5);
-
-    // platforms = this.physics.add.staticGroup();
-    // platforms.create(360, 1000, "ground").setScale(1).refreshBody();
+      .setBounds(0, 0, 720, 1080)
+      .setZoom(2);
 
     this.anims.create({
       key: "walk",
@@ -59,8 +64,10 @@ class CutScene1 extends Phaser.Scene {
 
     if (cursors.left.isDown) {
       velocityX = -100;
+      player.setFlipX(true);
     } else if (cursors.right.isDown) {
       velocityX = 100;
+      player.setFlipX(false);
     }
 
     if (cursors.up.isDown) {
