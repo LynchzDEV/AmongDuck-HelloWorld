@@ -32,28 +32,40 @@ https://nodejs.org/en/
 
 Run:
 
-`npm install`
+```cli
+npm install
+```
 
 or
 
-`yarn`
+```cli
+yarn
+```
 
 ### 3. Run the development server:
 
 Run:
 
-`npm run dev`
+```cli
+npm run dev
+```
 
 or
 
-`yarn dev`
+```cli
+yarn dev
+```
 
 ## Build for deployment:
 
 Run:
 
-`npm run deploy`
+```cli
+npm run deploy
+```
 
 or
 
-`yarn deploy`
+```cli
+yarn deploy
+```
