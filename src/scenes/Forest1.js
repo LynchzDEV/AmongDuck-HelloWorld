@@ -26,7 +26,9 @@ class Forest1 extends Phaser.Scene {
       .setDepth(1);
   }
 
-  update(delta, time) {}
+  update(delta, time) {
+    
+  }
 }
 
 export default Forest1;

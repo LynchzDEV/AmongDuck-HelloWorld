@@ -17,6 +17,7 @@ class CutScene1 extends Phaser.Scene {
   preload() {
     this.load.image("background", "src/image/_dev/backGround.png");
     this.load.image("foreground", "src/image/_dev/playermeow.jpg");
+    this.load.image("invisibleWall", "src/image/_dev/football.png"); //invisible wall
     this.load.spritesheet("player", "src/image/_dev/playerSpritesheet.png", {
       frameWidth: 669,
       frameHeight: 569,
@@ -29,7 +30,6 @@ class CutScene1 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1.5)
       .setDepth(-1);
-
     foreground = this.add
       .image(0, config.height - 100, "foreground")
       .setOrigin(0, 0)
@@ -47,13 +47,20 @@ class CutScene1 extends Phaser.Scene {
       .setBounds(0, 0, config.width, config.height)
       .setZoom(1);
 
+      invisibleWall = this.add
+      .image(0, 0, "invisibleWall")
+      .setOrigin(0, 0)
+      .setScale(config.width, 0.4);
+      this.physics.add.world.enable(invisibleWall);
+      invisibleWall.body.setImmovable(true);
+
     this.anims.create({
       key: "walk",
       frames: this.anims.generateFrameNumbers("player", {
         start: 0,
         end: 7,
       }),
-      frameRate: 4,
+      frameRate: 5,
       repeat: -1,
     });
 
@@ -64,34 +71,35 @@ class CutScene1 extends Phaser.Scene {
     const cursors = this.input.keyboard.createCursorKeys();
     let velocityX = 0;
     let velocityY = 0;
-
+    const normalSpeed = 150;
     if (cursors.left.isDown) {
-      velocityX = -100;
+      velocityX = -normalSpeed;
       player.setFlipX(true);
     } else if (cursors.right.isDown) {
-      velocityX = 100;
+      velocityX = normalSpeed;
       player.setFlipX(false);
     }
 
     if (cursors.up.isDown) {
-      velocityY = -100;
+      velocityY = -normalSpeed;
     } else if (cursors.down.isDown) {
-      velocityY = 100;
+      velocityY = normalSpeed;
     }
 
+    const twoDimentionalSpeed = 120;
     // Check for diagonal movement
     if (cursors.left.isDown && cursors.up.isDown) {
-      velocityX = -70;
-      velocityY = -70;
+      velocityX = -twoDimentionalSpeed;
+      velocityY = -twoDimentionalSpeed;
     } else if (cursors.left.isDown && cursors.down.isDown) {
-      velocityX = -70;
-      velocityY = 70;
+      velocityX = -twoDimentionalSpeed;
+      velocityY = twoDimentionalSpeed;
     } else if (cursors.right.isDown && cursors.up.isDown) {
-      velocityX = 70;
-      velocityY = -70;
+      velocityX = twoDimentionalSpeed;
+      velocityY = -twoDimentionalSpeed;
     } else if (cursors.right.isDown && cursors.down.isDown) {
-      velocityX = 70;
-      velocityY = 70;
+      velocityX = twoDimentionalSpeed;
+      velocityY = twoDimentionalSpeed;
     }
 
     player.setVelocity(velocityX, velocityY);
