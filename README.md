@@ -9,14 +9,14 @@
 
 ## Scene Arragement
 **MainMenu** -> **CutScene1** -> **CutScene2** -> **Forest1** -> **PathSelection** -> 
-                **CodingPath** -> **GameDev** 
-                               or
-                               -> **DevOps**
-                or 
-                **DesignPath** -> **FrontEnd** 
-                               or
-                               -> **WebDesign** 
--> **Ending** -> **Summarize**
+                \n**CodingPath** -> **GameDev** 
+                               \nor
+                               \n-> **DevOps**
+                \nor 
+                \n**DesignPath** -> **FrontEnd** 
+                               \nor
+                               \n-> **WebDesign** 
+\n-> **Ending** -> **Summarize**
 
 
 ## Setup
