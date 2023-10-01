@@ -3,8 +3,10 @@ import Phaser from 'phaser';
 let player;
 let up;
 let down;
+let cursors;
+let ratio;
 
-class _dev extends Phaser.Scene {
+class GameScene extends Phaser.Scene {
   constructor() {
     super({
       key: 'GameScene',
@@ -20,8 +22,18 @@ class _dev extends Phaser.Scene {
   }
 
   create() {
-    player = this.physics.add.sprite(100, 450, 'ermine');
+    const canvasWidth = this.sys.game.canvas.width;
+    const canvasHeight = this.sys.game.canvas.height;
+    if (canvasWidth < canvasHeight) {
+      ratio = canvasWidth / canvasHeight;
+    } else {
+      ratio = (canvasHeight * 1.5) / canvasWidth;
+    }
+
+    player = this.physics.add.sprite(canvasWidth / 2, 450, 'ermine');
     player.setCollideWorldBounds(true);
+    player.setScale(0.5 * ratio);
+    player.setBounce(0.2);
 
     this.anims.create({
       key: 'ermineAni',
@@ -33,37 +45,54 @@ class _dev extends Phaser.Scene {
       repeat: -1,
     });
 
-    up = this.physics.add
-      .sprite(50, 830, 'bubble')
-      .setScale(0.5)
-      .setSize(100, 100)
-      .setCollideWorldBounds(true);
+    if (canvasWidth < 600) {
+      up = this.physics.add
+        .sprite(50, 830, 'bubble')
+        .setScale(0.5)
+        .setSize(100, 100)
+        .setCollideWorldBounds(true);
 
-    down = this.physics.add
-      .sprite(150, 830, 'bubble')
-      .setScale(0.5)
-      .setSize(100, 100)
-      .setCollideWorldBounds(true);
+      down = this.physics.add
+        .sprite(150, 830, 'bubble')
+        .setScale(0.5)
+        .setSize(100, 100)
+        .setCollideWorldBounds(true);
 
-    up.setInteractive();
-    down.setInteractive();
+      up.setInteractive();
+      down.setInteractive();
 
-    this.input.on('gameobjectdown', (pointer, gameObject) => {
-      if (gameObject === up) {
-        player.setGravityY(-200);
-      } else if (gameObject === down) {
-        player.setVelocityY(1000);
-      }
-    });
+      this.input.on('gameobjectdown', (pointer, gameObject) => {
+        if (gameObject === up) {
+          player.setGravityY(-200);
+        }
+        if (gameObject === down) {
+          player.setVelocityY(1000);
+        }
+      });
 
-    this.input.on('gameobjectup', () => {
-      player.body.setGravityY(200);
-    });
+      this.input.on('gameobjectup', () => {
+        player.body.setGravityY(200);
+      });
+    } else {
+      cursors = this.input.keyboard.createCursorKeys();
+    }
   }
 
   update(delta, time) {
+    const canvasWidth = this.sys.game.canvas.width;
     player.anims.play('ermineAni', true);
+
+    if (canvasWidth >= 600) {
+      if (cursors.up.isDown) {
+        player.setGravityY(-200);
+      } else {
+        player.body.setGravityY(200);
+      }
+      if (cursors.down.isDown) {
+        player.setVelocityY(1000);
+      }
+    }
   }
 }
 
-export default _dev;
+export default GameScene;
