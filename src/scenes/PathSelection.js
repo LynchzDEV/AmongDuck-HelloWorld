@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 
-class Forest1 extends Phaser.Scene {
+class PathSelection extends Phaser.Scene {
   constructor() {
     super({
-      key: 'Forest1',
+      key: 'PathSelection',
     });
   }
 
@@ -14,4 +14,4 @@ class Forest1 extends Phaser.Scene {
   update(delta, time) {}
 }
 
-export default Forest1;
+export default PathSelection;
