@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { config } from "../main";
 
 let background;
+let platforms;
 let player;
 let camera;
 let cursors;
@@ -32,8 +33,13 @@ class CutScene1 extends Phaser.Scene {
       .setSize(200, 200)
       .setCollideWorldBounds(true);
 
-    camera = this.cameras.main;
-    camera.setViewport(0, 0, 720, 1080).setBounds(0, 0, 720, 1080).setZoom(1.5);
+    camera = this.cameras.main
+      .setViewport(0, 0, 720, 1080)
+      .setBounds(0, 0, 3000, 1080)
+      .setZoom(1.5);
+
+    // platforms = this.physics.add.staticGroup();
+    // platforms.create(360, 1000, "ground").setScale(1).refreshBody();
 
     this.anims.create({
       key: "walk",
@@ -47,42 +53,39 @@ class CutScene1 extends Phaser.Scene {
   }
 
   playerMove(player) {
-    cursors = this.input.keyboard.createCursorKeys();
+    const cursors = this.input.keyboard.createCursorKeys();
+    let velocityX = 0;
+    let velocityY = 0;
+
     if (cursors.left.isDown) {
-      player.setVelocityX(-100);
-      player.anims.play("walk", true);
-      player.flipX = true;
+      velocityX = -100;
     } else if (cursors.right.isDown) {
-      player.setVelocityX(100);
-      player.anims.play("walk", true);
-      player.flipX = false;
-    } else if (cursors.up.isDown) {
-      player.setVelocityY(-100);
-      player.anims.play("walk", true);
-    } else if (cursors.down.isDown) {
-      player.setVelocityY(100);
-      player.anims.play("walk", true);
-    } else if (cursors.left.isDown && cursors.up.isDown) {
-      player.setVelocityX(-70);
-      player.setVelocityY(70);
-      player.anims.play("walk", true);
-    } else if (cursors.left.isDown && cursors.down.isDown) {
-      player.setVelocityX(-70);
-      player.setVelocityY(-70);
-      player.anims.play("walk", true);
-    } else if (cursors.right.isDown && cursors.up.isDown) {
-      player.setVelocityX(70);
-      player.setVelocityY(70);
-      player.anims.play("walk", true);
-    } else if (cursors.right.isDown && cursors.down.isDown) {
-      player.setVelocityX(70);
-      player.setVelocityY(-70);
-      player.anims.play("walk", true);
-    } else {
-      player.setVelocityX(0);
-      player.setVelocityY(0);
-      player.anims.play("walk", false);
+      velocityX = 100;
     }
+
+    if (cursors.up.isDown) {
+      velocityY = -100;
+    } else if (cursors.down.isDown) {
+      velocityY = 100;
+    }
+
+    // Check for diagonal movement
+    if (cursors.left.isDown && cursors.up.isDown) {
+      velocityX = -70;
+      velocityY = -70;
+    } else if (cursors.left.isDown && cursors.down.isDown) {
+      velocityX = -70;
+      velocityY = 70;
+    } else if (cursors.right.isDown && cursors.up.isDown) {
+      velocityX = 70;
+      velocityY = -70;
+    } else if (cursors.right.isDown && cursors.down.isDown) {
+      velocityX = 70;
+      velocityY = 70;
+    }
+
+    player.setVelocity(velocityX, velocityY);
+    player.anims.play("walk", velocityX !== 0 || velocityY !== 0);
   }
 
   update(delta, time) {
