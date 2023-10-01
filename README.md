@@ -10,13 +10,14 @@
 ## Scene Arrangement
 ```md
 MainMenu -> CutScene1 -> CutScene2 -> Forest1 -> PathSelection 
-                -> CodingPath -> GameDev -> Ending -> Summarize
+                -> CodingPath -> GameDev
                                or
-                               -> DevOps -> Ending -> Summarize
+                               -> DevOps
                 or 
-                -> DesignPath -> FrontEnd -> Ending -> Summarize
+                -> DesignPath -> FrontEnd
                                or
-                               -> WebDesign -> Ending -> Summarize
+                               -> WebDesign
+                                            -> Ending -> Summarize
 ```
 
 ## Setup
