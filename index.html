@@ -3,15 +3,43 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Phaser3 - ES6 - Webpack</title>
+    <title>Amoung Ducks</title>
+
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
     <meta http-equiv="cleartype" content="on">
     <meta name="format-detection" content="telephone=no">
+    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Goose_icon_05.svg/444px-Goose_icon_05.svg.png" type="image/x-icon">
+    <style>
+        *,
+        body {
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            filter: blur(5px);
+        }
+    </style>
 </head>
 
 <body>
-    <div id="content" style="display: block; width: 100%; text-align: center"></div>
-<script type="text/javascript" src="./dev/vendor.js"></script><script type="text/javascript" src="./dev/app.js"></script></body>
-</html>
+    <div class="container">
+        <div id="content" style="display: block; width: 100%; text-align: center"></div>
+        <img src="src/image/_dev/backGround.png" alt="background">
+    </div>
+<script type="text/javascript" src="./dev/vendor.js"></script><script type="text/javascript" src="./dev/app.js"></script></body></html>

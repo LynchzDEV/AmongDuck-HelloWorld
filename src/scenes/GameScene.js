@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 
+let player;
+
 class GameScene extends Phaser.Scene {
   constructor() {
     super({
@@ -8,15 +10,14 @@ class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    
   }
 
   create() {
-  
+
   }
 
   update(delta, time) {
-    
+
   }
 }
 
