@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { config } from "../main";
+import calculateCanvasRatio from "../utils/ratio";
 
 let background;
 let player;
@@ -25,34 +25,37 @@ class CutScene1 extends Phaser.Scene {
   }
 
   create() {
+    const ratio = calculateCanvasRatio(this.sys);
+    const width = ratio.canvasWidth;
+    const height = ratio.canvasHeight;
     background = this.add
-      .tileSprite(0, 0, config.width, config.height, "background")
+      .tileSprite(0, 0, width* 2, height, "background")
       .setOrigin(0, 0)
-      .setScale(1.5)
+      .setScale(1)
       .setDepth(-1);
     foreground = this.add
-      .image(0, config.height - 100, "foreground")
+      .image(0, height - 100, "foreground")
       .setOrigin(0, 0)
       .setScale(0.5)
       .setDepth(1);
     player = this.physics.add
-      .sprite(config.width / 2, config.height / 2, "player")
-      .setScale(0.5)
+      .sprite(width/ 2, height/1.5, "player")
+      .setScale(0.3)
       .setSize(200, 200)
       .setCollideWorldBounds(true)
       .setDepth(0);
 
     camera = this.cameras.main
-      .setViewport(0, 0, config.width, config.height)
-      .setBounds(0, 0, config.width, config.height)
-      .setZoom(1);
+      .setViewport(0, 0, width, height)
+      .setBounds(0, 0, width* 2, height)
+      .setZoom(1.5);
 
-      invisibleWall = this.add
+    invisibleWall = this.add
       .image(0, 0, "invisibleWall")
       .setOrigin(0, 0)
-      .setScale(config.width, 0.4);
-      this.physics.add.world.enable(invisibleWall);
-      invisibleWall.body.setImmovable(true);
+      .setScale(width, 0.3);
+    this.physics.add.world.enable(invisibleWall);
+    invisibleWall.body.setImmovable(true);
 
     this.anims.create({
       key: "walk",
@@ -71,7 +74,7 @@ class CutScene1 extends Phaser.Scene {
     const cursors = this.input.keyboard.createCursorKeys();
     let velocityX = 0;
     let velocityY = 0;
-    const normalSpeed = 150;
+    const normalSpeed = 100;
     if (cursors.left.isDown) {
       velocityX = -normalSpeed;
       player.setFlipX(true);
@@ -86,7 +89,7 @@ class CutScene1 extends Phaser.Scene {
       velocityY = normalSpeed;
     }
 
-    const twoDimentionalSpeed = 120;
+    const twoDimentionalSpeed = 70;
     // Check for diagonal movement
     if (cursors.left.isDown && cursors.up.isDown) {
       velocityX = -twoDimentionalSpeed;
@@ -113,6 +116,8 @@ class CutScene1 extends Phaser.Scene {
   update(delta, time) {
     camera.startFollow(player);
     this.playerMove(player);
+    background.tilePositionX = this.cameras.main.scrollX * 0.5;
+    background.tilePositionY = this.cameras.main.scrollY * 0.5;
     // this.time.delayedCall(1000, this.changeScene, [], this);
   }
 }
