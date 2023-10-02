@@ -7,8 +7,23 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
+# Ignore node_modules
+node_modules/
+
+# Ignore yarn.lock
+yarn.lock
+
+# Ignore development or build-related files
+dist/
+build/
+coverage/
+tmp/
+temp/
+*.log
+*.pid
+*.seed
+*.pid.lock
+
 dist-ssr
 *.local
 
