@@ -32,7 +32,7 @@ const config = {
   },
 
   scene: [
-    // MainMenu,
+    MainMenu,
     CutScene1,
     CutScene2,
     Forest1,
