@@ -29,13 +29,15 @@ class MovementTemplate extends Phaser.Scene {
     const width = ratio.canvasWidth;
     const height = ratio.canvasHeight;
     background = this.add
-      .tileSprite(0, 0, width * 2, height, 'background')
+      .tileSprite(0, 0, width, height, 'background')
       .setOrigin(0, 0)
+      .setScrollFactor(0)
       .setScale(1)
       .setDepth(-1);
     foreground = this.add
       .image(0, height - 100, 'foreground')
       .setOrigin(0, 0)
+      .setScrollFactor(1)
       .setScale(0.5)
       .setDepth(1);
     player = this.physics.add
@@ -47,7 +49,8 @@ class MovementTemplate extends Phaser.Scene {
 
     camera = this.cameras.main
       .setViewport(0, 0, width, height)
-      .setBounds(0, 0, width * 2, height)
+      .setBounds(0, 0, width, height)
+      .setScroll(0, 0)
       .setZoom(1.5);
 
     invisibleWall = this.add
@@ -109,9 +112,9 @@ class MovementTemplate extends Phaser.Scene {
     player.anims.play('walk', velocityX !== 0 || velocityY !== 0);
   }
 
-  changeScene() {
-    this.scene.start('Forest1');
-  }
+  // changeScene() {
+  //   this.scene.start('Forest1');
+  // }
 
   update(delta, time) {
     camera.startFollow(player);
