@@ -1,11 +1,11 @@
-import Phaser from 'phaser'
-import calculateCanvasRatio from '../utils/ratio'
+import Phaser from 'phaser';
+import calculateCanvasRatio from '../utils/ratio';
 
-let background
-let player
-let camera
-let foreground
-let invisibleWall
+let background;
+let player;
+let camera;
+let foreground;
+let invisibleWall;
 
 class MovementTemplate extends Phaser.Scene {
   constructor() {
@@ -33,7 +33,7 @@ class MovementTemplate extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScrollFactor(0)
       .setScale(1)
-      .setDepth(-1)
+      .setDepth(-1);
     foreground = this.add
       .image(0, height - 100, 'foreground')
       .setOrigin(0, 0)
@@ -45,20 +45,13 @@ class MovementTemplate extends Phaser.Scene {
       .setScale(0.3)
       .setSize(200, 200)
       .setCollideWorldBounds(true)
-      .setDepth(0)
+      .setDepth(0);
 
     camera = this.cameras.main
       .setViewport(0, 0, width, height)
       .setBounds(0, 0, width, height)
       .setScroll(0, 0)
       .setZoom(1.5)
-
-    // invisibleWall = this.add
-    //   .image(0, 0, 'invisibleWall')
-    //   .setOrigin(0, 0)
-    //   .setScale(width, 0.3)
-    // this.physics.add.world.enable(invisibleWall)
-    // invisibleWall.body.setImmovable(true)
 
     this.anims.create({
       key: 'walk',
@@ -68,48 +61,48 @@ class MovementTemplate extends Phaser.Scene {
       }),
       frameRate: 5,
       repeat: -1,
-    })
+    });
 
-    this.physics.add.collider(player, invisibleWall)
+    this.physics.add.collider(player, invisibleWall);
   }
 
   playerMove(player) {
-    const cursors = this.input.keyboard.createCursorKeys()
-    let velocityX = 0
-    let velocityY = 0
-    const normalSpeed = 100
+    const cursors = this.input.keyboard.createCursorKeys();
+    let velocityX = 0;
+    let velocityY = 0;
+    const normalSpeed = 100;
     if (cursors.left.isDown) {
-      velocityX = -normalSpeed
-      player.setFlipX(true)
+      velocityX = -normalSpeed;
+      player.setFlipX(true);
     } else if (cursors.right.isDown) {
-      velocityX = normalSpeed
-      player.setFlipX(false)
+      velocityX = normalSpeed;
+      player.setFlipX(false);
     }
 
     if (cursors.up.isDown) {
-      velocityY = -normalSpeed
+      velocityY = -normalSpeed;
     } else if (cursors.down.isDown) {
-      velocityY = normalSpeed
+      velocityY = normalSpeed;
     }
 
-    const twoDimentionalSpeed = 70
+    const twoDimentionalSpeed = 70;
     // Check for diagonal movement
     if (cursors.left.isDown && cursors.up.isDown) {
-      velocityX = -twoDimentionalSpeed
-      velocityY = -twoDimentionalSpeed
+      velocityX = -twoDimentionalSpeed;
+      velocityY = -twoDimentionalSpeed;
     } else if (cursors.left.isDown && cursors.down.isDown) {
-      velocityX = -twoDimentionalSpeed
-      velocityY = twoDimentionalSpeed
+      velocityX = -twoDimentionalSpeed;
+      velocityY = twoDimentionalSpeed;
     } else if (cursors.right.isDown && cursors.up.isDown) {
-      velocityX = twoDimentionalSpeed
-      velocityY = -twoDimentionalSpeed
+      velocityX = twoDimentionalSpeed;
+      velocityY = -twoDimentionalSpeed;
     } else if (cursors.right.isDown && cursors.down.isDown) {
-      velocityX = twoDimentionalSpeed
-      velocityY = twoDimentionalSpeed
+      velocityX = twoDimentionalSpeed;
+      velocityY = twoDimentionalSpeed;
     }
 
-    player.setVelocity(velocityX, velocityY)
-    player.anims.play('walk', velocityX !== 0 || velocityY !== 0)
+    player.setVelocity(velocityX, velocityY);
+    player.anims.play('walk', velocityX !== 0 || velocityY !== 0);
   }
 
   // changeScene() {
@@ -117,13 +110,12 @@ class MovementTemplate extends Phaser.Scene {
   // }
 
   update(delta, time) {
-    camera.startFollow(player)
-    this.playerMove(player)
-    background.tilePositionX = this.cameras.main.scrollX * 0.5
-    background.tilePositionY = this.cameras.main.scrollY * 0.5
-    console.log(camera.worldView.x, camera.worldView.y)
+    camera.startFollow(player);
+    this.playerMove(player);
+    background.tilePositionX = this.cameras.main.scrollX * 0.5;
+    background.tilePositionY = this.cameras.main.scrollY * 0.5;
     // this.time.delayedCall(1000, this.changeScene, [], this);
   }
 }
 
-export default MovementTemplate
+export default MovementTemplate;
