@@ -6,10 +6,10 @@ let down;
 let cursors;
 let ratio;
 
-class GameScene extends Phaser.Scene {
+class Dev extends Phaser.Scene {
   constructor() {
     super({
-      key: 'GameScene',
+      key: 'Dev',
     });
   }
 
@@ -95,4 +95,4 @@ class GameScene extends Phaser.Scene {
   }
 }
 
-export default GameScene;
+export default Dev;
