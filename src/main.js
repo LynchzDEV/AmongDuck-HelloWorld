@@ -30,6 +30,7 @@ const config = {
   physics: {
     default: "arcade",
     arcade: {
+      gravity: { y: 300 },
       debug: true,
     },
   },
@@ -43,8 +44,8 @@ const config = {
     // PathSelection, //* 4 path selection scene
     // CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
     // DesignPath, //* 6 cutscene that lead to selection of front end or web design
-    GameDev, //* 7 game dev scene: parkour
-    DevOps, //* 8 dev ops scene: delivery man
+    // GameDev, //* 7 game dev scene: parkour
+    // DevOps, //* 8 dev ops scene: delivery man
     FrontEnd, //* 9 web dev scene: puzzle
     WebDesign, //* 10 web design scene: adventure
     Ending, //* 11 show text1

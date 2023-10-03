@@ -5,7 +5,7 @@ let player;
 let background;
 let platforms;
 let grounds;
-// let player;
+
 class GameDev extends Phaser.Scene {
   constructor() {
     super({
