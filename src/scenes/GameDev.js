@@ -14,7 +14,7 @@ class GameDev extends Phaser.Scene {
   preload() {
     this.load.image("background", "src/image/_dev/backGround.png");
     this.load.image("platforms", "src/image/_dev/Rapid.png");
-    this.load.image("player", "src/image/_dev/Player.png", {
+    this.load.spritesheet("player", "src/image/_dev/Player.png", {
       frameWidth: 90,
       frameHeight: 90,
     });
