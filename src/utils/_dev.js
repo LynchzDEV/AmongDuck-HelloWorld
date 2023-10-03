@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { changeSceneIf } from './changeScene';
 
 let player;
 let up;
@@ -92,6 +93,18 @@ class GameScene extends Phaser.Scene {
         player.setVelocityY(1000);
       }
     }
+    // test change scene
+    const gameContext = {
+      playerX: 150,
+      playerY: 180,
+    };
+
+    changeSceneIf(
+      () => player.y > 655,
+      'CutScene1',
+      this.scene,
+      gameContext
+    );
   }
 }
 

@@ -8,8 +8,12 @@ class CutScene1 extends Phaser.Scene {
   }
 
   preload() {}
-
-  create() {}
+  // test passing data between scenes
+  create(data) {
+    const gameContext = data.gameContext;
+    console.log(gameContext.playerX);
+    console.log(gameContext.playerY);
+  }
 
   update(delta, time) {}
 }

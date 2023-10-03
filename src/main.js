@@ -44,7 +44,7 @@ const config = {
     Ending, //* 11 show text1
     Summarize, //* 12 show text2
   ],
-  // scene: [_dev] //! dev mode, comment this line to turn off dev mode
+  scene: [_dev, CutScene1] //! dev mode, comment this line to turn off dev mode
 };
 
 const game = new Phaser.Game(config);
