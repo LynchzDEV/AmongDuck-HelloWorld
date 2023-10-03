@@ -1,22 +1,22 @@
 const changeSceneIf = (
-  conditionCallback,
+  condition,
+  thisScene,
   nextSceneKey,
-  sceneManager,
-  gameContext
+  gameContext = {}
 ) => {
-  if (conditionCallback()) {
-    sceneManager.start(nextSceneKey, { gameContext: gameContext });
+  if (condition) {
+    thisScene.start(nextSceneKey, { gameContext: gameContext });
   }
 };
 
 const changeSceneBetween = (
   conditionCallback,
+  thisScene,
   sceneKeys,
-  sceneManager,
-  gameContext
+  gameContext = {}
 ) => {
   const indexOfNextScene = conditionCallback();
-  sceneManager.start(sceneKeys[indexOfNextScene], { gameContext: gameContext });
+  thisScene.start(sceneKeys[indexOfNextScene], { gameContext: gameContext });
 };
 
 export { changeSceneIf, changeSceneBetween };
