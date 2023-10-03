@@ -35,24 +35,34 @@ class Forest1 extends Phaser.Scene {
     const height = ratio.canvasHeight;
     cursors = this.input.keyboard.createCursorKeys();
 
+    //world bound
+    this.physics.world.setBounds(0, 0, width * 2, height);
+
+    //player
+    player = this.physics.add
+      .sprite(width / 2, height / 1.5, "player")
+      .setScale(0.3)
+      .setSize(500, 500)
+      .setCollideWorldBounds(true)
+      .setDepth(0);
+
+    //background
     background = this.add
-      .tileSprite(0, 0, width * 2, height, "background")
+      .tileSprite(0, 0, width, height, "background")
       .setOrigin(0, 0)
       .setScale(1)
       .setScrollFactor(0)
       .setDepth(-1);
+
+    //foreground
     foreground = this.add
       .image(0, height / 1.4, "foreground")
       .setOrigin(0, 0)
       .setScrollFactor(1)
       .setScale(0.5)
       .setDepth(1);
-    player = this.physics.add
-      .sprite(width / 2, height / 1.5, "player")
-      .setScale(0.3)
-      .setSize(200, 200)
-      .setCollideWorldBounds(true)
-      .setDepth(0);
+
+    //camera
     camera = this.cameras.main
       .setViewport(0, 0, width, height)
       .setBounds(0, 0, width * 2, height)
@@ -60,9 +70,9 @@ class Forest1 extends Phaser.Scene {
 
     //interact item
     sign = this.physics.add
-      .image(width * 2 - 200, height / 1.5, "sign")
+      .image(width * 2 - 200, height / 1.2, "sign")
       .setScale(0.1)
-      .setDepth(0);
+      .setDepth(-1);
     sign.setImmovable(true);
 
     //function for interact item
@@ -70,16 +80,7 @@ class Forest1 extends Phaser.Scene {
       console.log("collide");
     });
 
-    //wait for next pull request
-    // invisibleWall = this.add
-    //   .image(0, 0, "invisibleWall")
-    //   .setOrigin(0, 0)
-    //   .setScrollFactor(0)
-    //   .setScale(width, 0.3);
-    // this.physics.add.world.enable(invisibleWall);
-    // invisibleWall.body.setImmovable(true);
-    this.physics.world.setBounds(0, 0, width * 2, height);
-
+    //animations
     this.anims.create({
       key: "walk",
       frames: this.anims.generateFrameNumbers("player", {
@@ -89,22 +90,16 @@ class Forest1 extends Phaser.Scene {
       frameRate: 5,
       repeat: -1,
     });
-
-    this.physics.add.collider(player, invisibleWall);
-  }
-
-  changeScene() {
-    this.scene.start("Forest1");
   }
 
   update(delta, time) {
-    camera.startFollow(player);
     this.playerMove(player, 200);
     console.log(player.x, player.y);
-    background.tilePositionX = camera.scrollX * 0.3;
-    background.tilePositionY = camera.scrollY * 0.3;
-    // console.log(background.tilePositionY)
-    // this.time.delayedCall(1000, this.changeScene, [], this);
+
+    //parallax background and follow player
+    camera.startFollow(player);
+    background.tilePositionX = camera.scrollX * 0.4;
+    background.tilePositionY = camera.scrollY * 0.4;
   }
 }
 
