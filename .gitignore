@@ -13,13 +13,21 @@ node_modules/**/*
 # Ignore yarn.lock
 yarn.lock
 
+# Ignore dev directories
+dev/
+dev-ssr/
+dev-ssg/
+dev-static/
+dev-dynamic/
+dev-ssr-dynamic/
+dev-ssg-dynamic/
+
 # Ignore development or build-related files
 dist/
 build/
 coverage/
 tmp/
 temp/
-dev/
 *.log
 *.pid
 *.seed
