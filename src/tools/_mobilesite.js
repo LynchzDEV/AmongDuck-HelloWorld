@@ -60,7 +60,7 @@ class Dev extends Phaser.Scene {
         .sprite(50, 830, "bubble")
         .setScale(0.5)
         .setSize(100, 100)
-        .setCollideWorldBounds(true);
+        .setInteractive();
 
       down = this.physics.add
         .sprite(150, 830, "bubble")
@@ -73,10 +73,7 @@ class Dev extends Phaser.Scene {
         .sprite(400, 830, "bubble")
         .setScale(0.5)
         .setSize(100, 100)
-        .setCollideWorldBounds(true);
-
-      up.setInteractive();
-      down.setInteractive();
+        .setInteractive();
 
       // enable interactivity to interact button, if player overlap with overlapObject
       enableInteractivityOnOverlap(this, interactor, player, overlapObject);

@@ -1,49 +1,52 @@
-import "phaser";
-import Phaser from "phaser";
-import _dev from "./utils/_dev";
-import _movementTemplate from "./utils/_movementTemplate";
+import 'phaser';
+import Phaser from 'phaser';
+import _dev from './tools/_dev';
+import _mobilesite from './tools/_mobilesite';
+import _movementTemplate from './tools/_movementTemplate';
+import _forest1 from './tools/_Forest1';
 
-import MainMenu from "./scenes/MainMenu";
-import CutScene1 from "./scenes/CUTSCENE/CutScene1";
-import CutScene2 from "./scenes/CUTSCENE/CutScene2";
-import Forest1 from "./scenes/Forest1";
-import PathSelection from "./scenes/PathSelection";
-import CodingPath from "./scenes/CodingPath";
-import DesignPath from "./scenes/DesignPath";
-import GameDev from "./scenes/GameDev";
-import DevOps from "./scenes/DevOps";
-import FrontEnd from "./scenes/Frontend";
-import WebDesign from "./scenes/WebDesign";
-import Ending from "./scenes/CUTSCENE/Ending";
-import Summarize from "./scenes/CUTSCENE/Summarize";
+import MainMenu from './scenes/MainMenu';
+import CutScene1 from './scenes/CUTSCENE/CutScene1';
+import CutScene2 from './scenes/CUTSCENE/CutScene2';
+import Forest1 from './scenes/Forest1';
+import PathSelection from './scenes/PathSelection';
+import CodingPath from './scenes/CodingPath';
+import DesignPath from './scenes/DesignPath';
+import GameDev from './scenes/GameDev';
+import DevOps from './scenes/DevOps';
+import FrontEnd from './scenes/Frontend';
+import WebDesign from './scenes/WebDesign';
+import Ending from './scenes/CUTSCENE/Ending';
+import Summarize from './scenes/CUTSCENE/Summarize';
 
 const config = {
-  // For more settings see <https://github.com/photonstorm/phaser/blob/master/src/boot/Config.js>
   type: Phaser.AUTO,
   pixelArt: true,
   roundPixels: true,
-  parent: "content",
+  parent: 'content',
   // width: '90vw',
   // height: '90vh',
   width: 1280,
   height: 720,
   physics: {
-    default: "arcade",
+    default: 'arcade',
     arcade: {
       // gravity: { y: 300 },
       debug: true,
     },
   },
   scene: [
-    _dev, //! dev mode, comment this line to turn off dev mode
-    //_movementTemplate, //! movement template, comment this line to turn off movement template
+    // _dev, //! dev mode
+    // _mobilesite, //! dev mode
+    //_movementTemplate, //! movement template
+    _forest1, //!  forest1 template [dev mode]
     // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
     // CutScene1, //* 1 cutscene 1 of the story mode
     // CutScene2, //* 2 cutscene 2 of the story mode
-    Forest1, //* 3 forest map that lead to first decision
-    PathSelection, //* 4 path selection scene
-    CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
-    DesignPath, //* 6 cutscene that lead to selection of front end or web design
+    // Forest1, //* 3 forest map that lead to first decision
+    // PathSelection, //* 4 path selection scene
+    // CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
+    // DesignPath, //* 6 cutscene that lead to selection of front end or web design
     GameDev, //* 7 game dev scene: parkour
     DevOps, //* 8 dev ops scene: delivery man
     FrontEnd, //* 9 web dev scene: puzzle

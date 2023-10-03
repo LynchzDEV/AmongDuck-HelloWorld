@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 
-class CutScene2 extends Phaser.Scene {
+class Dev extends Phaser.Scene {
   constructor() {
     super({
-      key: 'CutScene2',
+      key: 'Dev',
     });
   }
 
@@ -14,4 +14,4 @@ class CutScene2 extends Phaser.Scene {
   update(delta, time) {}
 }
 
-export default CutScene2;
+export default Dev;
