@@ -1,17 +1,67 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
+import playerMove from "../utils/playerMove";
 
+let background;
+let platforms;
+let player;
 class GameDev extends Phaser.Scene {
   constructor() {
     super({
-      key: 'GameDev',
+      key: "GameDev",
     });
   }
 
-  preload() {}
+  preload() {
+    this.load.image("background", "src/image/_dev/backGround.png");
+    this.load.image("platforms", "src/image/_dev/Rapid.png");
+    this.load.image("player", "src/image/_dev/Player.png", {
+      frameWidth: 90,
+      frameHeight: 90,
+    });
+  }
 
-  create() {}
+  create() {
+    background = this.add
+      .tileSprite(0, 0,800, 600, "background")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setScrollFactor(0)
+      .setDepth(-1);
+    this.playerMove = playerMove; //Binding function to scene
+    const { width, height } = this.scale;
+    player = this.physics.add
+      .sprite(0, 0, "player")
+      .setScale(1)
+      .setCollideWorldBounds(true);
 
-  update(delta, time) {}
+    platforms = this.physics.add.staticGroup();
+    platforms
+      .create(0, 0, "platforms")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .refreshBody();
+    platforms
+      .create(width / 1.2, height - 100, "platforms")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .refreshBody();
+    platforms
+      .create(width / 2, height / 2, "platforms")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .refreshBody();
+    platforms
+      .create(200, 200, "platforms")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .refreshBody();
+    this.physics.add.collider(player, platforms);
+  }
+
+  update(delta, time) {
+    // this.playerMove(player, 200);
+    // background.tilePositionX += player.body.velocity.x;
+  }
 }
 
 export default GameDev;
