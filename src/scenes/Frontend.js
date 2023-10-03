@@ -89,11 +89,12 @@ class FrontEnd extends Phaser.Scene {
     items = this.physics.add.group();
     let star = this.physics.add.image(100, 100, "platform-long");
     items.add(star);
-    items.add(house);
 
     //collider
+    this.physics.add.collider(player, items);
     this.physics.add.collider(player, platforms);
     this.physics.add.collider(items, platforms);
+    this.physics.add.collider(interactObj, platforms);
     this.physics.add.overlap(player, interactObj);
 
     //animations
