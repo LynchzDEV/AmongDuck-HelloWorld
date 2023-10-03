@@ -2,7 +2,7 @@ import 'phaser';
 import Phaser from 'phaser';
 import _dev from './utils/_dev';
 import MainMenu from './scenes/MainMenu';
-import CutScene1 from './scenes/CutScene1';
+import CutScene1 from './CUTSCENE/CutScene1';
 import CutScene2 from './scenes/CutScene2';
 import Forest1 from './scenes/Forest1';
 import PathSelection from './scenes/PathSelection';
