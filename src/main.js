@@ -34,7 +34,7 @@ const config = {
     },
   },
   scene: [
-    // _dev, //! dev mode, comment this line to turn off dev mode
+    _dev, //! dev mode, comment this line to turn off dev mode
     //_movementTemplate, //! movement template, comment this line to turn off movement template
     // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
     // CutScene1, //* 1 cutscene 1 of the story mode
