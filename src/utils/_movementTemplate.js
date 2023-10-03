@@ -1,5 +1,5 @@
-import Phaser from "phaser";
-import calculateCanvasRatio from "../utils/ratio";
+import Phaser from 'phaser';
+import calculateCanvasRatio from './ratio';
 
 let background;
 let player;
@@ -7,18 +7,18 @@ let camera;
 let foreground;
 let invisibleWall;
 
-class CutScene1 extends Phaser.Scene {
+class MovementTemplate extends Phaser.Scene {
   constructor() {
     super({
-      key: "CutScene1",
+      key: 'MovementTemplate',
     });
   }
 
   preload() {
-    this.load.image("background", "src/image/_dev/backGround.png");
-    this.load.image("foreground", "src/image/_dev/playermeow.jpg");
-    this.load.image("invisibleWall", "src/image/_dev/football.png"); //invisible wall
-    this.load.spritesheet("player", "src/image/_dev/playerSpritesheet.png", {
+    this.load.image('background', 'src/image/_dev/backGround.png');
+    this.load.image('foreground', 'src/image/_dev/playermeow.jpg');
+    this.load.image('invisibleWall', 'src/image/_dev/football.png'); //invisible wall
+    this.load.spritesheet('player', 'src/image/_dev/playerSpritesheet.png', {
       frameWidth: 669,
       frameHeight: 569,
     });
@@ -29,17 +29,17 @@ class CutScene1 extends Phaser.Scene {
     const width = ratio.canvasWidth;
     const height = ratio.canvasHeight;
     background = this.add
-      .tileSprite(0, 0, width* 2, height, "background")
+      .tileSprite(0, 0, width * 2, height, 'background')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(-1);
     foreground = this.add
-      .image(0, height - 100, "foreground")
+      .image(0, height - 100, 'foreground')
       .setOrigin(0, 0)
       .setScale(0.5)
       .setDepth(1);
     player = this.physics.add
-      .sprite(width/ 2, height/1.5, "player")
+      .sprite(width / 2, height / 1.5, 'player')
       .setScale(0.3)
       .setSize(200, 200)
       .setCollideWorldBounds(true)
@@ -47,19 +47,19 @@ class CutScene1 extends Phaser.Scene {
 
     camera = this.cameras.main
       .setViewport(0, 0, width, height)
-      .setBounds(0, 0, width* 2, height)
+      .setBounds(0, 0, width * 2, height)
       .setZoom(1.5);
 
     invisibleWall = this.add
-      .image(0, 0, "invisibleWall")
+      .image(0, 0, 'invisibleWall')
       .setOrigin(0, 0)
       .setScale(width, 0.3);
     this.physics.add.world.enable(invisibleWall);
     invisibleWall.body.setImmovable(true);
 
     this.anims.create({
-      key: "walk",
-      frames: this.anims.generateFrameNumbers("player", {
+      key: 'walk',
+      frames: this.anims.generateFrameNumbers('player', {
         start: 0,
         end: 7,
       }),
@@ -106,11 +106,11 @@ class CutScene1 extends Phaser.Scene {
     }
 
     player.setVelocity(velocityX, velocityY);
-    player.anims.play("walk", velocityX !== 0 || velocityY !== 0);
+    player.anims.play('walk', velocityX !== 0 || velocityY !== 0);
   }
 
   changeScene() {
-    this.scene.start("Forest1");
+    this.scene.start('Forest1');
   }
 
   update(delta, time) {
@@ -122,4 +122,4 @@ class CutScene1 extends Phaser.Scene {
   }
 }
 
-export default CutScene1;
+export default MovementTemplate;

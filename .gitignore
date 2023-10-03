@@ -19,6 +19,7 @@ build/
 coverage/
 tmp/
 temp/
+dev/
 *.log
 *.pid
 *.seed
