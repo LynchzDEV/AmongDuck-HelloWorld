@@ -7,6 +7,7 @@ let foreground;
 let player;
 let camera;
 let invisibleWall;
+let cursors;
 
 class Forest1 extends Phaser.Scene {
   constructor() {
@@ -30,8 +31,10 @@ class Forest1 extends Phaser.Scene {
     const ratio = calculateCanvasRatio(this.sys);
     const width = ratio.canvasWidth;
     const height = ratio.canvasHeight;
+    cursors = this.input.keyboard.createCursorKeys();
+
     background = this.add
-      .tileSprite(0, 0, width, height, "background")
+      .tileSprite(0, 0, width*2, height, "background")
       .setOrigin(0, 0)
       .setScale(1)
       .setScrollFactor(0)
@@ -51,9 +54,10 @@ class Forest1 extends Phaser.Scene {
 
     camera = this.cameras.main
       .setViewport(0, 0, width, height)
-      .setBounds(0, 0, width * 2, height)
+      .setBounds(0, 0, width*2, height)
       .setZoom(1.5);
 
+      
       //wait for next pull request
     // invisibleWall = this.add
     //   .image(0, 0, "invisibleWall")
@@ -62,6 +66,7 @@ class Forest1 extends Phaser.Scene {
     //   .setScale(width, 0.3);
     // this.physics.add.world.enable(invisibleWall);
     // invisibleWall.body.setImmovable(true);
+    this.physics.world.setBounds(0, 0, width*2, height);
 
     this.anims.create({
       key: "walk",
@@ -83,8 +88,10 @@ class Forest1 extends Phaser.Scene {
   update(delta, time) {
     camera.startFollow(player);
     this.playerMove(player, 200);
-    background.tilePositionX = this.cameras.main.scrollX * 0.3;
-    background.tilePositionY = this.cameras.main.scrollY * 0.3;
+    console.log(player.x, player.y)
+    background.tilePositionX = camera.scrollX * 0.3;
+    background.tilePositionY = camera.scrollY * 0.3;
+    // console.log(background.tilePositionY)
     // this.time.delayedCall(1000, this.changeScene, [], this);
   }
 }

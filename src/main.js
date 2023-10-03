@@ -23,10 +23,10 @@ const config = {
   pixelArt: true,
   roundPixels: true,
   parent: 'content',
-  // width: '90vw',
-  // height: '90vh',
-  width: 1280,
-  height: 720,
+  width: '90vw',
+  height: '90vh',
+  // width: 1280,
+  // height: 720,
   physics: {
     default: 'arcade',
     arcade: {
@@ -35,14 +35,14 @@ const config = {
   },
   scene: [
     // _dev, //! dev mode, comment this line to turn off dev mode
-    _movementTemplate, //! movement template, comment this line to turn off movement template
-    MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
-    CutScene1, //* 1 cutscene 1 of the story mode
-    CutScene2, //* 2 cutscene 2 of the story mode
-    Forest1, //* 3 forest map that lead to first decision
-    PathSelection, //* 4 path selection scene
-    CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
-    DesignPath, //* 6 cutscene that lead to selection of front end or web design
+    //_movementTemplate, //! movement template, comment this line to turn off movement template
+    // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
+    // CutScene1, //* 1 cutscene 1 of the story mode
+    // CutScene2, //* 2 cutscene 2 of the story mode
+   Forest1, //* 3 forest map that lead to first decision
+    // PathSelection, //* 4 path selection scene
+    // CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
+    // DesignPath, //* 6 cutscene that lead to selection of front end or web design
     GameDev, //* 7 game dev scene: parkour
     DevOps, //* 8 dev ops scene: delivery man
     FrontEnd, //* 9 web dev scene: puzzle

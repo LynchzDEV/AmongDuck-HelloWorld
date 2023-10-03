@@ -33,7 +33,7 @@ function playerMove(player, normalSpeed) {
     }
 
     player.setVelocity(velocityX, velocityY);
-    // player.anims.play("walk", velocityX !== 0 || velocityY !== 0);
+    player.anims.play("walk", velocityX !== 0 || velocityY !== 0);
 }
 
 export default playerMove;
