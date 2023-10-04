@@ -1,14 +1,16 @@
 function calculateCanvasRatio(sys) {
-  const canvasWidth = sys.game.canvas.width;
-  const canvasHeight = sys.game.canvas.height;
+  const width = sys.game.canvas.width;
+  const height = sys.game.canvas.height;
+  const centerX = width / 2;
+  const centerY = height / 2;
   const ratio =
-    canvasWidth < canvasHeight
-      ? canvasWidth / (canvasHeight * 0.8)
-      : (canvasHeight * 1.3) / canvasWidth;
+    width < height ? width / (height * 0.8) : (height * 1.3) / width;
 
   return {
-    canvasWidth,
-    canvasHeight,
+    width,
+    height,
+    centerX,
+    centerY,
     ratio,
   };
 }

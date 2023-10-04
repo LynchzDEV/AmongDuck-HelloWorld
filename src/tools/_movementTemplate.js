@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import calculateCanvasRatio from './ratio';
+import calculateCanvasRatio from '../utils/ratio';
 
 let background;
 let player;
@@ -11,23 +11,23 @@ class MovementTemplate extends Phaser.Scene {
   constructor() {
     super({
       key: 'MovementTemplate',
-    });
+    })
   }
 
   preload() {
-    this.load.image('background', 'src/image/_dev/backGround.png');
-    this.load.image('foreground', 'src/image/_dev/playermeow.jpg');
-    this.load.image('invisibleWall', 'src/image/_dev/football.png'); //invisible wall
+    this.load.image('background', 'src/image/_dev/backGround.png')
+    this.load.image('foreground', 'src/image/_dev/playermeow.jpg')
+    this.load.image('invisibleWall', 'src/image/_dev/football.png') //invisible wall
     this.load.spritesheet('player', 'src/image/_dev/playerSpritesheet.png', {
       frameWidth: 669,
       frameHeight: 569,
-    });
+    })
   }
 
   create() {
-    const ratio = calculateCanvasRatio(this.sys);
-    const width = ratio.canvasWidth;
-    const height = ratio.canvasHeight;
+    const ratio = calculateCanvasRatio(this.sys)
+    const width = ratio.canvasWidth
+    const height = ratio.canvasHeight
     background = this.add
       .tileSprite(0, 0, width, height, 'background')
       .setOrigin(0, 0)
@@ -39,7 +39,7 @@ class MovementTemplate extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScrollFactor(1)
       .setScale(0.5)
-      .setDepth(1);
+      .setDepth(1)
     player = this.physics.add
       .sprite(width / 2, height / 1.5, 'player')
       .setScale(0.3)
@@ -51,14 +51,7 @@ class MovementTemplate extends Phaser.Scene {
       .setViewport(0, 0, width, height)
       .setBounds(0, 0, width, height)
       .setScroll(0, 0)
-      .setZoom(1.5);
-
-    invisibleWall = this.add
-      .image(0, 0, 'invisibleWall')
-      .setOrigin(0, 0)
-      .setScale(width, 0.3);
-    this.physics.add.world.enable(invisibleWall);
-    invisibleWall.body.setImmovable(true);
+      .setZoom(1.5)
 
     this.anims.create({
       key: 'walk',

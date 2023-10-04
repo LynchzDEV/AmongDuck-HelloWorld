@@ -1,6 +1,6 @@
-import Phaser from "phaser";
-import calculateCanvasRatio from "../utils/ratio";
-import playerMove from "../utils/playerMove";
+import Phaser from 'phaser';
+import calculateCanvasRatio from '../utils/ratio';
+import playerMove from '../utils/playerMove';
 
 let background;
 let foreground;
@@ -13,26 +13,26 @@ let cursors;
 class Forest1 extends Phaser.Scene {
   constructor() {
     super({
-      key: "Forest1",
+      key: 'Forest1',
     });
   }
 
   preload() {
-    this.load.image("background", "src/image/_dev/backGround.png");
-    this.load.image("foreground", "src/image/_dev/playermeow.jpg");
-    this.load.image("invisibleWall", "src/image/_dev/football.png"); //invisible wall
-    this.load.spritesheet("player", "src/image/_dev/playerSpritesheet.png", {
+    this.load.image('background', 'src/image/_dev/backGround.png');
+    this.load.image('foreground', 'src/image/_dev/playermeow.jpg');
+    this.load.image('invisibleWall', 'src/image/_dev/football.png');
+    this.load.spritesheet('player', 'src/image/_dev/playerSpritesheet.png', {
       frameWidth: 669,
       frameHeight: 569,
     });
-    this.load.image("sign", "src/image/_dev/basketball.png");
+    this.load.image('sign', 'src/image/_dev/basketball.png');
   }
 
   create() {
-    this.playerMove = playerMove; //Binding function to scene
-    const ratio = calculateCanvasRatio(this.sys);
-    const width = ratio.canvasWidth;
-    const height = ratio.canvasHeight;
+    this.playerMove = playerMove;
+    const { width, height, centerX, centerY, ratio } = calculateCanvasRatio(
+      this.sys
+    );
     cursors = this.input.keyboard.createCursorKeys();
 
     //world bound
@@ -40,7 +40,7 @@ class Forest1 extends Phaser.Scene {
 
     //player
     player = this.physics.add
-      .sprite(width / 2, height / 1.5, "player")
+      .sprite(width / 2, height / 1.5, 'player')
       .setScale(0.3)
       .setSize(500, 500)
       .setCollideWorldBounds(true)
@@ -48,7 +48,7 @@ class Forest1 extends Phaser.Scene {
 
     //background
     background = this.add
-      .tileSprite(0, 0, width, height, "background")
+      .tileSprite(0, 0, width, height, 'background')
       .setOrigin(0, 0)
       .setScale(1)
       .setScrollFactor(0)
@@ -56,7 +56,7 @@ class Forest1 extends Phaser.Scene {
 
     //foreground
     foreground = this.add
-      .image(0, height / 1.4, "foreground")
+      .image(0, height / 1.4, 'foreground')
       .setOrigin(0, 0)
       .setScrollFactor(1)
       .setScale(0.5)
@@ -68,28 +68,31 @@ class Forest1 extends Phaser.Scene {
       .setBounds(0, 0, width * 2, height)
       .setZoom(1.5);
 
-    //interact item
     sign = this.physics.add
-      .image(width * 2 - 200, height / 1.2, "sign")
+      .image(width * 2 - 200, height / 1.2, 'sign')
       .setScale(0.1)
       .setDepth(-1);
     sign.setImmovable(true);
 
-    //function for interact item
     this.physics.add.collider(player, sign, () => {
-      console.log("collide");
+      console.log('collide');
     });
 
     //animations
     this.anims.create({
-      key: "walk",
-      frames: this.anims.generateFrameNumbers("player", {
+      key: 'walk',
+      frames: this.anims.generateFrameNumbers('player', {
         start: 0,
         end: 7,
       }),
       frameRate: 5,
       repeat: -1,
     });
+    this.physics.add.collider(player, invisibleWall);
+  }
+
+  changeScene() {
+    this.scene.start('Forest1');
   }
 
   update(delta, time) {
