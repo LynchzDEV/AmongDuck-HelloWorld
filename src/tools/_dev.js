@@ -14,11 +14,11 @@ class Dev extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spritesheet('ermine', 'src/asset/image/_dev/playerErmine.png', {
+    this.load.spritesheet('ermine', 'src/assets/image/_dev/playerErmine.png', {
       frameWidth: 500,
       frameHeight: 300,
     });
-    this.load.image('bubble', 'src/image/_dev/Bullet.png');
+    this.load.image('bubble', 'src/assets/image/_dev/Bullet.png');
   }
 
   create() {

@@ -2,14 +2,6 @@ import Phaser from 'phaser';
 import calculateCanvasRatio from '../utils/ratio';
 import playerMove from '../utils/playerMove';
 
-let background;
-let foreground;
-let player;
-let camera;
-let invisibleWall;
-let sign;
-let cursors;
-
 class Forest1 extends Phaser.Scene {
   constructor() {
     super({
@@ -26,7 +18,7 @@ class Forest1 extends Phaser.Scene {
   }
 
   update(delta, time) {
-    
+
   }
 }
 

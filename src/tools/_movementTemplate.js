@@ -15,10 +15,10 @@ class MovementTemplate extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('background', 'src/image/_dev/backGround.png')
-    this.load.image('foreground', 'src/image/_dev/playermeow.jpg')
-    this.load.image('invisibleWall', 'src/image/_dev/football.png') //invisible wall
-    this.load.spritesheet('player', 'src/image/_dev/playerSpritesheet.png', {
+    this.load.image('background', 'src/assets/image/_dev/backGround.png')
+    this.load.image('foreground', 'src/assets/image/_dev/playermeow.jpg')
+    this.load.image('invisibleWall', 'src/assets/image/_dev/football.png') //invisible wall
+    this.load.spritesheet('player', 'src/assets/image/_dev/playerSpritesheet.png', {
       frameWidth: 669,
       frameHeight: 569,
     })

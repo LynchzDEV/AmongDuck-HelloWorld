@@ -12,9 +12,9 @@ class MainMenu extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('logo', 'src/image/_dev/placeholder.png');
-    this.load.image('button1', 'src/image/_dev/playButton.png');
-    this.load.image('button2', 'src/image/_dev/play.png');
+    this.load.image('logo', 'src/assets/image/_dev/placeholder.png');
+    this.load.image('button1', 'src/assets/image/_dev/playButton.png');
+    this.load.image('button2', 'src/assets/image/_dev/play.png');
   }
 
   create() {
