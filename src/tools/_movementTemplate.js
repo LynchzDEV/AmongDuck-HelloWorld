@@ -110,10 +110,10 @@ class MovementTemplate extends Phaser.Scene {
   // }
 
   update(delta, time) {
-    camera.startFollow(player);
     this.playerMove(player);
-    background.tilePositionX = this.cameras.main.scrollX * 0.5;
-    background.tilePositionY = this.cameras.main.scrollY * 0.5;
+    camera.startFollow(player);
+    background.tilePositionX = camera.scrollX * 0.4;
+    background.tilePositionY = camera.scrollY * 0.4;
     // this.time.delayedCall(1000, this.changeScene, [], this);
   }
 }
