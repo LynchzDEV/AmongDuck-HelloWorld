@@ -13,6 +13,9 @@ let sign;
 let cursors;
 let up;
 let down;
+let isUpPressed = false;
+let isDownPressed = false;
+let mainCamera;
 
 // Create a Phaser scene called 'Forest1'
 class Forest1 extends Phaser.Scene {
@@ -41,7 +44,6 @@ class Forest1 extends Phaser.Scene {
     const { width, height, centerX, centerY, ratio } = calculateCanvasRatio(
       this.sys
     );
-    cursors = this.input.keyboard.createCursorKeys();
 
     // Create the background with a tile sprite
     background = this.add
@@ -69,15 +71,15 @@ class Forest1 extends Phaser.Scene {
 
     // Create the camera and set its properties
     camera = this.cameras.main
-      .setViewport(0, 0, width, height)
-      .setBounds(0, 0, width * 2, height)
+      // .setViewport(0, 0, width, height)
+      // .setBounds(0, 0, width * 2, height)
       .setZoom(1.5);
 
     // Create a sign as a physics image
     sign = this.physics.add
       .image(width * 2 - 200, height / 1.5, 'sign')
       .setScale(0.1)
-      .setDepth(0);
+      .setDepth(99);
 
     sign.setImmovable(true);
 
@@ -103,19 +105,42 @@ class Forest1 extends Phaser.Scene {
     // Add collision between player and invisible wall (commented out in the original code)
     // this.physics.add.collider(player, invisibleWall);
     //!-----------------------------------!//
-    up = this.physics.add
-      .sprite(centerX - 150, centerY + 300, 'bubble')
-      .setScale(0.5)
-      .setSize(150, 150)
-      .setInteractive()
-      .setDepth(2);
+    if (window.innerWidth < window.innerHeight) {
+      up = this.physics.add
+        .sprite(0, 0, 'bubble')
+        .setScale(0.5)
+        .setSize(150, 150)
+        .setInteractive()
+        .setDepth(2);
 
-    down = this.physics.add
-      .sprite(centerX - 50, centerY + 300, 'bubble')
-      .setScale(0.5)
-      .setSize(150, 150)
-      .setInteractive()
-      .setDepth(2);
+      down = this.physics.add
+        .sprite(0, 0, 'bubble')
+        .setScale(0.5)
+        .setSize(150, 150)
+        .setInteractive()
+        .setDepth(2);
+
+      this.input.on('gameobjectdown', (pointer, gameObject) => {
+        if (gameObject === up) {
+          isUpPressed = true;
+        }
+        if (gameObject === down) {
+          isDownPressed = true;
+        }
+      });
+
+      this.input.on('gameobjectup', (pointer, gameObject) => {
+        if (gameObject === up) {
+          isUpPressed = false;
+        }
+        if (gameObject === down) {
+          isDownPressed = false;
+        }
+      });
+    } else {
+      cursors = this.input.keyboard.createCursorKeys();
+    }
+
     //!-----------------------------------!//
   }
 
@@ -133,15 +158,45 @@ class Forest1 extends Phaser.Scene {
     camera.startFollow(player);
 
     // Call the playerMove function to move the player
-    this.playerMove(player, 2000);
+
+    const offsetY = 180;
+
+    const upY = player.y + offsetY;
+    const downY = player.y + offsetY;
+
+    const screenY = height - 50; // Adjust this value as needed
 
     // Update the background tile position for parallax scrolling
     background.tilePositionX = camera.scrollX * 0.3;
     background.tilePositionY = camera.scrollY * 0.3;
+    console.log(window.innerWidth, window.innerHeight);
+    // console.log(camera.scrollX, camera.scrollY);
+    if (window.innerWidth < window.innerHeight) {
+      up.x = camera.scrollX + 550;
+      up.y = Math.max(0, Math.min(upY, screenY));
+      down.x = camera.scrollX + 650;
+      down.y = Math.max(0, Math.min(downY, screenY));
 
-
-    // down.x = camera.ScrollX + centerX + 20; // Adjust the X position as needed
-    // down.y = camera.ScrollY + centerY + 120; // Adjust the Y position as needed
+      if (isUpPressed) {
+        player.setVelocityX(-200);
+        player.anims.play('walk', true);
+        player.setFlipX(true);
+        console.log('up');
+      }
+      if (isDownPressed) {
+        player.setVelocityX(200);
+        player.anims.play('walk', true);
+        player.setFlipX(false);
+        console.log('down');
+      }
+      if (!isUpPressed && !isDownPressed) {
+        player.setVelocityX(0);
+        player.anims.play('walk', false);
+        // console.log('stop');
+      }
+    } else {
+      this.playerMove(player, 2000);
+    }
   }
 }
 
