@@ -24,15 +24,15 @@ class Forest1 extends Phaser.Scene {
 
   // Preload game assets
   preload() {
-    this.load.image('background', 'src/assets/image/_dev/backGround.png');
-    this.load.image('foreground', 'src/assets/image/_dev/playermeow.jpg');
-    this.load.image('invisibleWall', 'src/assets/image/_dev/football.png');
-    this.load.spritesheet('player', 'src/assets/image/_dev/playerSpritesheet.png', {
+    this.load.image('background', 'assets/image/_dev/backGround.png');
+    this.load.image('foreground', 'assets/image/_dev/playermeow.jpg');
+    this.load.image('invisibleWall', 'assets/image/_dev/football.png');
+    this.load.spritesheet('player', 'assets/image/_dev/playerSpritesheet.png', {
       frameWidth: 669,
       frameHeight: 569,
     });
-    this.load.image('sign', 'src/image/_dev/basketball.png');
-    this.load.image('bubble', 'src/image/_dev/Bullet.png');
+    this.load.image('sign', 'assets/image/_dev/basketball.png');
+    this.load.image('bubble', 'assets/image/_dev/Bullet.png');
   }
 
   // Create game elements and set up the scene

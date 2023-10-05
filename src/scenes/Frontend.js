@@ -19,21 +19,21 @@ class FrontEnd extends Phaser.Scene {
   preload() {
     this.load.image(
       'background',
-      'src/assets/image/Sunny-land-files/environment/Background/back.png'
+      'assets/assets/image/Sunny-land-files/environment/Background/back.png'
     )
     this.load.image(
       'background_2',
-      'src/assets/image/Sunny-land-files/environment/Background/middle.png'
+      'assets/image/Sunny-land-files/environment/Background/middle.png'
     )
     this.load.image(
       'platform-long',
-      'src/assets/image/Sunny-land-files/environment/Props/platform-long.png'
+      'assets/image/Sunny-land-files/environment/Props/platform-long.png'
     )
     this.load.image(
       'house',
-      'src/assets/image/Sunny-land-files/environment/Props/plant-house.png'
+      'assets/image/Sunny-land-files/environment/Props/plant-house.png'
     )
-    this.load.spritesheet('player', 'src/assets/image/Sunny-land-files/spritesheets/player.png', {
+    this.load.spritesheet('player', 'assets/image/Sunny-land-files/spritesheets/player.png', {
       frameWidth: 32,
       frameHeight: 32,
     })
