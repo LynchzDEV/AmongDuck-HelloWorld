@@ -17,6 +17,8 @@ let isUpPressed = false;
 let isDownPressed = false;
 let mainCamera;
 let text;
+let cloud;
+let water;
 
 // const isMobile = navigator.userAgentData.mobile;
 
@@ -30,7 +32,9 @@ class ForestDev extends Phaser.Scene {
 
   // Preload game assets
   preload() {
-    this.load.image('background', 'src/image/_dev/backGround.png');
+    this.load.image('background', 'src/image/Japan/Sky.png');
+    this.load.image('cloud', 'src/image/Japan/Clouds.png');
+    this.load.image('water', 'src/image/Japan/Water.gif');
     this.load.image('foreground', 'src/image/_dev/playermeow.jpg');
     this.load.image('invisibleWall', 'src/image/_dev/football.png');
     this.load.spritesheet('player', 'src/image/_dev/playerSpritesheet.png', {
@@ -50,9 +54,23 @@ class ForestDev extends Phaser.Scene {
 
     // Create the background with a tile sprite
     background = this.add
-      .tileSprite(0, 0, width * 2, height, 'background')
+      .tileSprite(0, 0, width * 2, height * 2, 'background')
       .setOrigin(0, 0)
-      .setScale(1)
+      .setScale(0.6)
+      .setScrollFactor(0)
+      .setDepth(-2);
+
+    water = this.add
+      .tileSprite(0, (height * 2) / 3, width * 2, 252, 'water')
+      .setOrigin(0, 0)
+      .setScale(0.5)
+      .setScrollFactor(0)
+      .setDepth(-2);
+
+    cloud = this.add
+      .tileSprite(0, 0, width * 2, height, 'cloud')
+      .setOrigin(0, 0)
+      .setScale(0.5)
       .setScrollFactor(0)
       .setDepth(-1);
 
@@ -142,7 +160,6 @@ class ForestDev extends Phaser.Scene {
           isDownPressed = false;
         }
       });
-    } else if (/ipad|tablet/i.test(navigator.userAgent)) {
     } else {
       cursors = this.input.keyboard.createCursorKeys();
     }
@@ -181,6 +198,8 @@ class ForestDev extends Phaser.Scene {
     // Update the background tile position for parallax scrolling
     background.tilePositionX = camera.scrollX * 0.3;
     background.tilePositionY = camera.scrollY * 0.3;
+    cloud.tilePositionX += 0.1;
+    cloud.tilePositionY = camera.scrollY * 0.02;
 
     // console.log(window.innerWidth, window.innerHeight);
     // console.log(camera.scrollX, camera.scrollY);

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import calculateCanvasRatio from '../utils/ratio';
+import calculateCanvasRatio from '../../utils/ratio';
 
 let canvasWidth;
 let canvasHeight;

@@ -5,7 +5,7 @@ import _mobilesite from './tools/_mobilesite';
 import _movementTemplate from './tools/_movementTemplate';
 import _forest1 from './tools/_Forest1';
 
-import MainMenu from './scenes/MainMenu';
+import MainMenu from './scenes/cutscene/MainMenu';
 import CutScene1 from './scenes/CUTSCENE/CutScene1';
 import CutScene2 from './scenes/CUTSCENE/CutScene2';
 import Forest1 from './scenes/Forest1';
@@ -43,11 +43,11 @@ const config = {
     // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
     // CutScene1, //* 1 cutscene 1 of the story mode
     // CutScene2, //* 2 cutscene 2 of the story mode
-    Forest1, //* 3 forest map that lead to first decision
+    // Forest1, //* 3 forest map that lead to first decision
     // PathSelection, //* 4 path selection scene
     // CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
     // DesignPath, //* 6 cutscene that lead to selection of front end or web design
-    GameDev, //* 7 game dev scene: parkour
+    // GameDev, //* 7 game dev scene: parkour
     DevOps, //* 8 dev ops scene: delivery man
     FrontEnd, //* 9 web dev scene: puzzle
     WebDesign, //* 10 web design scene: adventure
