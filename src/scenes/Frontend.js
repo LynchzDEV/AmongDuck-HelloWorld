@@ -40,6 +40,7 @@ class FrontEnd extends Phaser.Scene {
   }
 
   create() {
+    console.log("FrontEnd");
     this.playerMove = playerMove; //Binding function to scene
     const { width, height } = this.scale;
 
