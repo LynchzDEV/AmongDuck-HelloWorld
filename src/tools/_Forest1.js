@@ -16,12 +16,15 @@ let down;
 let isUpPressed = false;
 let isDownPressed = false;
 let mainCamera;
+let text;
+
+// const isMobile = navigator.userAgentData.mobile;
 
 // Create a Phaser scene called 'Forest1'
-class Forest1 extends Phaser.Scene {
+class ForestDev extends Phaser.Scene {
   constructor() {
     super({
-      key: 'Forest1',
+      key: 'ForestDev',
     });
   }
 
@@ -101,24 +104,26 @@ class Forest1 extends Phaser.Scene {
       frameRate: 5,
       repeat: -1,
     });
-
     // Add collision between player and invisible wall (commented out in the original code)
     // this.physics.add.collider(player, invisibleWall);
     //!-----------------------------------!//
-    if (window.innerWidth < window.innerHeight) {
+    //* MOBILE SITE AND TABLET SITE *//
+    if (/mobile/i.test(navigator.userAgent) || window.innerWidth < 1280) {
       up = this.physics.add
         .sprite(0, 0, 'bubble')
         .setScale(0.5)
         .setSize(150, 150)
         .setInteractive()
-        .setDepth(2);
+        .setDepth(999)
+        .setAlpha(0.3);
 
       down = this.physics.add
         .sprite(0, 0, 'bubble')
         .setScale(0.5)
         .setSize(150, 150)
         .setInteractive()
-        .setDepth(2);
+        .setDepth(999)
+        .setAlpha(0.3);
 
       this.input.on('gameobjectdown', (pointer, gameObject) => {
         if (gameObject === up) {
@@ -137,11 +142,18 @@ class Forest1 extends Phaser.Scene {
           isDownPressed = false;
         }
       });
+    } else if (/ipad|tablet/i.test(navigator.userAgent)) {
     } else {
       cursors = this.input.keyboard.createCursorKeys();
     }
 
     //!-----------------------------------!//
+
+    const textStyle = {
+      fontFamily: 'Arial',
+      fontSize: '24px',
+      color: '#ffffff',
+    };
   }
 
   // Change the scene (not implemented in the original code)
@@ -169,13 +181,21 @@ class Forest1 extends Phaser.Scene {
     // Update the background tile position for parallax scrolling
     background.tilePositionX = camera.scrollX * 0.3;
     background.tilePositionY = camera.scrollY * 0.3;
-    console.log(window.innerWidth, window.innerHeight);
+
+    // console.log(window.innerWidth, window.innerHeight);
     // console.log(camera.scrollX, camera.scrollY);
-    if (window.innerWidth < window.innerHeight) {
-      up.x = camera.scrollX + 550;
-      up.y = Math.max(0, Math.min(upY, screenY));
-      down.x = camera.scrollX + 650;
-      down.y = Math.max(0, Math.min(downY, screenY));
+    if (/mobile/i.test(navigator.userAgent) || window.innerWidth < 1280) {
+      if (/mobile/i.test(navigator.userAgent)) {
+        up.x = camera.scrollX + 550;
+        up.y = Math.max(0, Math.min(upY, screenY));
+        down.x = camera.scrollX + 650;
+        down.y = Math.max(0, Math.min(downY, screenY));
+      } else {
+        up.x = camera.scrollX + 300;
+        up.y = Math.max(0, Math.min(upY, screenY));
+        down.x = camera.scrollX + 400;
+        down.y = Math.max(0, Math.min(downY, screenY));
+      }
 
       if (isUpPressed) {
         player.setVelocityX(-200);
@@ -200,4 +220,4 @@ class Forest1 extends Phaser.Scene {
   }
 }
 
-export default Forest1;
+export default ForestDev;
