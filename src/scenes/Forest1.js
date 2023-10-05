@@ -8,7 +8,15 @@ let player;
 let camera;
 let invisibleWall;
 let sign;
+
+// Controls [Desktop]
 let cursors;
+
+// Controls [Mobile & Tablet]
+let left;
+let right;
+let isLeftPressed = false;
+let isRightPressed = false;
 
 class Forest1 extends Phaser.Scene {
   constructor() {
@@ -89,6 +97,11 @@ class Forest1 extends Phaser.Scene {
       repeat: -1,
     });
     this.physics.add.collider(player, invisibleWall);
+
+    if (isDevice()) {
+
+    }
+
   }
 
   changeScene() {

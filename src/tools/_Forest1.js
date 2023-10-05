@@ -16,18 +16,25 @@ let down;
 let isUpPressed = false;
 let isDownPressed = false;
 let mainCamera;
+let text;
+let cloud;
+let water;
+
+// const isMobile = navigator.userAgentData.mobile;
 
 // Create a Phaser scene called 'Forest1'
-class Forest1 extends Phaser.Scene {
+class ForestDev extends Phaser.Scene {
   constructor() {
     super({
-      key: 'Forest1',
+      key: 'ForestDev',
     });
   }
 
   // Preload game assets
   preload() {
-    this.load.image('background', 'src/image/_dev/backGround.png');
+    this.load.image('background', 'src/image/Japan/Sky.png');
+    this.load.image('cloud', 'src/image/Japan/Clouds.png');
+    this.load.image('water', 'src/image/Japan/Water.gif');
     this.load.image('foreground', 'src/image/_dev/playermeow.jpg');
     this.load.image('invisibleWall', 'src/image/_dev/football.png');
     this.load.spritesheet('player', 'src/image/_dev/playerSpritesheet.png', {
@@ -47,9 +54,23 @@ class Forest1 extends Phaser.Scene {
 
     // Create the background with a tile sprite
     background = this.add
-      .tileSprite(0, 0, width * 2, height, 'background')
+      .tileSprite(0, 0, width * 2, height * 2, 'background')
       .setOrigin(0, 0)
-      .setScale(1)
+      .setScale(0.6)
+      .setScrollFactor(0)
+      .setDepth(-2);
+
+    water = this.add
+      .tileSprite(0, (height * 2) / 3, width * 2, 252, 'water')
+      .setOrigin(0, 0)
+      .setScale(0.5)
+      .setScrollFactor(0)
+      .setDepth(-2);
+
+    cloud = this.add
+      .tileSprite(0, 0, width * 2, height, 'cloud')
+      .setOrigin(0, 0)
+      .setScale(0.5)
       .setScrollFactor(0)
       .setDepth(-1);
 
@@ -101,24 +122,26 @@ class Forest1 extends Phaser.Scene {
       frameRate: 5,
       repeat: -1,
     });
-
     // Add collision between player and invisible wall (commented out in the original code)
     // this.physics.add.collider(player, invisibleWall);
     //!-----------------------------------!//
-    if (window.innerWidth < window.innerHeight) {
+    //* MOBILE SITE AND TABLET SITE *//
+    if (/mobile/i.test(navigator.userAgent) || window.innerWidth < 1280) {
       up = this.physics.add
         .sprite(0, 0, 'bubble')
         .setScale(0.5)
         .setSize(150, 150)
         .setInteractive()
-        .setDepth(2);
+        .setDepth(999)
+        .setAlpha(0.3);
 
       down = this.physics.add
         .sprite(0, 0, 'bubble')
         .setScale(0.5)
         .setSize(150, 150)
         .setInteractive()
-        .setDepth(2);
+        .setDepth(999)
+        .setAlpha(0.3);
 
       this.input.on('gameobjectdown', (pointer, gameObject) => {
         if (gameObject === up) {
@@ -142,6 +165,12 @@ class Forest1 extends Phaser.Scene {
     }
 
     //!-----------------------------------!//
+
+    const textStyle = {
+      fontFamily: 'Arial',
+      fontSize: '24px',
+      color: '#ffffff',
+    };
   }
 
   // Change the scene (not implemented in the original code)
@@ -169,13 +198,23 @@ class Forest1 extends Phaser.Scene {
     // Update the background tile position for parallax scrolling
     background.tilePositionX = camera.scrollX * 0.3;
     background.tilePositionY = camera.scrollY * 0.3;
-    console.log(window.innerWidth, window.innerHeight);
+    cloud.tilePositionX += 0.1;
+    cloud.tilePositionY = camera.scrollY * 0.02;
+
+    // console.log(window.innerWidth, window.innerHeight);
     // console.log(camera.scrollX, camera.scrollY);
-    if (window.innerWidth < window.innerHeight) {
-      up.x = camera.scrollX + 550;
-      up.y = Math.max(0, Math.min(upY, screenY));
-      down.x = camera.scrollX + 650;
-      down.y = Math.max(0, Math.min(downY, screenY));
+    if (/mobile/i.test(navigator.userAgent) || window.innerWidth < 1280) {
+      if (/mobile/i.test(navigator.userAgent)) {
+        up.x = camera.scrollX + 550;
+        up.y = Math.max(0, Math.min(upY, screenY));
+        down.x = camera.scrollX + 650;
+        down.y = Math.max(0, Math.min(downY, screenY));
+      } else {
+        up.x = camera.scrollX + 300;
+        up.y = Math.max(0, Math.min(upY, screenY));
+        down.x = camera.scrollX + 400;
+        down.y = Math.max(0, Math.min(downY, screenY));
+      }
 
       if (isUpPressed) {
         player.setVelocityX(-200);
@@ -200,4 +239,4 @@ class Forest1 extends Phaser.Scene {
   }
 }
 
-export default Forest1;
+export default ForestDev;

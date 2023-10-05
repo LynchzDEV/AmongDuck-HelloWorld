@@ -5,7 +5,7 @@ import _mobilesite from './tools/_mobilesite';
 import _movementTemplate from './tools/_movementTemplate';
 import _forest1 from './tools/_Forest1';
 
-import MainMenu from './scenes/MainMenu';
+import MainMenu from './scenes/cutscene/MainMenu';
 import CutScene1 from './scenes/CUTSCENE/CutScene1';
 import CutScene2 from './scenes/CUTSCENE/CutScene2';
 import Forest1 from './scenes/Forest1';
@@ -47,7 +47,7 @@ const config = {
     // PathSelection, //* 4 path selection scene
     // CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
     // DesignPath, //* 6 cutscene that lead to selection of front end or web design
-    GameDev, //* 7 game dev scene: parkour
+    // GameDev, //* 7 game dev scene: parkour
     DevOps, //* 8 dev ops scene: delivery man
     FrontEnd, //* 9 web dev scene: puzzle
     WebDesign, //* 10 web design scene: adventure
