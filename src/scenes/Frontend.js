@@ -19,7 +19,7 @@ class FrontEnd extends Phaser.Scene {
   preload() {
     this.load.image(
       'background',
-      'assets/assets/image/Sunny-land-files/environment/Background/back.png'
+      'assets/image/Sunny-land-files/environment/Background/back.png'
     )
     this.load.image(
       'background_2',
