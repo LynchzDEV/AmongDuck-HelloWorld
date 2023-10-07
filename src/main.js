@@ -56,6 +56,9 @@ const config = {
     Ending, //* 11 show text1
     Summarize, //* 12 show text2
   ],
+  scale: {
+    mode: Phaser.Scale.NONE, // Disable Phaser's scaling
+  },
 };
 
 const game = new Phaser.Game(config);
