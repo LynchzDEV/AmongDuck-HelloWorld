@@ -39,7 +39,7 @@ const config = {
     // _dev, //! dev mode
     // _mobilesite, //! dev mode
     //_movementTemplate, //! movement template
-    _forest1, //!  forest1 template [dev mode]
+    // _forest1, //!  forest1 template [dev mode]
     // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
     // CutScene1, //* 1 cutscene 1 of the story mode
     // CutScene2, //* 2 cutscene 2 of the story mode
@@ -48,7 +48,7 @@ const config = {
     // CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
     // DesignPath, //* 6 cutscene that lead to selection of front end or web design
     // GameDev, //* 7 game dev scene: parkour
-    DevOps, //* 8 dev ops scene: delivery man
+    // DevOps, //* 8 dev ops scene: delivery man
     FrontEnd, //* 9 web dev scene: puzzle
     WebDesign, //* 10 web design scene: adventure
     Ending, //* 11 show text1

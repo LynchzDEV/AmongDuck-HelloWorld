@@ -1,5 +1,29 @@
 import Phaser from 'phaser'
 import playerMove from '../utils/playerMove'
+import path from 'path'
+
+const background_path = path.join(
+  'assets',
+  'image',
+  'Sunny-land-files',
+  'environment',
+  'Background'
+)
+
+const props_path = path.join(
+  'assets',
+  'image',
+  'Sunny-land-files',
+  'environment',
+  'Props'
+)
+
+const spritesheet_path = path.join(
+  'assets',
+  'image',
+  'Sunny-land-files',
+  'spritesheets'
+)
 
 let platforms
 let items
@@ -17,25 +41,13 @@ class FrontEnd extends Phaser.Scene {
 
   //find puzzle game
   preload() {
-    this.load.image(
-      'background',
-      'assets/image/Sunny-land-files/environment/Background/back.png'
-    )
-    this.load.image(
-      'background_2',
-      'assets/image/Sunny-land-files/environment/Background/middle.png'
-    )
-    this.load.image(
-      'platform-long',
-      'assets/image/Sunny-land-files/environment/Props/platform-long.png'
-    )
-    this.load.image(
-      'house',
-      'assets/image/Sunny-land-files/environment/Props/plant-house.png'
-    )
-    this.load.spritesheet('player', 'assets/image/Sunny-land-files/spritesheets/player.png', {
-      frameWidth: 32,
-      frameHeight: 32,
+    this.load.image('background', path.join(background_path, 'back.png'))
+    this.load.image('background_2', path.join(background_path, 'middle.png'))
+    this.load.image('platform-long', path.join(props_path, 'platform-long.png'))
+    this.load.image('house', path.join(props_path, 'plant-house.png'))
+    this.load.spritesheet('player', path.join(spritesheet_path, 'oposum.png'), {
+      frameWidth: 36,
+      frameHeight: 28,
     })
   }
 
@@ -103,7 +115,7 @@ class FrontEnd extends Phaser.Scene {
       key: 'walk',
       frames: this.anims.generateFrameNumbers('player', {
         start: 0,
-        end: 2,
+        end: 5,
       }),
       frameRate: 10,
       repeat: -1,
