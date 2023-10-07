@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import path from 'path'
+import { BACKGROUND_TEMPLE_PATH, FOREGROUND_TEMPLE_PATH } from '../utils/mapPath'
 import {
   SKY_DEPTH,
   BACKGROUND_DEPTH,
@@ -8,19 +9,6 @@ import {
   PLAYER_DEPTH,
   FOREGROUND_DEPTH,
 } from '../utils/mapDepth'
-
-const background_path = path.join(
-  'assets',
-  'image',
-  'temple-scene',
-  'background'
-)
-const foreground_path = path.join(
-  'assets',
-  'image',
-  'temple-scene',
-  'foreground'
-)
 
 let background
 let foreground
@@ -33,15 +21,16 @@ class Temple extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('sky', path.join(background_path, 'Sky.png'))
-    this.load.image('City', path.join(background_path, 'City.png'))
-    this.load.image('Clouds', path.join(background_path, 'Clouds.png'))
-    this.load.image('fuji', path.join(background_path, 'Volcano fuji.png'))
+    this.load.image('sky', path.join(BACKGROUND_TEMPLE_PATH, 'Sky.png'))
+    this.load.image('City', path.join(BACKGROUND_TEMPLE_PATH, 'City.png'))
+    this.load.image('Clouds', path.join(BACKGROUND_TEMPLE_PATH, 'Clouds.png'))
+    this.load.image('fuji', path.join(BACKGROUND_TEMPLE_PATH, 'Volcano fuji.png'))
     this.load.image(
       'bgTree',
-      path.join(background_path, 'Background Trees.png')
+      path.join(BACKGROUND_TEMPLE_PATH, 'Background Trees.png')
     )
-    this.load.image('brush', path.join(background_path, 'brush.png'))
+    this.load.image('brush', path.join(BACKGROUND_TEMPLE_PATH, 'Brush.png'))
+    this.load.image('peddlerCar', path.join(BACKGROUND_TEMPLE_PATH, 'Peddler Car.png'))
   }
 
   create() {
@@ -75,7 +64,7 @@ class Temple extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(0.7)
       .setDepth(BACKGROUND_COMPONENT_DEPTH)
-    
+
     background.add(sky)
     background.add(city)
     background.add(clouds)
