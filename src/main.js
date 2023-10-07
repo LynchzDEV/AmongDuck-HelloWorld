@@ -27,7 +27,7 @@ const config = {
   parent: 'content',
   // width: '90vw',
   // height: '90vh',
-  width: 2560,
+  width: 1280,
   height: 720,
   physics: {
     default: 'arcade',
@@ -39,7 +39,7 @@ const config = {
   scene: [
     // _dev, //! dev mode
     // _mobilesite, //! dev mode
-    //_movementTemplate, //! movement template
+    // _movementTemplate, //! movement template
     // _forest1, //!  forest1 template [dev mode]
     // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
     // CutScene1, //* 1 cutscene 1 of the story mode
@@ -49,8 +49,8 @@ const config = {
     // PathSelection, //* 4 path selection scene
     // CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
     // DesignPath, //* 6 cutscene that lead to selection of front end or web design
-    // GameDev, //* 7 game dev scene: parkour
-    // DevOps, //* 8 dev ops scene: delivery man
+    GameDev, //* 7 game dev scene: parkour
+    DevOps, //* 8 dev ops scene: delivery man
     FrontEnd, //* 9 web dev scene: puzzle
     WebDesign, //* 10 web design scene: adventure
     Ending, //* 11 show text1

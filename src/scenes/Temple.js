@@ -58,7 +58,7 @@ class Temple extends Phaser.Scene {
   create() {
     //config
     const { width, height } = this.scale
-    const mapWidth = width
+    const mapWidth = width * 2
     const floorHeight = height - 330
 
     //setting world bounds
@@ -97,13 +97,13 @@ class Temple extends Phaser.Scene {
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH)
     let brush2 = this.add
-      .image(mapWidth/2  - 550, floorHeight + 20, 'bushes')
+      .image(mapWidth / 2 - 550, floorHeight + 20, 'bushes')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH)
     brush2.flipX = true
     let brush3 = this.add
-      .image(mapWidth/2  + 180, floorHeight + 20, 'bushes')
+      .image(mapWidth / 2 + 180, floorHeight + 20, 'bushes')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH)
@@ -162,8 +162,6 @@ class Temple extends Phaser.Scene {
     foreground.add(water)
   }
 
-  update() {
-    background.tilePositionX += 0.5
-  }
+  update() {}
 }
 export default Temple
