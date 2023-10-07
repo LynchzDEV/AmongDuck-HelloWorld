@@ -10,7 +10,9 @@ class WebDesign extends Phaser.Scene {
   //adventure
   preload() {}
 
-  create() {}
+  create() {
+    console.log('WebDesign');
+  }
 
   update(delta, time) {}
 }

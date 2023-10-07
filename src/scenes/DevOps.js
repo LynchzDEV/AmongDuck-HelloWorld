@@ -10,7 +10,9 @@ class DevOps extends Phaser.Scene {
   //delivery
   preload() {}
 
-  create() {}
+  create() {
+    console.log('DevOps');
+  }
 
   update(delta, time) {}
 }
