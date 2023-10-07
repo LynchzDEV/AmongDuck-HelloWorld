@@ -52,8 +52,8 @@ class FrontEnd extends Phaser.Scene {
   }
 
   create() {
-    this.playerMove = playerMove //Binding function to scene
-    const { width, height } = this.scale
+    this.playerMove = playerMove; //Binding function to scene
+    const { width, height } = this.scale;
 
     //world bound
     this.physics.add.world.setBounds(0, 0, width * 3, height)
