@@ -8,19 +8,13 @@ function logdebug(message) {
   }
 }
 
-function setHorizontalMovement(
-  player,
-  isLeftPressed,
-  isRightPressed,
-  normalSpeed,
-  flipLeft
-) {
+function setHorizontalMovement(player, isLeft, isRight, normalSpeed, flipLeft) {
   let velocityX = 0;
-  if (isLeftPressed) {
+  if (isLeft) {
     velocityX = -normalSpeed;
     player.setFlipX(flipLeft);
     logdebug('move left');
-  } else if (isRightPressed) {
+  } else if (isRight) {
     velocityX = normalSpeed;
     player.setFlipX(!flipLeft);
     logdebug('move right');
@@ -28,12 +22,12 @@ function setHorizontalMovement(
   return velocityX;
 }
 
-function handleJump(player, isUpPressed) {
+function handleJump(player, isUp) {
   let velocityY = 0;
-  if (isUpPressed && player.body.touching.down) {
+  if (isUp && player.body.touching.down) {
     holdTime++;
     logdebug(holdTime);
-  } else if (player.body.touching.down && !isUpPressed) {
+  } else if (player.body.touching.down && !isUp) {
     if (holdTime > 0 && holdTime < 10) {
       velocityY = -200;
       logdebug('short jump');
@@ -49,7 +43,6 @@ function handleJump(player, isUpPressed) {
   return velocityY;
 }
 
-// Main function
 function playerMoveTemple(
   player,
   normalSpeed,
@@ -62,6 +55,7 @@ function playerMoveTemple(
   let velocityX, velocityY;
 
   if (touchPad) {
+    // Use touchpad controls
     velocityX = setHorizontalMovement(
       player,
       isLeftPressed,
@@ -69,9 +63,9 @@ function playerMoveTemple(
       normalSpeed,
       flipLeft
     );
-
     velocityY = handleJump(player, isUpPressed);
   } else {
+    // Use keyboard controls
     const cursors = this.input.keyboard.createCursorKeys();
     const a = this.input.keyboard.addKey('a');
     const d = this.input.keyboard.addKey('d');
@@ -89,7 +83,6 @@ function playerMoveTemple(
       normalSpeed,
       flipLeft
     );
-
     velocityY = handleJump(player, isUpDown);
   }
 
