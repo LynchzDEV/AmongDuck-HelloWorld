@@ -14,7 +14,8 @@ import {
   FOREGROUND_DEPTH,
 } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
-import playerMove from '../utils/playerMove';
+import playerMoveTemple from '../utils/playerMoveTemple';
+import calculateCanvasRatio from '../utils/ratio';
 
 const spritesheet_path = path.join(
   'assets',
@@ -23,12 +24,22 @@ const spritesheet_path = path.join(
   'spritesheets'
 );
 
+const isMobile = /mobile/i.test(navigator.userAgent);
+const isSmallScreen = window.innerWidth < 1280;
+
 let background;
 let foreground;
 let components;
 let camera;
 let player;
 let clouds;
+
+let left;
+let right;
+let up;
+let isLeftPressed = false;
+let isRightPressed = false;
+let isUpPressed = false;
 
 class Temple extends Phaser.Scene {
   constructor() {
@@ -71,11 +82,14 @@ class Temple extends Phaser.Scene {
       frameWidth: 36,
       frameHeight: 28,
     });
+
+    //load button
+    this.load.image('left', path.join('assets', 'ui', 'left.png'));
+    this.load.image('right', path.join('assets', 'ui', 'right.png'));
+    this.load.image('up', path.join('assets', 'ui', 'up.png'));
   }
 
   create() {
-    this.playerMove = playerMove; //Binding function to scene
-
     //config
     const { width, height } = this.scale;
     const mapWidth = width * 4;
@@ -89,12 +103,72 @@ class Temple extends Phaser.Scene {
 
     //setting camera
     camera = this.cameras.main;
-    camera.setBounds(0, 0, mapWidth, height);
-    camera.setViewport(0, 0, 1280, height);
+    this.playerMoveTemple = playerMoveTemple;
+    //camera and control for each device
+    if (isMobile || isSmallScreen) {
+      left = this.physics.add
+        .sprite(150, 150, 'left')
+        .setScale(5)
+        .setSize(15, 15)
+        .setInteractive()
+        .setDepth(999)
+        .setAlpha(0.7);
+
+      right = this.physics.add
+        .sprite(0, 0, 'right')
+        .setScale(5)
+        .setSize(15, 15)
+        .setInteractive()
+        .setDepth(999)
+        .setAlpha(0.7);
+
+      up = this.physics.add
+        .sprite(0, 0, 'up')
+        .setScale(5)
+        .setSize(15, 15)
+        .setInteractive()
+        .setDepth(999)
+        .setAlpha(0.7);
+
+      this.input.on('gameobjectdown', (pointer, gameObject) => {
+        if (gameObject === left) {
+          isLeftPressed = true;
+        }
+        if (gameObject === right) {
+          isRightPressed = true;
+        }
+        if (gameObject === up) {
+          isUpPressed = true;
+        }
+      });
+
+      this.input.on('gameobjectup', (pointer, gameObject) => {
+        if (gameObject === left) {
+          isLeftPressed = false;
+        }
+        if (gameObject === right) {
+          isRightPressed = false;
+        }
+        if (gameObject === up) {
+          isUpPressed = false;
+        }
+      });
+      if (isSmallScreen) {
+        //mobile
+        //TODO Implement mobile camera bounds and viewport
+      } else {
+        //tablet
+        //TODO Implement tablet camera bounds and viewport
+      }
+    } else {
+      //default (desktop)
+      camera.setBounds(0, 0, mapWidth, height);
+      camera.setViewport(0, 0, 1280, height);
+    }
 
     //clouds
     clouds = this.add
-      .tileSprite(50, 0, mapWidth, height, 'Clouds')
+      .tileSprite(0, 0, mapWidth, height, 'Clouds')
       .setOrigin(0, 0)
       .setScale(0.7)
       .setDepth(SKY_DEPTH + 1)
@@ -239,7 +313,40 @@ class Temple extends Phaser.Scene {
   }
 
   update() {
-    this.playerMove(player, 200, false);
+    if (isMobile || isSmallScreen) {
+      const { height } = calculateCanvasRatio(this.sys);
+      const offsetY = 180;
+      const upY = player.y + offsetY;
+      const downY = player.y + offsetY;
+      const screenY = height - 50; // Adjust this value as needed
+
+      if (isSmallScreen) {
+        left.x = camera.scrollX + 550;
+        left.y = Math.max(0, Math.min(upY, screenY));
+        right.x = camera.scrollX + 650;
+        right.y = Math.max(0, Math.min(downY, screenY));
+        up.x = camera.scrollX + 750;
+        up.y = Math.max(0, Math.min(upY, screenY));
+      } else {
+        left.x = camera.scrollX + 300;
+        left.y = Math.max(0, Math.min(upY, screenY));
+        right.x = camera.scrollX + 400;
+        right.y = Math.max(0, Math.min(downY, screenY));
+        up.x = camera.scrollX + 500;
+        up.y = Math.max(0, Math.min(upY, screenY));
+      }
+      this.playerMoveTemple(
+        player,
+        200,
+        false,
+        true,
+        isLeftPressed,
+        isRightPressed,
+        isUpPressed
+      );
+    } else {
+      this.playerMoveTemple(player, 200, false, false, null, null, null);
+    }
     camera.startFollow(player);
 
     //scrolling background
