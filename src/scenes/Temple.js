@@ -24,7 +24,7 @@ const spritesheet_path = path.join(
 );
 
 const isMobile = /mobile/i.test(navigator.userAgent);
-const isSmallScreen = window.innerWidth < 1280;
+const tablet = window.innerWidth < 1280;
 
 let background;
 let foreground;
@@ -108,8 +108,7 @@ class Temple extends Phaser.Scene {
     this.playerMoveTemple = playerMoveTemple;
 
     //camera and control for each device
-    //I don't know why mobile always return true on chorme dev tool (I just use && for this reason)
-    if (isMobile && isSmallScreen) {
+    if (isMobile || tablet) {
       this.input.on('gameobjectdown', (pointer, gameObject) => {
         if (gameObject === left) {
           isLeftPressed = true;
@@ -133,17 +132,17 @@ class Temple extends Phaser.Scene {
           isUpPressed = false;
         }
       });
-      if (isMobile && window.innerWidth <= 728) {
+      if (isMobile) {
         //mobile
-        let screenWidth = window.innerWidth; // Get the width of the browser window
-        let screenHeight = window.innerHeight; // Get the height of the browser window
+        let screenWidth = window.innerWidth; 
+        let screenHeight = window.innerHeight; 
         if (screenHeight > 720) screenHeight = 720;
         console.log('Mobile view');
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
 
         left = this.physics.add
-          .sprite(screenWidth / 2 - 100, screenHeight / 1.2, 'left')
+          .sprite(screenWidth / 2 - screenWidth / 3, screenHeight / 1.2, 'left')
           .setScale(5)
           .setSize(15, 15)
           .setInteractive()
@@ -152,7 +151,11 @@ class Temple extends Phaser.Scene {
           .setScrollFactor(0);
 
         right = this.physics.add
-          .sprite(screenWidth / 2, screenHeight / 1.2, 'right')
+          .sprite(
+            screenWidth / 2 - screenWidth / 8,
+            screenHeight / 1.2,
+            'right'
+          )
           .setScale(5)
           .setSize(15, 15)
           .setInteractive()
@@ -161,7 +164,7 @@ class Temple extends Phaser.Scene {
           .setScrollFactor(0);
 
         up = this.physics.add
-          .sprite(screenWidth / 2 + 100, screenHeight / 1.2, 'up')
+          .sprite(screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2, 'up')
           .setScale(5)
           .setSize(15, 15)
           .setInteractive()
@@ -177,18 +180,21 @@ class Temple extends Phaser.Scene {
           screenHeight
         );
         camera.setZoom(1);
-      } else if (isSmallScreen) {
+      } else if (tablet) {
         //tablet
-        let screenWidth = window.innerWidth; // Get the width of the browser window
-        let screenHeight = window.innerHeight; // Get the height of the browser window
+        let screenWidth = window.innerWidth; 
+        let screenHeight = window.innerHeight; 
         if (screenHeight > 720) screenHeight = 720;
-        console.log('Tablet view');
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
 
         left = this.physics.add
-          .sprite(screenWidth / 2 - screenWidth / 4, screenHeight / 1.4, 'left')
-          .setScale(5)
+          .sprite(
+            screenWidth / 2 - screenWidth / 2.5,
+            screenHeight / 1.2,
+            'left'
+          )
+          .setScale(7)
           .setSize(15, 15)
           .setInteractive()
           .setDepth(999)
@@ -197,11 +203,11 @@ class Temple extends Phaser.Scene {
 
         right = this.physics.add
           .sprite(
-            screenWidth / 2 - screenWidth / 6,
-            screenHeight / 1.4,
+            screenWidth / 2 - screenWidth / 3.5,
+            screenHeight / 1.2,
             'right'
           )
-          .setScale(5)
+          .setScale(7)
           .setSize(15, 15)
           .setInteractive()
           .setDepth(999)
@@ -209,8 +215,8 @@ class Temple extends Phaser.Scene {
           .setScrollFactor(0);
 
         up = this.physics.add
-          .sprite(screenWidth - screenWidth / 4, screenHeight / 1.4, 'up')
-          .setScale(5)
+          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, 'up')
+          .setScale(7)
           .setSize(15, 15)
           .setInteractive()
           .setDepth(999)
@@ -224,7 +230,6 @@ class Temple extends Phaser.Scene {
           screenWidth,
           height
         );
-        camera.setZoom(1.5);
       }
     } else {
       //default (desktop)
@@ -379,8 +384,8 @@ class Temple extends Phaser.Scene {
   }
 
   update() {
-     //I don't know why mobile always return true on chorme dev tool (I just use && for this reason)
-    if (isMobile && isSmallScreen) {
+    //I don't know why mobile always return true on chorme dev tool (I just use && for this reason)
+    if (isMobile || tablet) {
       this.playerMoveTemple(
         player,
         500,
@@ -395,7 +400,7 @@ class Temple extends Phaser.Scene {
     }
 
     camera.startFollow(player);
-    
+
     //scrolling background
     clouds.tilePositionX += 0.1;
   }
