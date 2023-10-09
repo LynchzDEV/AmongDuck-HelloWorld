@@ -272,9 +272,9 @@ class Temple extends Phaser.Scene {
     //ground physics
     const grounds = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(0, floorHeight + 100, mapWidth * 2, 60, 'ground')
+      .tileSprite(0, floorHeight + 100, mapWidth * 5, 250, 'ground')
       .setOrigin(0, 0)
-      .setScale(1)
+      .setScale(0.2)
       .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
