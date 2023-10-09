@@ -15,7 +15,6 @@ import {
 } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import playerMoveTemple from '../utils/playerMoveTemple';
-import calculateCanvasRatio from '../utils/ratio';
 
 const spritesheet_path = path.join(
   'assets',
@@ -93,10 +92,11 @@ class Temple extends Phaser.Scene {
     //config
     const { width, height } = this.scale;
     const mapWidth = width * 4;
+    const mapHeight = height;
     const floorHeight = height - 330;
 
     //setting world bounds
-    this.physics.world.setBounds(0, 0, mapWidth, height);
+    this.physics.world.setBounds(0, 0, mapWidth, mapHeight);
 
     //set collision L, R, T, B
     this.physics.world.setBoundsCollision(true, true, true, true);
@@ -105,31 +105,7 @@ class Temple extends Phaser.Scene {
     camera = this.cameras.main;
     this.playerMoveTemple = playerMoveTemple;
     //camera and control for each device
-    if (isMobile || isSmallScreen) {
-      left = this.physics.add
-        .sprite(150, 150, 'left')
-        .setScale(5)
-        .setSize(15, 15)
-        .setInteractive()
-        .setDepth(999)
-        .setAlpha(0.7);
-
-      right = this.physics.add
-        .sprite(0, 0, 'right')
-        .setScale(5)
-        .setSize(15, 15)
-        .setInteractive()
-        .setDepth(999)
-        .setAlpha(0.7);
-
-      up = this.physics.add
-        .sprite(0, 0, 'up')
-        .setScale(5)
-        .setSize(15, 15)
-        .setInteractive()
-        .setDepth(999)
-        .setAlpha(0.7);
-
+    if (isMobile && isSmallScreen) {
       this.input.on('gameobjectdown', (pointer, gameObject) => {
         if (gameObject === left) {
           isLeftPressed = true;
@@ -153,22 +129,111 @@ class Temple extends Phaser.Scene {
           isUpPressed = false;
         }
       });
-      if (isSmallScreen) {
+      if (isMobile && window.innerWidth <= 728) {
         //mobile
+        let screenWidth = window.innerWidth; // Get the width of the browser window
+        let screenHeight = window.innerHeight; // Get the height of the browser window
+        if (screenHeight > 720) screenHeight = 720;
+        console.log('Mobile view');
+        console.log(`Screen Width: ${screenWidth}px`);
+        console.log(`Screen Height: ${screenHeight}px`);
+
+        left = this.physics.add
+          .sprite(screenWidth / 2 - 100, screenHeight / 1.2, 'left')
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        right = this.physics.add
+          .sprite(screenWidth / 2, screenHeight / 1.2, 'right')
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        up = this.physics.add
+          .sprite(screenWidth / 2 + 100, screenHeight / 1.2, 'up')
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
         //TODO Implement mobile camera bounds and viewport
-      } else {
+        camera.setViewport(
+          width / 2 - screenWidth / 2,
+          height / 2 - screenHeight / 2,
+          screenWidth,
+          screenHeight
+        );
+        camera.setBounds(0, 0, mapWidth, mapHeight);
+        camera.setZoom(1);
+      } else if (isSmallScreen) {
         //tablet
+        let screenWidth = window.innerWidth; // Get the width of the browser window
+        let screenHeight = window.innerHeight; // Get the height of the browser window
+        if (screenHeight > 720) screenHeight = 720;
+        console.log('Tablet view');
+        console.log(`Screen Width: ${screenWidth}px`);
+        console.log(`Screen Height: ${screenHeight}px`);
+
+        left = this.physics.add
+          .sprite(screenWidth / 2 - screenWidth / 4, screenHeight / 1.4, 'left')
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        right = this.physics.add
+          .sprite(
+            screenWidth / 2 - screenWidth / 6,
+            screenHeight / 1.4,
+            'right'
+          )
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        up = this.physics.add
+          .sprite(screenWidth - screenWidth / 4, screenHeight / 1.4, 'up')
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+        //TODO Implement mobile camera bounds and viewport
+        camera.setViewport(
+          width / 2 - screenWidth / 2,
+          height / 2 - screenHeight / 2,
+          screenWidth,
+          height
+        );
+        camera.setBounds(0, 0, mapWidth, mapHeight);
+        camera.setZoom(1.5);
         //TODO Implement tablet camera bounds and viewport
       }
     } else {
       //default (desktop)
-      camera.setBounds(0, 0, mapWidth, height);
-      camera.setViewport(0, 0, 1280, height);
+      console.log('desktop');
+      camera.setBounds(0, 0, mapWidth, mapHeight);
+      camera.setViewport(0, 0, width, height);
     }
 
     //clouds
     clouds = this.add
-      .tileSprite(0, 0, mapWidth, height, 'Clouds')
+      .tileSprite(0, 0, mapWidth, mapHeight, 'Clouds')
       .setOrigin(0, 0)
       .setScale(0.7)
       .setDepth(SKY_DEPTH + 1)
@@ -177,14 +242,14 @@ class Temple extends Phaser.Scene {
     //background
     background = this.add.group();
     let sky = this.add
-      .tileSprite(0, 0, mapWidth, height, 'sky')
+      .tileSprite(0, 0, mapWidth, mapHeight, 'sky')
       .setOrigin(0, 0)
       .setScale(1, 0.7)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(0);
 
     let city = this.add
-      .tileSprite(0, floorHeight - 200, 550, 200, 'City')
+      .tileSprite(-100, floorHeight - 200, 550, 200, 'City')
       .setOrigin(0, 0)
       .setScale(1.5)
       .setDepth(BACKGROUND_DEPTH)
@@ -198,7 +263,7 @@ class Temple extends Phaser.Scene {
       .setScrollFactor(OBJECT_SCROLL.BG);
 
     let bgTree = this.add
-      .tileSprite(0, floorHeight + 20, mapWidth * 2, 180, 'bgTree')
+      .tileSprite(-100, floorHeight + 20, mapWidth * 2, 180, 'bgTree')
       .setOrigin(0, 0)
       .setScale(0.7)
       .setDepth(BACKGROUND_COMPONENT_DEPTH)
@@ -244,21 +309,22 @@ class Temple extends Phaser.Scene {
     background.add(brush3);
 
     //components background
-    components = this.add.group();
+    components = this.physics.add.group();
     let house = this.add
       .image(mapWidth / 2 - 620, floorHeight - 220, 'House')
       .setOrigin(0, 0)
       .setScale(0.8)
-      .setDepth(MIDDLEGROUND_DEPTH)
+      // .setSize(1000,500)
+      .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
     let torii = this.add
       .image(mapWidth / 2 + 900, floorHeight - 100, 'torii')
       .setOrigin(0, 0)
       .setScale(0.7)
-      .setDepth(MIDDLEGROUND_DEPTH)
+      .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
-
+      
     components.add(house);
     components.add(torii);
 
@@ -272,7 +338,7 @@ class Temple extends Phaser.Scene {
     //ground physics
     const grounds = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(0, floorHeight + 100, mapWidth * 2, 60, 'ground')
+      .tileSprite(-100, floorHeight + 100, mapWidth * 2, 60, 'ground')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(PLAYER_DEPTH)
@@ -284,14 +350,14 @@ class Temple extends Phaser.Scene {
     //foreground
     foreground = this.add.group();
     let water = this.add
-      .tileSprite(0, 450, mapWidth * 2, 250, 'water')
+      .tileSprite(-100, 450, mapWidth * 2, 250, 'water')
       .setOrigin(0, 0)
       .setScale(1.1)
       .setDepth(FOREGROUND_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
     let tree = this.add
-      .tileSprite(0, 300, mapWidth * 4, height * 2, 'tree')
+      .tileSprite(-100, 300, mapWidth * 4, mapHeight * 2, 'tree')
       .setOrigin(0, 0)
       .setScale(0.5)
       .setDepth(FOREGROUND_DEPTH)
@@ -299,6 +365,11 @@ class Temple extends Phaser.Scene {
 
     foreground.add(tree);
     foreground.add(water);
+
+    //testing overlab position
+    // this.physics.add.overlap(player, house, () => {
+    //   console.log('overlap house')
+    // })
 
     //animations for testing
     this.anims.create({
@@ -313,31 +384,31 @@ class Temple extends Phaser.Scene {
   }
 
   update() {
-    if (isMobile || isSmallScreen) {
-      const { height } = calculateCanvasRatio(this.sys);
-      const offsetY = 180;
-      const upY = player.y + offsetY;
-      const downY = player.y + offsetY;
-      const screenY = height - 50; // Adjust this value as needed
+    if (isMobile && isSmallScreen) {
+      // const { height } = calculateCanvasRatio(this.sys)
+      // const offsetY = 180
+      // const upY = player.y + offsetY
+      // const downY = player.y + offsetY
+      // const screenY = height - 50 // Adjust this value as needed
 
-      if (isSmallScreen) {
-        left.x = camera.scrollX + 550;
-        left.y = Math.max(0, Math.min(upY, screenY));
-        right.x = camera.scrollX + 650;
-        right.y = Math.max(0, Math.min(downY, screenY));
-        up.x = camera.scrollX + 750;
-        up.y = Math.max(0, Math.min(upY, screenY));
-      } else {
-        left.x = camera.scrollX + 300;
-        left.y = Math.max(0, Math.min(upY, screenY));
-        right.x = camera.scrollX + 400;
-        right.y = Math.max(0, Math.min(downY, screenY));
-        up.x = camera.scrollX + 500;
-        up.y = Math.max(0, Math.min(upY, screenY));
-      }
+      // if (isSmallScreen) {
+      //   // left.x = camera.scrollX + 550
+      //   // left.y = Math.max(0, Math.min(upY, screenY))
+      //   // right.x = camera.scrollX + 650
+      //   // right.y = Math.max(0, Math.min(downY, screenY))
+      //   // up.x = camera.scrollX + 750
+      //   // up.y = Math.max(0, Math.min(upY, screenY))
+      // } else {
+      //   // left.x = camera.scrollX + 300
+      //   // left.y = Math.max(0, Math.min(upY, screenY))
+      //   // right.x = camera.scrollX + 400
+      //   // right.y = Math.max(0, Math.min(downY, screenY))
+      //   // up.x = camera.scrollX + 500
+      //   // up.y = Math.max(0, Math.min(upY, screenY))
+      // }
       this.playerMoveTemple(
         player,
-        200,
+        500,
         false,
         true,
         isLeftPressed,
@@ -345,8 +416,10 @@ class Temple extends Phaser.Scene {
         isUpPressed
       );
     } else {
-      this.playerMoveTemple(player, 200, false, false, null, null, null);
+      this.playerMoveTemple(player, 500, false, false, null, null, null);
     }
+
+    // this.playerMoveTemple(player, 200, false, false, null, null, null)
     camera.startFollow(player);
 
     //scrolling background
