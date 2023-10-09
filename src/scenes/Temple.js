@@ -103,8 +103,12 @@ class Temple extends Phaser.Scene {
 
     //setting camera
     camera = this.cameras.main;
+    camera.setBounds(0, 0, mapWidth, mapHeight);
+
     this.playerMoveTemple = playerMoveTemple;
+
     //camera and control for each device
+    //I don't know why mobile always return true on chorme dev tool (I just use && for this reason)
     if (isMobile && isSmallScreen) {
       this.input.on('gameobjectdown', (pointer, gameObject) => {
         if (gameObject === left) {
@@ -165,14 +169,13 @@ class Temple extends Phaser.Scene {
           .setAlpha(0.7)
           .setScrollFactor(0);
 
-        //TODO Implement mobile camera bounds and viewport
+        //Implement mobile camera bounds and viewport
         camera.setViewport(
           width / 2 - screenWidth / 2,
           height / 2 - screenHeight / 2,
           screenWidth,
           screenHeight
         );
-        camera.setBounds(0, 0, mapWidth, mapHeight);
         camera.setZoom(1);
       } else if (isSmallScreen) {
         //tablet
@@ -213,21 +216,19 @@ class Temple extends Phaser.Scene {
           .setDepth(999)
           .setAlpha(0.7)
           .setScrollFactor(0);
-        //TODO Implement mobile camera bounds and viewport
+
+        //Implement tablet camera bounds and viewport
         camera.setViewport(
           width / 2 - screenWidth / 2,
           height / 2 - screenHeight / 2,
           screenWidth,
           height
         );
-        camera.setBounds(0, 0, mapWidth, mapHeight);
         camera.setZoom(1.5);
-        //TODO Implement tablet camera bounds and viewport
       }
     } else {
       //default (desktop)
       console.log('desktop');
-      camera.setBounds(0, 0, mapWidth, mapHeight);
       camera.setViewport(0, 0, width, height);
     }
 
@@ -314,7 +315,6 @@ class Temple extends Phaser.Scene {
       .image(mapWidth / 2 - 620, floorHeight - 220, 'House')
       .setOrigin(0, 0)
       .setScale(0.8)
-      // .setSize(1000,500)
       .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
@@ -324,7 +324,7 @@ class Temple extends Phaser.Scene {
       .setScale(0.7)
       .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
-      
+
     components.add(house);
     components.add(torii);
 
@@ -366,11 +366,6 @@ class Temple extends Phaser.Scene {
     foreground.add(tree);
     foreground.add(water);
 
-    //testing overlab position
-    // this.physics.add.overlap(player, house, () => {
-    //   console.log('overlap house')
-    // })
-
     //animations for testing
     this.anims.create({
       key: 'walk',
@@ -385,27 +380,6 @@ class Temple extends Phaser.Scene {
 
   update() {
     if (isMobile && isSmallScreen) {
-      // const { height } = calculateCanvasRatio(this.sys)
-      // const offsetY = 180
-      // const upY = player.y + offsetY
-      // const downY = player.y + offsetY
-      // const screenY = height - 50 // Adjust this value as needed
-
-      // if (isSmallScreen) {
-      //   // left.x = camera.scrollX + 550
-      //   // left.y = Math.max(0, Math.min(upY, screenY))
-      //   // right.x = camera.scrollX + 650
-      //   // right.y = Math.max(0, Math.min(downY, screenY))
-      //   // up.x = camera.scrollX + 750
-      //   // up.y = Math.max(0, Math.min(upY, screenY))
-      // } else {
-      //   // left.x = camera.scrollX + 300
-      //   // left.y = Math.max(0, Math.min(upY, screenY))
-      //   // right.x = camera.scrollX + 400
-      //   // right.y = Math.max(0, Math.min(downY, screenY))
-      //   // up.x = camera.scrollX + 500
-      //   // up.y = Math.max(0, Math.min(upY, screenY))
-      // }
       this.playerMoveTemple(
         player,
         500,
@@ -419,9 +393,8 @@ class Temple extends Phaser.Scene {
       this.playerMoveTemple(player, 500, false, false, null, null, null);
     }
 
-    // this.playerMoveTemple(player, 200, false, false, null, null, null)
     camera.startFollow(player);
-
+    
     //scrolling background
     clouds.tilePositionX += 0.1;
   }
