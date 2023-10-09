@@ -379,6 +379,7 @@ class Temple extends Phaser.Scene {
   }
 
   update() {
+     //I don't know why mobile always return true on chorme dev tool (I just use && for this reason)
     if (isMobile && isSmallScreen) {
       this.playerMoveTemple(
         player,
