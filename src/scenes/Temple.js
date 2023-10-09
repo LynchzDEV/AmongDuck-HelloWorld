@@ -25,7 +25,7 @@ const spritesheet_path = path.join(
 );
 
 const isMobile = /mobile/i.test(navigator.userAgent);
-const isSmallScreen = window.innerWidth < 1280;
+const tablet = window.innerWidth < 1280;
 
 let background;
 let foreground;
@@ -112,33 +112,10 @@ class Temple extends Phaser.Scene {
 
     //setting camera
     camera = this.cameras.main;
+    camera.setBounds(0, 0, mapWidth, height);
     this.playerMoveTemple = playerMoveTemple;
     //camera and control for each device
-    if (isMobile || isSmallScreen) {
-      left = this.physics.add
-        .sprite(150, 150, 'left')
-        .setScale(5)
-        .setSize(15, 15)
-        .setInteractive()
-        .setDepth(999)
-        .setAlpha(0.7);
-
-      right = this.physics.add
-        .sprite(0, 0, 'right')
-        .setScale(5)
-        .setSize(15, 15)
-        .setInteractive()
-        .setDepth(999)
-        .setAlpha(0.7);
-
-      up = this.physics.add
-        .sprite(0, 0, 'up')
-        .setScale(5)
-        .setSize(15, 15)
-        .setInteractive()
-        .setDepth(999)
-        .setAlpha(0.7);
-
+    if (isMobile || tablet) {
       this.input.on('gameobjectdown', (pointer, gameObject) => {
         if (gameObject === left) {
           isLeftPressed = true;
@@ -162,17 +139,109 @@ class Temple extends Phaser.Scene {
           isUpPressed = false;
         }
       });
-      if (isSmallScreen) {
+      if (isMobile) {
         //mobile
-        //TODO Implement mobile camera bounds and viewport
-      } else {
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+        if (screenHeight > 720) screenHeight = 720;
+        console.log('Mobile view');
+        console.log(`Screen Width: ${screenWidth}px`);
+        console.log(`Screen Height: ${screenHeight}px`);
+
+        left = this.physics.add
+          .sprite(screenWidth / 2 - screenWidth / 3, screenHeight / 1.2, 'left')
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        right = this.physics.add
+          .sprite(
+            screenWidth / 2 - screenWidth / 8,
+            screenHeight / 1.2,
+            'right'
+          )
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        up = this.physics.add
+          .sprite(screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2, 'up')
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        //Implement mobile camera bounds and viewport
+        camera.setViewport(
+          width / 2 - screenWidth / 2,
+          height / 2 - screenHeight / 2,
+          screenWidth,
+          screenHeight
+        );
+        camera.setZoom(1);
+      } else if (tablet) {
         //tablet
-        //TODO Implement tablet camera bounds and viewport
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+        if (screenHeight > 720) screenHeight = 720;
+        console.log(`Screen Width: ${screenWidth}px`);
+        console.log(`Screen Height: ${screenHeight}px`);
+
+        left = this.physics.add
+          .sprite(
+            screenWidth / 2 - screenWidth / 2.5,
+            screenHeight / 1.2,
+            'left'
+          )
+          .setScale(7)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        right = this.physics.add
+          .sprite(
+            screenWidth / 2 - screenWidth / 3.5,
+            screenHeight / 1.2,
+            'right'
+          )
+          .setScale(7)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        up = this.physics.add
+          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, 'up')
+          .setScale(7)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        //Implement tablet camera bounds and viewport
+        camera.setViewport(
+          width / 2 - screenWidth / 2,
+          height / 2 - screenHeight / 2,
+          screenWidth,
+          height
+        );
       }
     } else {
       //default (desktop)
-      camera.setBounds(0, 0, mapWidth, height);
-      camera.setViewport(0, 0, 1280, height);
+      console.log('desktop');
+      camera.setViewport(0, 0, width, height);
     }
 
     //clouds
@@ -349,31 +418,10 @@ class Temple extends Phaser.Scene {
   }
 
   update() {
-    if (isMobile || isSmallScreen) {
-      const { height } = calculateCanvasRatio(this.sys);
-      const offsetY = 180;
-      const upY = player.y + offsetY;
-      const downY = player.y + offsetY;
-      const screenY = height - 50; // Adjust this value as needed
-
-      if (isSmallScreen) {
-        left.x = camera.scrollX + 550;
-        left.y = Math.max(0, Math.min(upY, screenY));
-        right.x = camera.scrollX + 650;
-        right.y = Math.max(0, Math.min(downY, screenY));
-        up.x = camera.scrollX + 750;
-        up.y = Math.max(0, Math.min(upY, screenY));
-      } else {
-        left.x = camera.scrollX + 300;
-        left.y = Math.max(0, Math.min(upY, screenY));
-        right.x = camera.scrollX + 400;
-        right.y = Math.max(0, Math.min(downY, screenY));
-        up.x = camera.scrollX + 500;
-        up.y = Math.max(0, Math.min(upY, screenY));
-      }
+    if (isMobile || tablet) {
       this.playerMoveTemple(
         player,
-        200,
+        500,
         false,
         true,
         isLeftPressed,
@@ -381,7 +429,7 @@ class Temple extends Phaser.Scene {
         isUpPressed
       );
     } else {
-      this.playerMoveTemple(player, 200, false, false, null, null, null);
+      this.playerMoveTemple(player, 500, false, false, null, null, null);
     }
     camera.startFollow(player);
 
