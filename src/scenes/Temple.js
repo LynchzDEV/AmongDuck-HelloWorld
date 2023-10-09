@@ -33,6 +33,7 @@ let components;
 let camera;
 let player;
 let clouds;
+let sakura;
 
 let left;
 let right;
@@ -65,6 +66,10 @@ class Temple extends Phaser.Scene {
       path.join(COMPONENT_TEMPLE_PATH, 'Trading Cart.png')
     );
     this.load.image('ground', path.join(COMPONENT_TEMPLE_PATH, 'ground.png'));
+    this.load.image(
+      'groundShadow',
+      path.join(COMPONENT_TEMPLE_PATH, 'platformShadow.png')
+    );
 
     //load foreground
     this.load.image(
@@ -72,6 +77,10 @@ class Temple extends Phaser.Scene {
       path.join(FOREGROUND_TEMPLE_PATH, 'Sakura Tree.png')
     );
     this.load.image('water', path.join(FOREGROUND_TEMPLE_PATH, 'Water.png'));
+    this.load.spritesheet('sakura', path.join('assets', 'anim', 'sakura.png'), {
+      frameWidth: 320,
+      frameHeight: 320,
+    });
 
     // load components
     this.load.image('House', path.join(COMPONENT_TEMPLE_PATH, 'House.png'));
@@ -275,10 +284,18 @@ class Temple extends Phaser.Scene {
       .tileSprite(0, floorHeight + 100, mapWidth * 5, 250, 'ground')
       .setOrigin(0, 0)
       .setScale(0.2)
-      .setDepth(PLAYER_DEPTH)
+      .setDepth(PLAYER_DEPTH + 2)
+      .setScrollFactor(OBJECT_SCROLL.PLAYER);
+
+    let groundShadow = this.add
+      .tileSprite(0, floorHeight + 120, mapWidth * 5, 250, 'groundShadow')
+      .setOrigin(0, 0)
+      .setScale(0.15)
+      .setDepth(PLAYER_DEPTH + 1)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
     grounds.add(ground);
+    grounds.add(groundShadow);
     this.physics.add.collider(player, grounds);
 
     //foreground
@@ -287,7 +304,7 @@ class Temple extends Phaser.Scene {
       .tileSprite(0, 450, mapWidth * 2, 250, 'water')
       .setOrigin(0, 0)
       .setScale(1.1)
-      .setDepth(FOREGROUND_DEPTH)
+      .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
     let tree = this.add
@@ -296,6 +313,25 @@ class Temple extends Phaser.Scene {
       .setScale(0.5)
       .setDepth(FOREGROUND_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.FG);
+
+    this.sakura = this.add
+      .sprite(0, 450, 'sakura')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(FOREGROUND_DEPTH)
+      .setScrollFactor(OBJECT_SCROLL.FG);
+
+    this.anims.create({
+      key: 'sakura',
+      frames: this.anims.generateFrameNumbers('sakura', {
+        start: 0,
+        end: 20,
+      }),
+      frameRate: 8,
+      repeat: -1,
+    });
+    this.sakura.anims.play('sakura', true);
+    this.sakura.flipX = true;
 
     foreground.add(tree);
     foreground.add(water);
