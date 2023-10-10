@@ -16,6 +16,7 @@ import {
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import playerMoveTemple from '../utils/playerMoveTemple';
 
+//spritesheet for testing player
 const spritesheet_path = path.join(
   'assets',
   'image',
