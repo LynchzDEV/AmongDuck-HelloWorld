@@ -33,6 +33,7 @@ let camera;
 let player;
 let clouds;
 let water;
+let grounds;
 
 let left;
 let right;
@@ -46,7 +47,7 @@ class Temple extends Phaser.Scene {
     super('Temple');
   }
 
-  preload() {
+  loadBackground() {
     //load background
     this.load.image('sky', path.join(BACKGROUND_TEMPLE_PATH, 'Sky.png'));
     this.load.image('City', path.join(BACKGROUND_TEMPLE_PATH, 'City.png'));
@@ -69,7 +70,8 @@ class Temple extends Phaser.Scene {
       'groundShadow',
       path.join(COMPONENT_TEMPLE_PATH, 'platformShadow.png')
     );
-
+  }
+  loadForeground() {
     //load foreground
     this.load.image(
       'tree',
@@ -83,29 +85,34 @@ class Temple extends Phaser.Scene {
       frameWidth: 320,
       frameHeight: 320,
     });
-
+  }
+  loadComponents() {
     // load components
     this.load.image('House', path.join(COMPONENT_TEMPLE_PATH, 'House.png'));
     this.load.image('torii', path.join(COMPONENT_TEMPLE_PATH, 'Arc.png'));
-
+  }
+  loadPlayer() {
     //load player
     this.load.spritesheet('player', path.join(spritesheet_path, 'oposum.png'), {
       frameWidth: 36,
       frameHeight: 28,
     });
-
+  }
+  loadUI() {
     //load button
     this.load.image('left', path.join('assets', 'ui', 'left.png'));
     this.load.image('right', path.join('assets', 'ui', 'right.png'));
     this.load.image('up', path.join('assets', 'ui', 'up.png'));
   }
+  preload() {
+    this.loadBackground();
+    this.loadForeground();
+    this.loadComponents();
+    this.loadPlayer();
+    this.loadUI();
+  }
 
-  create() {
-    //config
-    const { width, height } = this.scale;
-    const mapWidth = width * 4;
-    const floorHeight = height - 330;
-
+  setWorldBoundsAndCamera(height, mapWidth) {
     //setting world bounds
     this.physics.world.setBounds(0, 0, mapWidth, height);
 
@@ -115,7 +122,8 @@ class Temple extends Phaser.Scene {
     //setting camera
     camera = this.cameras.main;
     camera.setBounds(0, 0, mapWidth, height);
-    this.playerMoveTemple = playerMoveTemple;
+  }
+  setDeviceSpecificControls(height, width) {
     //camera and control for each device
     if (isMobile || tablet) {
       this.input.on('gameobjectdown', (pointer, gameObject) => {
@@ -245,7 +253,8 @@ class Temple extends Phaser.Scene {
       console.log('desktop');
       camera.setViewport(0, 0, width, height);
     }
-
+  }
+  addBackgroundElements(width, height, mapWidth, floorHeight) {
     //clouds
     clouds = this.add
       .tileSprite(0, 0, mapWidth, height, 'Clouds')
@@ -322,7 +331,8 @@ class Temple extends Phaser.Scene {
     background.add(brush1);
     background.add(brush2);
     background.add(brush3);
-
+  }
+  addComponents(width, height, mapWidth, floorHeight) {
     //components background
     components = this.add.group();
     let house = this.add
@@ -341,7 +351,8 @@ class Temple extends Phaser.Scene {
 
     components.add(house);
     components.add(torii);
-
+  }
+  addMiddlegroundAndPlayer(width, height, mapWidth, floorHeight) {
     //player
     player = this.physics.add
       .sprite(300, height - 300, 'player')
@@ -350,7 +361,7 @@ class Temple extends Phaser.Scene {
       .setDepth(PLAYER_DEPTH);
 
     //ground physics
-    const grounds = this.physics.add.staticGroup();
+    grounds = this.physics.add.staticGroup();
     let ground = this.add
       .tileSprite(0, floorHeight + 100, mapWidth * 5, 250, 'ground')
       .setOrigin(0, 0)
@@ -368,17 +379,9 @@ class Temple extends Phaser.Scene {
     grounds.add(ground);
     grounds.add(groundShadow);
     this.physics.add.collider(player, grounds);
-
-    this.anims.create({
-      key: 'waterAnim',
-      frames: this.anims.generateFrameNumbers('water', {
-        start: 0,
-        end: 5,
-      }),
-      frameRate: 5.5,
-      repeat: -1,
-    });
-
+  }
+  addForegroundElements(width, height, mapWidth, floorHeight) {
+    //adding water
     water = this.add
       .sprite(0, 450, 'water')
       .setOrigin(0, 0)
@@ -416,16 +419,6 @@ class Temple extends Phaser.Scene {
       .setDepth(FOREGROUND_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.FG);
 
-    this.anims.create({
-      key: 'sakura',
-      frames: this.anims.generateFrameNumbers('sakura', {
-        start: 0,
-        end: 20,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
     let xPositions = [0, 450, 1200, 1500, 2300, 2550, 2950]; //TODO apply to every sakura tree the rest of the x positions
     let yPositions = [450, 550, 600, 650, 450, 500, 550]; //TODO apply to every sakura tree the rest of the y positions
 
@@ -447,7 +440,8 @@ class Temple extends Phaser.Scene {
 
     foreground.add(tree);
     foreground.add(water);
-
+  }
+  addAnimations() {
     //animations for testing
     this.anims.create({
       key: 'walk',
@@ -458,6 +452,51 @@ class Temple extends Phaser.Scene {
       frameRate: 10,
       repeat: -1,
     });
+
+    //water animation
+    this.anims.create({
+      key: 'waterAnim',
+      frames: this.anims.generateFrameNumbers('water', {
+        start: 0,
+        end: 5,
+      }),
+      frameRate: 5.5,
+      repeat: -1,
+    });
+
+    //sakura animation
+    this.anims.create({
+      key: 'sakura',
+      frames: this.anims.generateFrameNumbers('sakura', {
+        start: 0,
+        end: 20,
+      }),
+      frameRate: 8,
+      repeat: -1,
+    });
+  }
+
+  create() {
+    //config
+    const { width, height } = this.scale;
+    const mapWidth = width * 4;
+    const floorHeight = height - 330;
+    this.playerMoveTemple = playerMoveTemple;
+
+    //setting world and camera
+    this.setWorldBoundsAndCamera(height, mapWidth);
+    this.setDeviceSpecificControls(height, width);
+
+    //adding animations
+    this.addAnimations();
+    //adding background
+    this.addBackgroundElements(width, height, mapWidth, floorHeight);
+    //adding house and torii
+    this.addComponents(width, height, mapWidth, floorHeight);
+    //adding ground and player
+    this.addMiddlegroundAndPlayer(width, height, mapWidth, floorHeight);
+    //adding foreground
+    this.addForegroundElements(width, height, mapWidth, floorHeight);
   }
 
   update() {
