@@ -15,7 +15,6 @@ import {
 } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import playerMoveTemple from '../utils/playerMoveTemple';
-import calculateCanvasRatio from '../utils/ratio';
 
 const spritesheet_path = path.join(
   'assets',
@@ -76,7 +75,10 @@ class Temple extends Phaser.Scene {
       'tree',
       path.join(FOREGROUND_TEMPLE_PATH, 'Sakura Tree.png')
     );
-    this.load.image('water', path.join(FOREGROUND_TEMPLE_PATH, 'Water.png'));
+    this.load.spritesheet('water', path.join('assets', 'anim', 'water.png'), {
+      frameWidth: 1839,
+      frameHeight: 252,
+    });
     this.load.spritesheet('sakura', path.join('assets', 'anim', 'sakura.png'), {
       frameWidth: 320,
       frameHeight: 320,
@@ -367,12 +369,42 @@ class Temple extends Phaser.Scene {
     grounds.add(groundShadow);
     this.physics.add.collider(player, grounds);
 
+    this.anims.create({
+      key: 'waterAnim',
+      frames: this.anims.generateFrameNumbers('water', {
+        start: 0,
+        end: 5,
+      }),
+      frameRate: 5.5,
+      repeat: -1,
+    });
+
     water = this.add
-      .tileSprite(0, 450, mapWidth * 2, 250, 'water')
+      .sprite(0, 450, 'water')
       .setOrigin(0, 0)
       .setScale(1.1)
       .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
+
+    water.anims.play('waterAnim', true);
+
+    water = this.add
+      .sprite(1840, 450, 'water')
+      .setOrigin(0, 0)
+      .setScale(1.1)
+      .setDepth(PLAYER_DEPTH)
+      .setScrollFactor(OBJECT_SCROLL.PLAYER);
+
+    water.anims.play('waterAnim', true);
+
+    water = this.add
+      .sprite(3680, 450, 'water')
+      .setOrigin(0, 0)
+      .setScale(1.1)
+      .setDepth(PLAYER_DEPTH)
+      .setScrollFactor(OBJECT_SCROLL.PLAYER);
+
+    water.anims.play('waterAnim', true);
 
     //foreground
     foreground = this.add.group();
@@ -440,13 +472,12 @@ class Temple extends Phaser.Scene {
         isUpPressed
       );
     } else {
-      this.playerMoveTemple(player, 1000, false, false, null, null, null);
+      this.playerMoveTemple(player, 300, false, false, null, null, null);
     }
     camera.startFollow(player);
 
     //scrolling background
     clouds.tilePositionX += 0.1;
-    water.tilePositionX -= 0.15;
   }
 }
 export default Temple;
