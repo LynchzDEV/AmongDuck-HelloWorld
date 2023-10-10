@@ -501,6 +501,7 @@ class Temple extends Phaser.Scene {
   }
 
   update() {
+    //player movement
     if (isMobile || tablet) {
       this.playerMoveTemple(
         player,
@@ -514,6 +515,8 @@ class Temple extends Phaser.Scene {
     } else {
       this.playerMoveTemple(player, 300, false, false, null, null, null);
     }
+    
+    //camera follow player
     camera.startFollow(player);
 
     //scrolling background
