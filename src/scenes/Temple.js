@@ -33,7 +33,7 @@ let components;
 let camera;
 let player;
 let clouds;
-let sakura;
+let water;
 
 let left;
 let right;
@@ -367,26 +367,20 @@ class Temple extends Phaser.Scene {
     grounds.add(groundShadow);
     this.physics.add.collider(player, grounds);
 
-    //foreground
-    foreground = this.add.group();
-    let water = this.add
+    water = this.add
       .tileSprite(0, 450, mapWidth * 2, 250, 'water')
       .setOrigin(0, 0)
       .setScale(1.1)
       .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
+    //foreground
+    foreground = this.add.group();
+
     let tree = this.add
       .tileSprite(0, 300, mapWidth * 4, height * 2, 'tree')
       .setOrigin(0, 0)
       .setScale(0.5)
-      .setDepth(FOREGROUND_DEPTH)
-      .setScrollFactor(OBJECT_SCROLL.FG);
-
-    this.sakura = this.add
-      .sprite(0, 450, 'sakura')
-      .setOrigin(0, 0)
-      .setScale(0.8)
       .setDepth(FOREGROUND_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.FG);
 
@@ -399,8 +393,25 @@ class Temple extends Phaser.Scene {
       frameRate: 8,
       repeat: -1,
     });
-    this.sakura.anims.play('sakura', true);
-    this.sakura.flipX = true;
+
+    let xPositions = [0, 450, 1200, 1500, 2300, 2550, 2950]; //TODO apply to every sakura tree the rest of the x positions
+    let yPositions = [450, 550, 600, 650, 450, 500, 550]; //TODO apply to every sakura tree the rest of the y positions
+
+    for (let i = 0; i < xPositions.length; i++) {
+      let x = xPositions[i];
+      let y = yPositions[i];
+
+      // Create a sakura sprite at position (x, y)
+      let sakura = this.add
+        .sprite(x, y, 'sakura')
+        .setOrigin(0, 0)
+        .setScale(0.8)
+        .setDepth(FOREGROUND_DEPTH)
+        .setScrollFactor(OBJECT_SCROLL.FG);
+
+      sakura.anims.play('sakura', true);
+      sakura.flipX = true;
+    }
 
     foreground.add(tree);
     foreground.add(water);
@@ -429,12 +440,13 @@ class Temple extends Phaser.Scene {
         isUpPressed
       );
     } else {
-      this.playerMoveTemple(player, 500, false, false, null, null, null);
+      this.playerMoveTemple(player, 1000, false, false, null, null, null);
     }
     camera.startFollow(player);
 
     //scrolling background
     clouds.tilePositionX += 0.1;
+    water.tilePositionX -= 0.15;
   }
 }
 export default Temple;
