@@ -32,9 +32,11 @@ let foreground;
 let components;
 let camera;
 let player;
-let clouds;
 let water;
 let grounds;
+let sky;
+let sky2;
+let sky3;
 
 let left;
 let right;
@@ -50,9 +52,10 @@ class Temple extends Phaser.Scene {
 
   loadBackground() {
     //load background
-    this.load.image('sky', path.join(BACKGROUND_TEMPLE_PATH, 'Sky.png'));
+    this.load.image('sky', path.join(BACKGROUND_TEMPLE_PATH, 'skyP01.png'));
+    this.load.image('sky2', path.join(BACKGROUND_TEMPLE_PATH, 'skyP02.png'));
+    this.load.image('sky3', path.join(BACKGROUND_TEMPLE_PATH, 'skyP03.png'));
     this.load.image('City', path.join(BACKGROUND_TEMPLE_PATH, 'City.png'));
-    this.load.image('Clouds', path.join(BACKGROUND_TEMPLE_PATH, 'Clouds.png'));
     this.load.image(
       'fuji',
       path.join(BACKGROUND_TEMPLE_PATH, 'Volcano fuji.png')
@@ -257,21 +260,31 @@ class Temple extends Phaser.Scene {
   }
   addBackgroundElements(width, height, mapWidth, floorHeight) {
     //clouds
-    clouds = this.add
-      .tileSprite(0, 0, mapWidth, height, 'Clouds')
+    sky = this.add
+      .tileSprite(0, 0, mapWidth, height, 'sky')
       .setOrigin(0, 0)
-      .setScale(0.7)
-      .setDepth(SKY_DEPTH + 1)
-      .setScrollFactor(OBJECT_SCROLL.CLOUD);
+      .setScale(2.6)
+      .setDepth(SKY_DEPTH)
+      .setScrollFactor(0);
+
+    sky2 = this.add
+      .tileSprite(0, 10, mapWidth, height, 'sky2')
+      .setOrigin(0, 0)
+      .setScale(2.6)
+      .setAlpha(0.6)
+      .setDepth(SKY_DEPTH)
+      .setScrollFactor(0);
+
+    sky3 = this.add
+      .tileSprite(0, 20, mapWidth, height, 'sky3')
+      .setOrigin(0, 0)
+      .setScale(2.6)
+      .setAlpha(0.4)
+      .setDepth(SKY_DEPTH)
+      .setScrollFactor(0);
 
     //background
     background = this.add.group();
-    let sky = this.add
-      .tileSprite(0, 0, mapWidth, height, 'sky')
-      .setOrigin(0, 0)
-      .setScale(1, 0.7)
-      .setDepth(SKY_DEPTH)
-      .setScrollFactor(0);
 
     let city = this.add
       .tileSprite(0, floorHeight - 200, 550, 200, 'City')
@@ -325,7 +338,6 @@ class Temple extends Phaser.Scene {
 
     background.add(sky);
     background.add(city);
-    background.add(clouds);
     background.add(fuji);
     background.add(bgTree);
     background.add(peddlerCar);
@@ -364,14 +376,14 @@ class Temple extends Phaser.Scene {
     //ground physics
     grounds = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(0, floorHeight + 100, mapWidth * 5, 250, 'ground')
+      .tileSprite(0, floorHeight + 98, mapWidth * 5, 250, 'ground')
       .setOrigin(0, 0)
       .setScale(0.2)
       .setDepth(PLAYER_DEPTH + 2)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
     let groundShadow = this.add
-      .tileSprite(0, floorHeight + 120, mapWidth * 5, 250, 'groundShadow')
+      .tileSprite(0, floorHeight + 120, mapWidth * 25, 250, 'groundShadow')
       .setOrigin(0, 0)
       .setScale(0.15)
       .setDepth(PLAYER_DEPTH + 1)
@@ -513,14 +525,16 @@ class Temple extends Phaser.Scene {
         isUpPressed
       );
     } else {
-      this.playerMoveTemple(player, 300, false, false, null, null, null);
+      this.playerMoveTemple(player, 1000, false, false, null, null, null);
     }
     
     //camera follow player
     camera.startFollow(player);
 
     //scrolling background
-    clouds.tilePositionX += 0.1;
+    sky.tilePositionX += 0.015;
+    sky2.tilePositionX += 0.05;
+    sky3.tilePositionX += 0.1;
   }
 }
 export default Temple;
