@@ -9,7 +9,9 @@
 
 ## Scene Arrangement
 ```js
-MainMenu -> CutScene1 (Story line) -> CutScene2 (Story line) -> Temple -> CutScene3 (Ask for help) -> Delivery -> Temple -> PathSelection -> CodePath / DesignPath -> Ending -> Summarzie
+MainMenu -> CutScene1 (StoryLine) -> CutScene2 (StoryLine) -> Temple -> 
+CutScene3 (Tutorial) -> Delivery -> Temple -> PathSelection -> 
+CodePath / DesignPath -> Ending -> Summarzie
 ```
 
 ## Setup
