@@ -153,10 +153,14 @@ class Temple extends Phaser.Scene {
           isUpPressed = false;
         }
       });
+
+      //get screen width and height
+      let screenWidth = window.innerWidth;
+      let screenHeight = window.innerHeight;
+
+      //device check
       if (isMobile) {
         //mobile
-        let screenWidth = window.innerWidth;
-        let screenHeight = window.innerHeight;
         if (screenHeight > 720) screenHeight = 720;
         console.log('Mobile view');
         console.log(`Screen Width: ${screenWidth}px`);
@@ -203,9 +207,8 @@ class Temple extends Phaser.Scene {
         camera.setZoom(1);
       } else if (tablet) {
         //tablet
-        let screenWidth = window.innerWidth;
-        let screenHeight = window.innerHeight;
         if (screenHeight > 720) screenHeight = 720;
+        console.log("Tablet view");
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
 

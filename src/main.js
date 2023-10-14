@@ -42,8 +42,8 @@ const config = {
     // CutScene1, //* 1 cutscene 1 of the story mode
     // CutScene2, //* 2 cutscene 2 of the story mode
     // Forest1, //* 3 forest map that lead to first decision
-    Temple, //* 3 temple map that lead to first decision
-    // PathSelection, //* 4 path selection scene
+    // Temple, //* 3 temple map that lead to first decision
+    PathSelection, //* 4 path selection scene
     // CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
     // DesignPath, //* 6 cutscene that lead to selection of front end or web design
     GameDev, //* 7 game dev scene: parkour
