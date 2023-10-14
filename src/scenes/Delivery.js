@@ -40,7 +40,23 @@ class Delivery extends Phaser.Scene {
     this.load.image('statue-stone', path.join(COMPONENT_GAME_PATH, 'statue-stone.png'));
     this.load.image('stone-wall', path.join(COMPONENT_GAME_PATH, 'stone-wall.png'));
     this.load.image('stone', path.join(COMPONENT_GAME_PATH, 'stone.png'));
+    
+    //load spritesheet
+    //I'm not trying yet, this scale is not correct
+    this.load.spritesheet('chess', path.join(SPRITESHEET_GAME_PATH, 'chess.png'), {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+    this.load.spritesheet('flame', path.join(SPRITESHEET_GAME_PATH, 'flame.png'), {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
+    this.load.spritesheet('torch-flame', path.join(SPRITESHEET_GAME_PATH, 'torch-flame.png'), {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
   }
+  
   loadPlayer() {
     this.load.spritesheet('player', path.join(PLAYER_SPRITESHEET_PATH, 'oposum.png'), {
       frameWidth: 36,
