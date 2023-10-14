@@ -1,5 +1,17 @@
 import path from 'path'
 
+export const UI_PATH = path.join(
+  'assets',
+  'ui'
+)
+
+export const PLAYER_SPRITESHEET_PATH = path.join(
+  'assets',
+  'image',
+  'Sunny-land-files',
+  'spritesheets'
+)
+
 export const BACKGROUND_TEMPLE_PATH = path.join(
   'assets',
   'image',
