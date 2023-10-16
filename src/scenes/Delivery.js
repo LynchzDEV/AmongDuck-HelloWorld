@@ -4,7 +4,9 @@ import {
     BACKGROUND_GAME_PATH,
     COMPONENT_GAME_PATH,
     PLATFORM_GAME_PATH,
-    SPRITESHEET_GAME_PATH
+    SPRITESHEET_GAME_PATH,
+    PLAYER_SPRITESHEET_PATH,
+    UI_PATH,
 } from '../utils/mapPath';
 import {
     SKY_DEPTH,
@@ -14,6 +16,28 @@ import {
     PLAYER_DEPTH,
     FOREGROUND_DEPTH
 } from '../utils/mapDepth';
+
+import {
+  setWorldBoundsAndCamera,
+} from '../utils/setWorldAndCameraBound';
+
+import {
+  playerMoveTemple,
+} from '../utils/playerMoveTemple';
+
+//bg component
+let backgrounds;
+let cloundLayer1;
+let cloundLayer2;
+let platforms;
+let components;
+// player
+let player;
+let camera;
+//interactive
+let chess;
+let house;
+let gate;
 
 class Delivery extends Phaser.Scene {
   constructor() {
@@ -30,11 +54,12 @@ class Delivery extends Phaser.Scene {
   loadPlatforms() {
     this.load.image('platform', path.join(PLATFORM_GAME_PATH, 'platform.png'));
     this.load.image('tile-platfrom', path.join(PLATFORM_GAME_PATH, 'tile-platform.png'));
+    this.load.image('platform-glass', path.join(PLATFORM_GAME_PATH, 'platform-glass.png'));
+    this.load.image('platform-vine', path.join(PLATFORM_GAME_PATH, 'platform-vine.png'));
   }
   loadComponents() {
     this.load.image('gate', path.join(COMPONENT_GAME_PATH, 'gate.png'));
     this.load.image('gate-active', path.join(COMPONENT_GAME_PATH, 'gate-active.png'));
-    this.load.image('grass', path.join(COMPONENT_GAME_PATH, 'grass.png'));
     this.load.image('sakura-tree', path.join(COMPONENT_GAME_PATH, 'Sakura tree.png'));
     this.load.image('small-sign', path.join(COMPONENT_GAME_PATH, 'small-sign.png'));
     this.load.image('statue-stone', path.join(COMPONENT_GAME_PATH, 'statue-stone.png'));
@@ -56,7 +81,6 @@ class Delivery extends Phaser.Scene {
       frameHeight: 16,
     });
   }
-  
   loadPlayer() {
     this.load.spritesheet('player', path.join(PLAYER_SPRITESHEET_PATH, 'oposum.png'), {
       frameWidth: 36,
@@ -78,7 +102,17 @@ class Delivery extends Phaser.Scene {
     this.loadUI();
   }
 
-  create() {}
+  create() {
+    //config
+    const { width, height } = this.scale;
+    const mapWidth = width * 3;
+    const mapHeight = height * 2;
+    // const floorHeight = height - 330;
+    this.playerMoveTemple = playerMoveTemple;
+    this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
+    this.setWorldBoundsAndCamera(mapHeight, mapWidth, camera);
+    
+  }
 
   update(delta, time) {}
 }

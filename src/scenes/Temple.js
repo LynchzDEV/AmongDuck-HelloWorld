@@ -5,7 +5,7 @@ import {
   FOREGROUND_TEMPLE_PATH,
   COMPONENT_TEMPLE_PATH,
   UI_PATH,
-  PLAYER_SPRITESHEET_PATH
+  PLAYER_SPRITESHEET_PATH,
 } from '../utils/mapPath';
 import {
   SKY_DEPTH,
@@ -15,6 +15,7 @@ import {
   PLAYER_DEPTH,
   FOREGROUND_DEPTH,
 } from '../utils/mapDepth';
+import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import playerMoveTemple from '../utils/playerMoveTemple';
 
@@ -91,10 +92,14 @@ class Temple extends Phaser.Scene {
   }
   loadPlayer() {
     //load player
-    this.load.spritesheet('player', path.join(PLAYER_SPRITESHEET_PATH, 'oposum.png'), {
-      frameWidth: 36,
-      frameHeight: 28,
-    });
+    this.load.spritesheet(
+      'player',
+      path.join(PLAYER_SPRITESHEET_PATH, 'oposum.png'),
+      {
+        frameWidth: 36,
+        frameHeight: 28,
+      }
+    );
   }
   loadUI() {
     //load button
@@ -110,18 +115,7 @@ class Temple extends Phaser.Scene {
     this.loadUI();
   }
 
-  setWorldBoundsAndCamera(height, mapWidth) {
-    //setting world bounds
-    this.physics.world.setBounds(0, 0, mapWidth, height);
-
-    //set collision L, R, T, B
-    this.physics.world.setBoundsCollision(true, true, true, true);
-
-    //setting camera
-    camera = this.cameras.main;
-    camera.setBounds(0, 0, mapWidth, height);
-  }
-  setDeviceSpecificControls(height, width) {
+  setDeviceSpecificControls(height, width, camera) {
     //camera and control for each device
     if (isMobile || tablet) {
       this.input.on('gameobjectdown', (pointer, gameObject) => {
@@ -202,7 +196,7 @@ class Temple extends Phaser.Scene {
       } else if (tablet) {
         //tablet
         if (screenHeight > 720) screenHeight = 720;
-        console.log("Tablet view");
+        console.log('Tablet view');
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
 
@@ -491,11 +485,14 @@ class Temple extends Phaser.Scene {
     const { width, height } = this.scale;
     const mapWidth = width * 4;
     const floorHeight = height - 330;
+    //binding functions
     this.playerMoveTemple = playerMoveTemple;
-
+    this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
     //setting world and camera
-    this.setWorldBoundsAndCamera(height, mapWidth);
-    this.setDeviceSpecificControls(height, width);
+    const returnCamera = this.setWorldBoundsAndCamera(height, mapWidth, camera);
+    camera = returnCamera;
+    //setting device specific controls
+    this.setDeviceSpecificControls(height, width, camera);
 
     //adding animations
     this.addAnimations();
@@ -524,7 +521,7 @@ class Temple extends Phaser.Scene {
     } else {
       this.playerMoveTemple(player, 1000, false, false, null, null, null);
     }
-    
+
     //camera follow player
     camera.startFollow(player);
 
