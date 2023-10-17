@@ -23,12 +23,14 @@ const config = {
   pixelArt: true,
   roundPixels: true,
   parent: 'content',
-  width: 1280,
-  height: 720,
+  // width: 1280,
+  // height: 720,
+  width: 3840,
+  height: 1440,
   physics: {
     default: 'arcade',
     arcade: {
-      debug: false,
+      debug: true,
     },
   },
   scene: [
@@ -40,7 +42,7 @@ const config = {
     // CutScene1, //* 1 cutscene 1 of the story mode
     // CutScene2, //* 2 cutscene 2 of the story mode
     // CutScene3, //* 3 cutscene 3 of the story mode
-    // Delivery, //* 4 delivery game
+    Delivery, //* 4 delivery game
     // Delivery2, //* 5 delivery game
     Temple, //* 3 temple map that lead to first decision
     PathSelection, //* 4 path selection scene
