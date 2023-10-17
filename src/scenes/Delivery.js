@@ -338,13 +338,13 @@ class Delivery extends Phaser.Scene {
     backgrounds.add(cloundLayer2);
     backgrounds.add(cloundLayer1);
   }
-  //water
+  //water shadows
   addForeground(mapWidth, mapHeight) {
     water = this.add
-      .tileSprite(0, mapHeight - 200, mapWidth, 250, 'water')
+      .tileSprite(0, 520, mapWidth, 250, 'water')
       .setOrigin(0, 0)
       .setScale(1)
-      .setScrollFactor(OBJECT_SCROLL.FG)
+      .setScrollFactor(OBJECT_SCROLL.PLAYER, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
 
     //add shadows
@@ -374,7 +374,7 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(mapWidth-300, mapHeight - 80, 'shadow-platform')
+      .image(mapWidth - 300, mapHeight - 80, 'shadow-platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
@@ -536,7 +536,7 @@ class Delivery extends Phaser.Scene {
   addPlayerAndColider(floorHeight) {
     //player
     player = this.physics.add
-      .sprite(100, floorHeight - 200, 'player')
+      .sprite(100, floorHeight - 150, 'player')
       .setCollideWorldBounds(true)
       .setScale(3)
       .setDepth(PLAYER_DEPTH);
@@ -582,12 +582,12 @@ class Delivery extends Phaser.Scene {
     //config
     const { width, height } = this.scale;
     // main scale
-    // const mapWidth = width * 3;
-    // const mapHeight = height * 2;
+    const mapWidth = width * 3;
+    const mapHeight = height * 2;
 
     //Dev scale 3840 * 1440
-    const mapWidth = width;
-    const mapHeight = height;
+    // const mapWidth = width;
+    // const mapHeight = height;
 
     const floorHeight = mapHeight - 215;
 
@@ -609,7 +609,7 @@ class Delivery extends Phaser.Scene {
     //background
     this.addBackgroundElements(mapWidth, mapHeight);
     //foreground
-    this.addForeground(mapWidth, mapHeight);
+    this.addForeground(mapWidth, mapHeight, floorHeight);
     //platforms
     this.addPlatforms(floorHeight);
     //main components
