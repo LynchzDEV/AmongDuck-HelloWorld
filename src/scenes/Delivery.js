@@ -338,13 +338,13 @@ class Delivery extends Phaser.Scene {
     backgrounds.add(cloundLayer2);
     backgrounds.add(cloundLayer1);
   }
-  //water shadows
+  //water and shadows
   addForeground(mapWidth, mapHeight) {
     water = this.add
-      .tileSprite(0, 520, mapWidth, 250, 'water')
+      .sprite(0, mapHeight-200, 'water')
       .setOrigin(0, 0)
       .setScale(1)
-      .setScrollFactor(OBJECT_SCROLL.PLAYER, 0)
+      .setScrollFactor(0,0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
 
     //add shadows
@@ -354,17 +354,12 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(1530, mapHeight - 110, 'shadow-platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
       .image(1650, mapHeight - 80, 'shadow-platform-long1')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(2045, mapHeight - 80, 'shadow-platform')
+      .image(2110, mapHeight - 80, 'shadow-platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
@@ -389,26 +384,25 @@ class Delivery extends Phaser.Scene {
       .setDepth(MIDDLEGROUND_DEPTH);
 
     let platformSmall = this.add
-      .image(1368, 975, 'platform')
+      .image(1405, 1100, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
     let platformVine = this.add
-      .image(1537, 778, 'platform')
+      .image(1355, 860, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
-      .setSize(222, 74)
       .setDepth(MIDDLEGROUND_DEPTH);
 
     let platformStatue_long = this.add
-      .image(1627, 1143, 'platform-long1')
+      .image(1659, 1002, 'platform-long1')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
     let platformGlass = this.add
-      .image(2035, 967, 'platform')
+      .image(2124, 921, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -439,7 +433,12 @@ class Delivery extends Phaser.Scene {
     platforms.add(platformHouse);
     platforms.add(platformGate);
     platforms.add(platformSakuraTree);
+    // Set collision boxes for each platform
+    platforms.children.iterate((child) => {
+      child.body.setSize(child.width, 20).setOffset(0, 0);
+    });
   }
+
   //house, milk shop, milk, gate, sign
   addMainComponents() {
     components = this.add.group();
@@ -490,12 +489,12 @@ class Delivery extends Phaser.Scene {
       .setScale(0.7)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     this.add
-      .image(1672, 1049, 'stone-wall')
+      .image(1704, 907, 'stone-wall')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     this.add
-      .image(1949, 967, 'statue-stone')
+      .image(1950, 825, 'statue-stone')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
@@ -505,18 +504,18 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     this.add
-      .image(1546, 725, 'stone')
+      .image(1377, 818, 'stone')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     this.add
-      .image(1391, 853, 'lantern')
+      .image(1430, 978, 'lantern')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     //add vine on platformVine
     this.add
-      .image(1620, 772, 'vine')
+      .image(1430, 865, 'vine')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
@@ -539,6 +538,7 @@ class Delivery extends Phaser.Scene {
       .sprite(100, floorHeight - 150, 'player')
       .setCollideWorldBounds(true)
       .setScale(3)
+      .setSize(30, 25)
       .setDepth(PLAYER_DEPTH);
 
     this.physics.add.collider(player, platforms);
@@ -582,12 +582,12 @@ class Delivery extends Phaser.Scene {
     //config
     const { width, height } = this.scale;
     // main scale
-    const mapWidth = width * 3;
-    const mapHeight = height * 2;
+    // const mapWidth = width * 3;
+    // const mapHeight = height * 2;
 
     //Dev scale 3840 * 1440
-    // const mapWidth = width;
-    // const mapHeight = height;
+    const mapWidth = width;
+    const mapHeight = height;
 
     const floorHeight = mapHeight - 215;
 
