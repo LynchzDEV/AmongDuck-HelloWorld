@@ -316,21 +316,21 @@ class Delivery extends Phaser.Scene {
     let bg = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'background')
       .setOrigin(0, 0)
-      .setScale(1.7)
+      .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD - 0.1);
     //front clound
     cloundLayer1 = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer2')
       .setOrigin(0, 0)
-      .setScale(1.7)
+      .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD);
     // mid clound
     cloundLayer2 = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer1')
       .setOrigin(0, 0)
-      .setScale(1.7)
+      .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD2);
 
@@ -341,10 +341,9 @@ class Delivery extends Phaser.Scene {
   //water and shadows
   addForeground(mapWidth, mapHeight) {
     water = this.add
-      .sprite(0, mapHeight-200, 'water')
+      .tileSprite(0, mapHeight - 200, mapWidth, 200, 'water')
       .setOrigin(0, 0)
       .setScale(1)
-      .setScrollFactor(0,0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
 
     //add shadows
@@ -582,12 +581,12 @@ class Delivery extends Phaser.Scene {
     //config
     const { width, height } = this.scale;
     // main scale
-    // const mapWidth = width * 3;
-    // const mapHeight = height * 2;
+    const mapWidth = width * 3;
+    const mapHeight = height * 2;
 
     //Dev scale 3840 * 1440
-    const mapWidth = width;
-    const mapHeight = height;
+    // const mapWidth = width;
+    // const mapHeight = height;
 
     const floorHeight = mapHeight - 215;
 
@@ -609,7 +608,7 @@ class Delivery extends Phaser.Scene {
     //background
     this.addBackgroundElements(mapWidth, mapHeight);
     //foreground
-    this.addForeground(mapWidth, mapHeight, floorHeight);
+    this.addForeground(mapWidth, mapHeight);
     //platforms
     this.addPlatforms(floorHeight);
     //main components

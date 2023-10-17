@@ -23,10 +23,10 @@ const config = {
   pixelArt: true,
   roundPixels: true,
   parent: 'content',
-  // width: 1280,
-  // height: 720,
-  width: 3840,
-  height: 1440,
+  width: 1280,
+  height: 720,
+  // width: 3840,
+  // height: 1440,
   physics: {
     default: 'arcade',
     arcade: {
