@@ -9,15 +9,9 @@
 
 ## Scene Arrangement
 ```js
-MainMenu -> CutScene1 -> CutScene2 -> Forest1 -> PathSelection 
-                -> CodingPath -> GameDev
-                               or
-                               -> DevOps
-                or 
-                -> DesignPath -> FrontEnd
-                               or
-                               -> WebDesign
-                                            -> Ending -> Summarize
+MainMenu -> CutScene1 (StoryLine) -> CutScene2 (StoryLine) -> Temple -> 
+CutScene3 (Tutorial) -> Delivery -> Temple -> PathSelection -> 
+CodePath / DesignPath -> Ending -> Summarzie
 ```
 
 ## Setup
