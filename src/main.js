@@ -25,6 +25,8 @@ const config = {
   parent: 'content',
   width: 1280,
   height: 720,
+  // width: 3840,
+  // height: 1440,
   physics: {
     default: 'arcade',
     arcade: {
