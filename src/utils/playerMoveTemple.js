@@ -23,7 +23,7 @@ function setHorizontalMovement(player, isLeft, isRight, normalSpeed, flipLeft) {
 }
 
 function handleJump(player, isUp) {
-  let velocityY = 0;
+  let velocityY = player.body.velocity.y;
   if (isUp && player.body.touching.down) {
     holdTime++;
     logdebug(holdTime);
