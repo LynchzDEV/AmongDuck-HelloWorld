@@ -1,13 +1,6 @@
 import Phaser from 'phaser';
 import playerMoveTemple from '../utils/playerMoveTemple';
-import setWorldBoundsAndCamera from '../utils/setWorldAndCameraBound';
-import path from 'path';
-import {
-  BACKGROUND_GAME_PATH,
-  PLATFORM_GAME_PATH,
-  COMPONENT_GAME_PATH,
-  SPRITESHEET_GAME_PATH,
-} from '../utils/mapPath';
+import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
 import {
   SKY_DEPTH,
   BACKGROUND_DEPTH,
@@ -17,13 +10,19 @@ import {
   FOREGROUND_DEPTH,
 } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
+import { shallowWater, playerDrown } from '../utils/event/drown';
+
+const isMobile = /mobile/i.test(navigator.userAgent);
+const tablet = window.innerWidth < 1280;
 
 let backgrounds;
 let cloundLayer1;
 let cloundLayer2;
 let platforms;
 let components;
+let camera;
 //slide platform
+let platformSlideGroup;
 let platformSlide1;
 let platformSlide2;
 //gate
@@ -33,6 +32,7 @@ let gateNext;
 let key;
 let chess;
 let house;
+let shallow_water;
 //player
 let player;
 
@@ -42,63 +42,141 @@ class Delivery2 extends Phaser.Scene {
       key: 'Delivery2',
     });
   }
-  loadBackground() {
-    this.load.image(
-      'background',
-      path.join(BACKGROUND_GAME_PATH, 'background-pink.png')
-    );
-    this.load.image(
-      'clound-layer1',
-      path.join(BACKGROUND_GAME_PATH, 'bg-pink-layer1.png')
-    );
-    this.load.image(
-      'clound-layer2',
-      path.join(BACKGROUND_GAME_PATH, 'bg-pink-layer2.png')
-    );
-  }
-  loadPlatforms() {
-    this.load.image('platform', path.join(PLATFORM_GAME_PATH, 'platform.png'));
-    this.load.image(
-      'platform-long1',
-      path.join(PLATFORM_GAME_PATH, 'platform-long1.png')
-    );
-    this.load.image(
-      'platform-long2',
-      path.join(PLATFORM_GAME_PATH, 'platform-long2.png')
-    );
-    this.load.image(
-      'platform-long3',
-      path.join(PLATFORM_GAME_PATH, 'platform-long3.png')
-    );
-    this.load.image(
-      'ground-main',
-      path.join(PLATFORM_GAME_PATH, 'ground-main.png')
-    );
-  }
-  loadMainComponents() {
-    this.load.image('house2', path.join(COMPONENT_GAME_PATH, 'house2.png'));
-    this.load.image('gate', path.join(COMPONENT_GAME_PATH, 'gate.png'));
-    this.load.image(
-      'gate-active',
-      path.join(COMPONENT_GAME_PATH, 'gate-active.png')
-    );
-    this.load.image('key', path.join(COMPONENT_GAME_PATH, 'key.png'));
-    this.load.spritesheet(
-      'chess',
-      path.join(SPRITESHEET_GAME_PATH, 'chess.png'),
-      {
-        frameWidth: 143.5,
-        frameHeight: 147.5,
+
+  setDeviceSpecificControls(height, width, camera) {
+    //camera and control for each device
+    if (isMobile || tablet) {
+      this.input.on('gameobjectdown', (pointer, gameObject) => {
+        if (gameObject === left) {
+          isLeftPressed = true;
+        }
+        if (gameObject === right) {
+          isRightPressed = true;
+        }
+        if (gameObject === up) {
+          isUpPressed = true;
+        }
+      });
+
+      this.input.on('gameobjectup', (pointer, gameObject) => {
+        if (gameObject === left) {
+          isLeftPressed = false;
+        }
+        if (gameObject === right) {
+          isRightPressed = false;
+        }
+        if (gameObject === up) {
+          isUpPressed = false;
+        }
+      });
+
+      //get screen width and height
+      let screenWidth = window.innerWidth;
+      let screenHeight = window.innerHeight;
+
+      //device check
+      if (isMobile) {
+        //mobile
+        if (screenHeight > 720) screenHeight = 720;
+        console.log('Mobile view');
+        console.log(`Screen Width: ${screenWidth}px`);
+        console.log(`Screen Height: ${screenHeight}px`);
+
+        left = this.physics.add
+          .sprite(screenWidth / 2 - screenWidth / 3, screenHeight / 1.2, 'left')
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        right = this.physics.add
+          .sprite(
+            screenWidth / 2 - screenWidth / 8,
+            screenHeight / 1.2,
+            'right'
+          )
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        up = this.physics.add
+          .sprite(screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2, 'up')
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        //Implement mobile camera bounds and viewport
+        camera.setViewport(
+          width / 2 - screenWidth / 2,
+          height / 2 - screenHeight / 2,
+          screenWidth,
+          screenHeight
+        );
+        camera.setZoom(1);
+      } else if (tablet) {
+        //tablet
+        if (screenHeight > 720) screenHeight = 720;
+        console.log('Tablet view');
+        console.log(`Screen Width: ${screenWidth}px`);
+        console.log(`Screen Height: ${screenHeight}px`);
+
+        left = this.physics.add
+          .sprite(
+            screenWidth / 2 - screenWidth / 2.5,
+            screenHeight / 1.2,
+            'left'
+          )
+          .setScale(7)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        right = this.physics.add
+          .sprite(
+            screenWidth / 2 - screenWidth / 3.5,
+            screenHeight / 1.2,
+            'right'
+          )
+          .setScale(7)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        up = this.physics.add
+          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, 'up')
+          .setScale(7)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        //Implement tablet camera bounds and viewport
+        camera.setViewport(
+          width / 2 - screenWidth / 2,
+          height / 2 - screenHeight / 2,
+          screenWidth,
+          height
+        );
       }
-    );
+    } else {
+      //default (desktop)
+      console.log('desktop');
+      camera.setViewport(0, 0, width, height);
+    }
   }
-
-  preload() {
-    this.loadBackground();
-    this.loadPlatforms();
-    this.loadMainComponents();
-  }
-
   addBackgroundElements(mapWidth, mapHeight) {
     backgrounds = this.add.group();
     let bg = this.add
@@ -134,7 +212,7 @@ class Delivery2 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    platformSlide1 = this.add
+    platformSlide1 = this.physics.add
       .image(573, 1230, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
@@ -156,7 +234,7 @@ class Delivery2 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    platformSlide2 = this.add
+    platformSlide2 = this.physics.add
       .image(3066, 893, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
@@ -168,9 +246,9 @@ class Delivery2 extends Phaser.Scene {
       .setDepth(MIDDLEGROUND_DEPTH);
     //key on this platform
     let platformToKey4 = this.add
-      .image(2343, 458, 'platform-long1')
+      .image(2270, 458, 'platform-long1')
       .setOrigin(0, 0)
-      .setScale(0.8, 1)
+      .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
     //path to chess
@@ -203,11 +281,9 @@ class Delivery2 extends Phaser.Scene {
       .setDepth(MIDDLEGROUND_DEPTH);
 
     platforms.add(ground);
-    platforms.add(platformSlide1);
     platforms.add(platformHouse);
     platforms.add(platformToKey1);
     platforms.add(platformToKey2);
-    platforms.add(platformSlide2);
     platforms.add(platformToKey3);
     platforms.add(platformToKey4);
     platforms.add(platformToChess1);
@@ -219,11 +295,34 @@ class Delivery2 extends Phaser.Scene {
     platforms.children.iterate((child) => {
       child.body.setSize(child.width, 20).setOffset(0, 0);
     });
+
+    //set move platform
+    this.tweens.add({
+      targets: platformSlide1,
+      x: 1075,
+      ease: 'Expo.easeInOut',
+      duration: 3500,
+      repeat: -1,
+      yoyo: true,
+    });
+    this.tweens.add({
+      targets: platformSlide2,
+      y: 443,
+      ease: 'LINEAR',
+      duration: 4000,
+      repeat: -1,
+      yoyo: true,
+    });
+
+    platformSlide1.body.setAllowGravity(false);
+    platformSlide1.body.setImmovable(true);
+    platformSlide2.body.setAllowGravity(false);
+    platformSlide2.body.setImmovable(true);
   }
   addMainComponents() {
     components = this.add.group();
     house = this.add
-      .image(1233, 791, 'house2')
+      .image(1439, 834, 'house2')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -245,7 +344,7 @@ class Delivery2 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     key = this.add
-      .image(2440, 390, 'key')
+      .image(2400, 370, 'key')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -257,9 +356,105 @@ class Delivery2 extends Phaser.Scene {
     components.add(key);
   }
   //add props
-  addComponents() {}
+  addComponents() {
+    this.add
+      .image(280, 1120, 'logs')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(310, 880, 'tree')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+    this.add
+      .image(1179, 990, 'log')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
 
-  //chess animation
+    // chess platform
+    this.add
+      .image(93, 644, 'brush')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(130, 712, 'vine')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(MIDDLEGROUND_DEPTH + 1).flipX = true;
+
+    this.add
+      .image(504, 774, 'grass2')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(676, 834, 'stone-wall')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(662, 870, 'box')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(680, 750, 'lantern')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+
+    //house platforms
+    this.add
+      .image(1420, 621, 'sakura-tree')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+
+    //path to key
+    this.add
+      .image(2372, 1090, 'stone')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(2637, 930, 'tou')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(2872, 580, 'vine')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(MIDDLEGROUND_DEPTH + 1);
+    this.add
+      .image(2804, 558, 'grass')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(2322, 352, 'bench')
+      .setScale(1)
+      .setOrigin(0, 0)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+  }
+  //player and colider
+  addPlayerAndColider(floorHeight) {
+    //player
+    player = this.physics.add
+      .sprite(100, floorHeight - 150, 'player')
+      .setCollideWorldBounds(true)
+      .setScale(3)
+      .setSize(30, 25)
+      .setDepth(PLAYER_DEPTH);
+
+    this.physics.add.collider(player, platforms);
+    this.physics.add.collider(player, platformSlide1);
+    this.physics.add.collider(player, platformSlide2);
+  }
+  //animation chess
   addAnimations() {
     this.anims.create({
       key: 'chess-rotate',
@@ -275,18 +470,27 @@ class Delivery2 extends Phaser.Scene {
     //config
     const { width, height } = this.scale;
     // main scale
-    // const mapWidth = width * 3;
-    // const mapHeight = height * 2;
+    const mapWidth = width * 3;
+    const mapHeight = height * 2;
 
     //Dev scale 3840 * 1440
-    const mapWidth = width;
-    const mapHeight = height;
+    // const mapWidth = width;
+    // const mapHeight = height;
 
     const floorHeight = mapHeight - 215;
 
     //binding function
     this.playerMoveTemple = playerMoveTemple;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
+
+    //setting world and camera
+    const returnCamera = this.setWorldBoundsAndCamera(
+      mapHeight,
+      mapWidth,
+      camera
+    );
+    camera = returnCamera;
+    this.setDeviceSpecificControls(height, width, camera);
 
     this.addAnimations();
     // background
@@ -295,13 +499,23 @@ class Delivery2 extends Phaser.Scene {
     this.addPlatforms(floorHeight);
     // main components
     this.addMainComponents();
-
+    // props
+    this.addComponents();
+    // player
+    this.addPlayerAndColider(floorHeight);
 
     //test animation chess
     this.anims.play('chess-rotate', chess);
   }
 
   update(delta, time) {
+    //testing movement
+    this.playerMoveTemple(player, 1000, false, false, null, null, null);
+    //camera follow player
+    camera.startFollow(player);
+
+    //player drown
+    // playerDrown(this, player, shallow_water);
   }
 }
 
