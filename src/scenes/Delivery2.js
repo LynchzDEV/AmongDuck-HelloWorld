@@ -5,6 +5,7 @@ import path from 'path';
 import {
   BACKGROUND_GAME_PATH,
   PLATFORM_GAME_PATH,
+  COMPONENT_GAME_PATH,
   SPRITESHEET_GAME_PATH,
 } from '../utils/mapPath';
 import {
@@ -21,11 +22,12 @@ let backgrounds;
 let cloundLayer1;
 let cloundLayer2;
 let platforms;
+let components;
 //slide platform
 let platformSlide1;
 let platformSlide2;
 //gate
-let gatePrevios;
+let gatePrevious;
 let gateNext;
 //interaction
 let key;
@@ -85,8 +87,8 @@ class Delivery2 extends Phaser.Scene {
       'chess',
       path.join(SPRITESHEET_GAME_PATH, 'chess.png'),
       {
-        frameWidth: 128,
-        frameHeight: 128,
+        frameWidth: 143.5,
+        frameHeight: 147.5,
       }
     );
   }
@@ -219,10 +221,56 @@ class Delivery2 extends Phaser.Scene {
     });
   }
   addMainComponents() {
-    
+    components = this.add.group();
+    house = this.add
+      .image(1233, 791, 'house2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    gatePrevious = this.add
+      .image(52, 1147, 'gate-active')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    gateNext = this.add
+      .image(3600, 270, 'gate')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    gateNext.flipX = true;
+    chess = this.physics.add
+      .sprite(150, 615, 'chess')
+      .setOrigin(0, 0)
+      .setSize(100, 100)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    key = this.add
+      .image(2440, 390, 'key')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    components.add(house);
+    components.add(gatePrevious);
+    components.add(gateNext);
+    components.add(chess);
+    components.add(key);
   }
   //add props
   addComponents() {}
+
+  //chess animation
+  addAnimations() {
+    this.anims.create({
+      key: 'chess-rotate',
+      frames: this.anims.generateFrameNumbers('chess', {
+        start: 21,
+        end: 27,
+      }),
+      frameRate: 3,
+      repeat: 0,
+    });
+  }
   create() {
     //config
     const { width, height } = this.scale;
@@ -240,14 +288,21 @@ class Delivery2 extends Phaser.Scene {
     this.playerMoveTemple = playerMoveTemple;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
 
+    this.addAnimations();
     // background
     this.addBackgroundElements(mapWidth, mapHeight);
-
     // platforms
     this.addPlatforms(floorHeight);
+    // main components
+    this.addMainComponents();
+
+
+    //test animation chess
+    this.anims.play('chess-rotate', chess);
   }
 
-  update(delta, time) {}
+  update(delta, time) {
+  }
 }
 
 export default Delivery2;
