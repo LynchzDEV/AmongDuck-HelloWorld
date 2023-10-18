@@ -23,12 +23,15 @@ import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
 import playerMoveTemple from '../utils/playerMoveTemple';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 
+import { shallowWater, playerDrown } from '../utils/event/drown';
+
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
 
 //bg component
 let backgrounds;
 let water;
+let shallow_water;
 let cloundLayer1;
 let cloundLayer2;
 let platforms;
@@ -340,6 +343,17 @@ class Delivery extends Phaser.Scene {
   }
   //water and shadows
   addForeground(mapWidth, mapHeight) {
+    shallow_water = shallowWater(
+      this,
+      0,
+      mapHeight - 20,
+      mapWidth * 2,
+      200,
+      BACKGROUND_COMPONENT_DEPTH
+    );
+
+    this.physics.add.existing(shallow_water);
+
     water = this.add
       .tileSprite(0, mapHeight - 200, mapWidth, 200, 'water')
       .setOrigin(0, 0)
@@ -624,6 +638,8 @@ class Delivery extends Phaser.Scene {
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
     //camera follow player
     camera.startFollow(player);
+    //player drown
+    playerDrown(this, player, shallow_water);
   }
 }
 
