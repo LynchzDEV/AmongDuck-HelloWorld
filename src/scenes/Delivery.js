@@ -640,6 +640,8 @@ class Delivery extends Phaser.Scene {
     camera.startFollow(player);
     //player drown
     playerDrown(this, player, shallow_water);
+
+    //skip scene
   }
 }
 
