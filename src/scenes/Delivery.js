@@ -88,6 +88,10 @@ class Delivery extends Phaser.Scene {
       'platform-long2',
       path.join(PLATFORM_GAME_PATH, 'platform-long2.png')
     );
+    this.load.image(
+      'platform-long3',
+      path.join(PLATFORM_GAME_PATH, 'platform-long3.png')
+    );
     this.load.image('ground', path.join(PLATFORM_GAME_PATH, 'ground.png'));
     this.load.image(
       'ground-edge',
@@ -99,6 +103,7 @@ class Delivery extends Phaser.Scene {
     );
   }
   loadMainComponents() {
+    //delivery1
     this.load.image(
       'milk-shop',
       path.join(COMPONENT_GAME_PATH, 'milk-shop.png')
@@ -113,6 +118,18 @@ class Delivery extends Phaser.Scene {
     this.load.sign = this.load.image(
       'sign',
       path.join(COMPONENT_GAME_PATH, 'sign.png')
+    );
+
+    //delivery2
+    this.load.image('house2', path.join(COMPONENT_GAME_PATH, 'house2.png'));
+    this.load.image('key', path.join(COMPONENT_GAME_PATH, 'key.png'));
+    this.load.spritesheet(
+      'chess',
+      path.join(SPRITESHEET_GAME_PATH, 'chess.png'),
+      {
+        frameWidth: 143.5,
+        frameHeight: 147.5,
+      }
     );
   }
   loadComponents() {
@@ -137,6 +154,15 @@ class Delivery extends Phaser.Scene {
     this.load.image('lantern', path.join(COMPONENT_GAME_PATH, 'lantern.png'));
     this.load.image('grass', path.join(COMPONENT_GAME_PATH, 'grass.png'));
     this.load.image('vine', path.join(COMPONENT_GAME_PATH, 'vine.png'));
+
+    //delivery2
+    this.load.image('logs', path.join(COMPONENT_GAME_PATH, 'logs.png'));
+    this.load.image('log', path.join(COMPONENT_GAME_PATH, 'log.png'));
+    this.load.image('tree', path.join(COMPONENT_GAME_PATH, 'tree.png'));
+    this.load.image('box', path.join(COMPONENT_GAME_PATH, 'box.png'));
+    this.load.image('grass2', path.join(COMPONENT_GAME_PATH, 'grass2.png'));
+    this.load.image('brush', path.join(COMPONENT_GAME_PATH, 'brush.png'));
+    this.load.image('tou', path.join(COMPONENT_GAME_PATH, 'tou.png'));
   }
   loadForeground() {
     this.load.image('water', path.join(FOREGROUND_TEMPLE_PATH, 'Water.png'));
@@ -319,21 +345,21 @@ class Delivery extends Phaser.Scene {
     let bg = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'background')
       .setOrigin(0, 0)
-      .setScale(1.4)
+      .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD - 0.1);
     //front clound
     cloundLayer1 = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer2')
       .setOrigin(0, 0)
-      .setScale(1.4)
+      .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD);
     // mid clound
     cloundLayer2 = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer1')
       .setOrigin(0, 0)
-      .setScale(1.4)
+      .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD2);
 
@@ -640,6 +666,11 @@ class Delivery extends Phaser.Scene {
     camera.startFollow(player);
     //player drown
     playerDrown(this, player, shallow_water);
+
+    //skip scene for using preload image from this scene
+    this.time.delayedCall(100, () => {
+      this.scene.start('Delivery2');
+    });
   }
 }
 
