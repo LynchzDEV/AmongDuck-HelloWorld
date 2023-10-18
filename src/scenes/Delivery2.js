@@ -182,21 +182,21 @@ class Delivery2 extends Phaser.Scene {
     let bg = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'background')
       .setOrigin(0, 0)
-      .setScale(1.6)
+      .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD - 0.1);
     //mid clound
     cloundLayer1 = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer2')
       .setOrigin(0, 0)
-      .setScale(1.6)
+      .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD);
     // front
     cloundLayer2 = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer1')
       .setOrigin(0, 0)
-      .setScale(1.6)
+      .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD2);
 
