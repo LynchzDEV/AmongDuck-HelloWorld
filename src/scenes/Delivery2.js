@@ -16,13 +16,13 @@ const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
 
 let backgrounds;
+let water;
 let cloundLayer1;
 let cloundLayer2;
 let platforms;
 let components;
 let camera;
 //slide platform
-let platformSlideGroup;
 let platformSlide1;
 let platformSlide2;
 //gate
@@ -204,6 +204,24 @@ class Delivery2 extends Phaser.Scene {
     backgrounds.add(cloundLayer2);
     backgrounds.add(cloundLayer1);
   }
+  addForegroundElements(mapWidth, mapHeight) {
+    //shalllow water
+    shallow_water = shallowWater(
+      this,
+      0,
+      mapHeight - 6,
+      mapWidth * 2,
+      160,
+      BACKGROUND_COMPONENT_DEPTH
+    );
+    this.physics.add.existing(shallow_water);
+
+    water = this.add
+      .tileSprite(0, mapHeight - 150, mapWidth, 200, 'water')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+  }
   //add platforms
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
@@ -319,6 +337,7 @@ class Delivery2 extends Phaser.Scene {
     platformSlide2.body.setAllowGravity(false);
     platformSlide2.body.setImmovable(true);
   }
+  //house gate chess key
   addMainComponents() {
     components = this.add.group();
     house = this.add
@@ -327,12 +346,12 @@ class Delivery2 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     gatePrevious = this.add
-      .image(52, 1147, 'gate-active')
+      .image(52, 1140, 'gate-active')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     gateNext = this.add
-      .image(3600, 270, 'gate')
+      .image(3600, 274, 'gate')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -355,7 +374,7 @@ class Delivery2 extends Phaser.Scene {
     components.add(chess);
     components.add(key);
   }
-  //add props
+  //add props stone sakura tree logs
   addComponents() {
     this.add
       .image(280, 1120, 'logs')
@@ -425,7 +444,7 @@ class Delivery2 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(2872, 580, 'vine')
+      .image(2872, 576, 'vine')
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
@@ -495,6 +514,8 @@ class Delivery2 extends Phaser.Scene {
     this.addAnimations();
     // background
     this.addBackgroundElements(mapWidth, mapHeight);
+    // foreground
+    this.addForegroundElements(mapWidth, mapHeight);
     // platforms
     this.addPlatforms(floorHeight);
     // main components
@@ -515,7 +536,7 @@ class Delivery2 extends Phaser.Scene {
     camera.startFollow(player);
 
     //player drown
-    // playerDrown(this, player, shallow_water);
+    playerDrown(this, player, shallow_water);
   }
 }
 
