@@ -6,7 +6,7 @@ import {
   COMPONENT_GAME_PATH,
   PLATFORM_GAME_PATH,
   SPRITESHEET_GAME_PATH,
-  PLAYER_SPRITESHEET_PATH,
+  PLAYER_SPRITESHEET_PATH, 
   UI_PATH,
 } from '../utils/mapPath';
 import {
@@ -727,11 +727,8 @@ class Delivery extends Phaser.Scene {
   }
 
   update(delta, time) {
-
     //dev skip the scene
     this.scene.start('Delivery2');
-
-
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
