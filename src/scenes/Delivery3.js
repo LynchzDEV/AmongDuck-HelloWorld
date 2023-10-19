@@ -8,9 +8,22 @@ const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
 
 let camera;
+let water;
 let backgrounds;
 let cloundLayer1;
 let cloundLayer2;
+let platforms;
+let components;
+//gate
+let gatePrevious;
+let gateNext;
+//interaction
+let milk1;
+let milk2;
+let milk3;
+let house;
+//player
+let player;
 
 class Delivery3 extends Phaser.Scene {
   constructor() {
@@ -177,6 +190,9 @@ class Delivery3 extends Phaser.Scene {
     backgrounds.add(bg);
     backgrounds.add(cloundLayer2);
     backgrounds.add(cloundLayer1);
+  }
+  addPlatforms(floorHeight) {
+    platforms = this.physics.add.staticGroup();
   }
 
   create() {

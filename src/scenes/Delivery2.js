@@ -204,6 +204,7 @@ class Delivery2 extends Phaser.Scene {
     backgrounds.add(cloundLayer2);
     backgrounds.add(cloundLayer1);
   }
+  //water
   addForegroundElements(mapWidth, mapHeight) {
     water = this.add
       .tileSprite(0, mapHeight - 150, mapWidth, 200, 'water')
