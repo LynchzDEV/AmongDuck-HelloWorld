@@ -205,17 +205,6 @@ class Delivery2 extends Phaser.Scene {
     backgrounds.add(cloundLayer1);
   }
   addForegroundElements(mapWidth, mapHeight) {
-    //shalllow water
-    shallow_water = shallowWater(
-      this,
-      0,
-      mapHeight - 6,
-      mapWidth * 2,
-      160,
-      BACKGROUND_COMPONENT_DEPTH
-    );
-    this.physics.add.existing(shallow_water);
-
     water = this.add
       .tileSprite(0, mapHeight - 150, mapWidth, 200, 'water')
       .setOrigin(0, 0)
@@ -536,7 +525,7 @@ class Delivery2 extends Phaser.Scene {
     camera.startFollow(player);
 
     //player drown
-    playerDrown(this, player, shallow_water);
+    // playerDrown(this, player, shallow_water);
   }
 }
 
