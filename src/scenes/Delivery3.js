@@ -3,6 +3,7 @@ import playerMoveTemple from '../utils/playerMoveTemple';
 import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
 import {
   BACKGROUND_COMPONENT_DEPTH,
+  FOREGROUND_DEPTH,
   MIDDLEGROUND_DEPTH,
   SKY_DEPTH,
 } from '../utils/mapDepth';
@@ -300,10 +301,10 @@ class Delivery3 extends Phaser.Scene {
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     chest = this.add
-      .sprite(2010, 291, 'chest')
+      .sprite(2010, 285, 'chest')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+      .setDepth(MIDDLEGROUND_DEPTH);
     //default chest frame
     chest.setFrame(21);
 
@@ -311,23 +312,94 @@ class Delivery3 extends Phaser.Scene {
       .image(2400, 1023, 'key')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+      .setDepth(MIDDLEGROUND_DEPTH);
     sign = this.add
       .image(3456, 1088, 'sign')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+      .setDepth(MIDDLEGROUND_DEPTH);
     milk1 = this.add
       .image(555, 107, 'milk')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+      .setDepth(MIDDLEGROUND_DEPTH);
     ladder = this.add
       .image(3609, 0, 'ladder')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+      .setDepth(MIDDLEGROUND_DEPTH);
   }
+  //props
+  addComponents() {
+    //straw
+    this.add
+      .image(676, 1148, 'straw1')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(751, 1169, 'straw2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(800, 1050, 'lantern')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+
+    //sakura
+    this.add
+      .image(800, 612, 'sakura-tree')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(FOREGROUND_DEPTH);
+
+    //key brush
+    this.add
+      .image(2350, 1003, 'brush')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1).flipX = true;
+
+    //chest prop
+    this.add
+      .image(1996, 319, 'box')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+    this.add
+      .image(2020, 200, 'lantern')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(2000, 386, 'vine')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH + 1).flipX = true;
+
+    //milk props
+    this.add
+      .image(493, 112, 'bench')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+
+    this.add
+      .image(570, 137, 'brush')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1).flipX = true;
+
+    //ladder props
+    this.add
+      .image(3609, 225, 'vine')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH + 1);
+  }
+
   create() {
     //config
     const { width, height } = this.scale;
@@ -359,6 +431,8 @@ class Delivery3 extends Phaser.Scene {
     this.addPlatforms(floorHeight);
     //add main components
     this.addMainComponents();
+    //add props
+    this.addComponents();
   }
 
   update(delta, time) {
