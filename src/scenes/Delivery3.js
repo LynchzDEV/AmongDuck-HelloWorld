@@ -1,7 +1,11 @@
 import Phaser from 'phaser';
 import playerMoveTemple from '../utils/playerMoveTemple';
 import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
-import { MIDDLEGROUND_DEPTH, SKY_DEPTH } from '../utils/mapDepth';
+import {
+  BACKGROUND_COMPONENT_DEPTH,
+  MIDDLEGROUND_DEPTH,
+  SKY_DEPTH,
+} from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
@@ -19,10 +23,12 @@ let gatePrevious;
 let gateNext;
 //interaction
 let milk1;
-let milk2;
-let milk3;
 let house;
+let house2;
 let chest;
+let key;
+let sign;
+let ladder;
 //player
 let player;
 
@@ -233,7 +239,7 @@ class Delivery3 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    
+
     //path to chest
     let platformToChest1 = this.add
       .image(1982, 391, 'platform')
@@ -243,18 +249,85 @@ class Delivery3 extends Phaser.Scene {
 
     //path to milk
     let platformToMilk1 = this.add
-      .image(1053, 220, 'platform2')
+      .image(477, 218, 'platform2')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    
-    let laddlePlatform = this.add
-      .image(0, 0, 'platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-  }
 
+    let ladderPlatform = this.add
+      .image(3435, 231, 'platform2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    platforms.add(ground);
+    platforms.add(platformHouse);
+    platforms.add(platformToJump1);
+    platforms.add(platformToJump2);
+    platforms.add(platformToJump3);
+    platforms.add(platformToGateNext1);
+    platforms.add(platformToGateNext2);
+    platforms.add(platformToChest1);
+    platforms.add(platformToMilk1);
+    platforms.add(ladderPlatform);
+
+    // Set collision boxes for each platform
+    platforms.children.iterate((child) => {
+      child.body.setSize(child.width, 20).setOffset(0, 0);
+    });
+  }
+  addMainComponents() {
+    //add gate
+    gatePrevious = this.physics.add
+      .image(52, 1140, 'gate-active')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    gateNext = this.physics.add
+      .image(3640, 1140, 'gate')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    gateNext.flipX = true;
+    house = this.add
+      .image(1311, 720, 'house4')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    house2 = this.add
+      .image(845, 939, 'house3')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    chest = this.add
+      .sprite(2010, 291, 'chest')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    //default chest frame
+    chest.setFrame(21);
+
+    key = this.add
+      .image(2400, 1023, 'key')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    sign = this.add
+      .image(3456, 1088, 'sign')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    milk1 = this.add
+      .image(555, 107, 'milk')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    ladder = this.add
+      .image(3609, 0, 'ladder')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+  }
   create() {
     //config
     const { width, height } = this.scale;
@@ -284,11 +357,13 @@ class Delivery3 extends Phaser.Scene {
     this.addBackgroundElements(mapWidth, mapHeight);
     //add platforms
     this.addPlatforms(floorHeight);
+    //add main components
+    this.addMainComponents();
   }
 
   update(delta, time) {
     //dev skip the scene
-    this.scene.start('Delivery4');
+    // this.scene.start('Delivery4');
   }
 }
 

@@ -147,8 +147,8 @@ class Delivery extends Phaser.Scene {
     this.load.image('house2', path.join(COMPONENT_GAME_PATH, 'house2.png'));
     this.load.image('key', path.join(COMPONENT_GAME_PATH, 'key.png'));
     this.load.spritesheet(
-      'chess',
-      path.join(SPRITESHEET_GAME_PATH, 'chess.png'),
+      'chest',
+      path.join(SPRITESHEET_GAME_PATH, 'chest.png'),
       {
         frameWidth: 143.5,
         frameHeight: 147.5,
@@ -158,6 +158,7 @@ class Delivery extends Phaser.Scene {
     //delivery3
     this.load.image('house3', path.join(COMPONENT_GAME_PATH, 'house3.png'));
     this.load.image('house4', path.join(COMPONENT_GAME_PATH, 'house4.png'));
+    this.load.image('ladder', path.join(COMPONENT_GAME_PATH, 'ladder.png'));
   }
   loadComponents() {
     this.load.image(
@@ -731,7 +732,7 @@ class Delivery extends Phaser.Scene {
     this.scene.start('Delivery2');
 
 
-    
+
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
     //camera follow player
