@@ -277,6 +277,8 @@ class Delivery4 extends Phaser.Scene {
     this.addComponents();
   }
 
-  update(delta, time) {}
+  update(delta, time) {
+    
+  }
 }
 export default Delivery4;
