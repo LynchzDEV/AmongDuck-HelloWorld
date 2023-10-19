@@ -24,6 +24,7 @@ import playerMoveTemple from '../utils/playerMoveTemple';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 
 import { shallowWater, playerDrown } from '../utils/event/drown';
+import { manageCollectItem } from '../utils/event/collectItem';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -44,7 +45,10 @@ let milkShop;
 let house;
 let gate;
 let milk1;
+let milk2; // have to modify position for testing
+let milk3; // have to modify position for testing
 let sign;
+let sakuraTree; // temp for testing
 //control flow
 let left;
 let right;
@@ -52,6 +56,14 @@ let up;
 let isLeftPressed = false;
 let isRightPressed = false;
 let isUpPressed = false;
+// manage collect item
+let collectItemManager = manageCollectItem();
+let overlapMilk1 = true;
+let overlapMilk2 = true;
+let overlapMilk3 = true;
+let deliverToSign = true; // temp for testing
+let deliverToSakuraTree = true; // temp for testing
+let deliverToHouse = true; // temp for testing
 
 class Delivery extends Phaser.Scene {
   constructor() {
@@ -459,7 +471,7 @@ class Delivery extends Phaser.Scene {
       .setDepth(MIDDLEGROUND_DEPTH);
 
     let platformSakuraTree = this.add
-      .image(929, 695, 'platform-long1')
+      .image(929 - 65, 695 + 55, 'platform-long1') // modified platform position for testing
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -485,23 +497,35 @@ class Delivery extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    house = this.add
+    house = this.physics.add
       .image(2620, 400, 'house')
       .setOrigin(0, 0)
       .setScale(1)
+      .setSize(150, 400) // temp for testing
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    milk1 = this.add
-      .image(1102, 584, 'milk')
+    milk1 = this.physics.add
+      .image(1102 - 65, 595 + 55, 'milk') // modified platform position for testing
       .setOrigin(0, 0)
-      .setScale(1)
+      .setScale(0.8)
       .setDepth(MIDDLEGROUND_DEPTH);
-    gate = this.add
+    milk2 = this.physics.add
+      .image(100, this.scale.height * 2 - 215 - 150, 'milk')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    milk3 = this.physics.add
+      .image(1950, 925, 'milk')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    gate = this.physics.add
       .image(3650, 787, 'gate')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     gate.flipX = true;
-    sign = this.add
+    // sign is not physics object by default, this is for testing
+    sign = this.physics.add
       .image(2447, 701, 'sign')
       .setOrigin(0, 0)
       .setScale(1)
@@ -512,17 +536,23 @@ class Delivery extends Phaser.Scene {
     components.add(milk1);
     components.add(gate);
     components.add(sign);
+
+    // init inventory
+    manageCollectItem().initInventory(this, milk1, 3);
   }
   //prop
   addComponents() {
     //sakura milk shop
-    this.add
+    // sakura tree is not physics object by default, this is for testing
+    sakuraTree = this.physics.add
       .image(141, 612, 'sakura-tree')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1).flipX = true;
+      .setSize(50, 600) // temp for testing
+      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+    sakuraTree.flipX = true;
     this.add
-      .image(700, 266, 'sakura-tree')
+      .image(700 - 65, 266 + 55, 'sakura-tree') // modified platform position for testing
       .setOrigin(0, 0)
       .setScale(0.7)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
@@ -537,7 +567,7 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     this.add
-      .image(1075, 589, 'bench')
+      .image(1075 - 65, 589 + 55, 'bench') // modified platform position for testing
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
@@ -571,9 +601,16 @@ class Delivery extends Phaser.Scene {
   }
   //player and colider
   addPlayerAndColider(floorHeight) {
-    //player
+    // player
+    // player = this.physics.add
+    //   .sprite(100, floorHeight - 150, 'player')
+    //   .setCollideWorldBounds(true)
+    //   .setScale(3)
+    //   .setSize(30, 25)
+    //   .setDepth(PLAYER_DEPTH);
+
     player = this.physics.add
-      .sprite(100, floorHeight - 150, 'player')
+      .sprite(1102 - 65, 584 + 55, 'player')
       .setCollideWorldBounds(true)
       .setScale(3)
       .setSize(30, 25)
@@ -615,6 +652,16 @@ class Delivery extends Phaser.Scene {
     //   frameRate: 8,
     //   repeat: -1,
     // });
+  }
+  init() {
+    overlapMilk1 = true;
+    overlapMilk2 = true;
+    overlapMilk3 = true;
+    collectItemManager = manageCollectItem();
+    deliverToSign = true;
+    deliverToSakuraTree = true;
+    deliverToHouse = true;
+    this.playerMoveTemple = playerMoveTemple;
   }
   create() {
     //config
@@ -665,11 +712,55 @@ class Delivery extends Phaser.Scene {
     camera.startFollow(player);
     //player drown
     playerDrown(this, player, shallow_water);
+    //player collect milk
+    if (overlapMilk1) {
+      overlapMilk1 = !collectItemManager.collect(this, player, milk1);
+    }
+    if (overlapMilk2) {
+      overlapMilk2 = !collectItemManager.collect(this, player, milk2);
+    }
+    if (overlapMilk3) {
+      overlapMilk3 = !collectItemManager.collect(this, player, milk3);
+    }
+    //player deliver milk
+    if (deliverToSign) {
+      deliverToSign = !collectItemManager.deliver(this, player, sign);
+    }
+    if (deliverToSakuraTree) {
+      deliverToSakuraTree = !collectItemManager.deliver(
+        this,
+        player,
+        sakuraTree
+      );
+    }
+    if (deliverToHouse) {
+      deliverToHouse = !collectItemManager.deliver(this, player, house);
+    }
+    // checking for deliver success
+    if (
+      !overlapMilk1 &&
+      !overlapMilk2 &&
+      !overlapMilk3 &&
+      !deliverToSign &&
+      !deliverToSakuraTree &&
+      !deliverToHouse
+    ) {
+      const temp = gate;
+      gate = this.physics.add
+        .image(3650, 787, 'gate-active')
+        .setOrigin(0, 0)
+        .setScale(1)
+        .setDepth(MIDDLEGROUND_DEPTH);
+      gate.flipX = true;
 
-    //skip scene for using preload image from this scene
-    this.time.delayedCall(100, () => {
-      this.scene.start('Delivery2');
-    });
+      const overlapping = this.physics.overlap(player, gate);
+      if (overlapping) {
+        //skip scene for using preload image from this scene
+        this.time.delayedCall(100, () => {
+          this.scene.start('Delivery2');
+        });
+      }
+    }
   }
 }
 
