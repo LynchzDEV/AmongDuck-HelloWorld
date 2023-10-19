@@ -526,6 +526,10 @@ class Delivery2 extends Phaser.Scene {
 
     //player drown
     // playerDrown(this, player, shallow_water);
+
+    this.time.delayedCall(100, () => {
+      this.scene.start('Delivery3');
+    });
   }
 }
 

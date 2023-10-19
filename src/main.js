@@ -11,6 +11,7 @@ import CutScene2 from './scenes/CUTSCENE/CutScene2';
 import CutScene3 from './scenes/CUTSCENE/CutScene3';
 import Delivery from './scenes/Delivery';
 import Delivery2 from './scenes/Delivery2';
+import Delivery3 from './scenes/Delivery3';
 import Temple from './scenes/Temple';
 import PathSelection from './scenes/PathSelection';
 import CodingPath from './scenes/CodingPath';
@@ -44,6 +45,7 @@ const config = {
     // CutScene3, //* 3 cutscene 3 of the story mode
     Delivery, //* 4 delivery game
     Delivery2, //* 5 delivery game
+    Delivery3, //* 6 delivery game
     Temple, //* 3 temple map that lead to first decision
     PathSelection, //* 4 path selection scene
     CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
