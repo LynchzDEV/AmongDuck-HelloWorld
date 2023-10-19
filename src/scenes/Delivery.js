@@ -477,7 +477,6 @@ class Delivery extends Phaser.Scene {
       child.body.setSize(child.width, 20).setOffset(0, 0);
     });
   }
-
   //house, milk shop, milk, gate, sign
   addMainComponents() {
     components = this.add.group();
@@ -554,12 +553,12 @@ class Delivery extends Phaser.Scene {
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     //add vine on platformVine
     this.add
-      .image(1430, 865, 'vine')
+      .image(1432, 855, 'vine')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
     this.add
-      .image(2178, 940, 'grass')
+      .image(2210, 895, 'grass')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(PLAYER_DEPTH + 1);
