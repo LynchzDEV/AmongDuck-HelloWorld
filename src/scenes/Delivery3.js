@@ -224,7 +224,9 @@ class Delivery3 extends Phaser.Scene {
     this.addBackgroundElements(mapWidth, mapHeight);
   }
 
-  update(delta, time) {}
+  update(delta, time) {
+    this.scene.start('Delivery4');
+  }
 }
 
 export default Delivery3;

@@ -6,7 +6,7 @@ import {
   COMPONENT_GAME_PATH,
   PLATFORM_GAME_PATH,
   SPRITESHEET_GAME_PATH,
-  PLAYER_SPRITESHEET_PATH,
+  PLAYER_SPRITESHEET_PATH, 
   UI_PATH,
 } from '../utils/mapPath';
 import {
@@ -143,6 +143,9 @@ class Delivery extends Phaser.Scene {
         frameHeight: 147.5,
       }
     );
+
+    //delivery4
+    this.load.image('ladder', path.join(COMPONENT_GAME_PATH, 'ladder.png'));
   }
   loadComponents() {
     this.load.image(
@@ -706,6 +709,8 @@ class Delivery extends Phaser.Scene {
   }
 
   update(delta, time) {
+    this.scene.start('Delivery2');
+    
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
     //camera follow player

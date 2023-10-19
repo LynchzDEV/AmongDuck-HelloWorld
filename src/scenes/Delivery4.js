@@ -1,8 +1,9 @@
-import Phaser from 'phaser';
-import playerMoveTemple from '../utils/playerMoveTemple';
-import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
-import { SKY_DEPTH } from '../utils/mapDepth';
-import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
+import Phaser from "phaser";
+import playerMoveTemple from "../utils/playerMoveTemple";
+import { setWorldBoundsAndCamera } from "../utils/setWorldAndCameraBound";
+import { SKY_DEPTH } from "../utils/mapDepth";
+import { OBJECT_SCROLL } from "../utils/mapObjectScroll";
+import { MIDDLEGROUND_DEPTH,BACKGROUND_COMPONENT_DEPTH } from "../utils/mapDepth";
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -11,16 +12,17 @@ let camera;
 let backgrounds;
 let cloundLayer1;
 let cloundLayer2;
+let platforms;
 
 class Delivery4 extends Phaser.Scene {
   constructor() {
-    super('Delivery4');
+    super("Delivery4");
   }
 
   setDeviceSpecificControls(height, width, camera) {
     //camera and control for each device
     if (isMobile || tablet) {
-      this.input.on('gameobjectdown', (pointer, gameObject) => {
+      this.input.on("gameobjectdown", (pointer, gameObject) => {
         if (gameObject === left) {
           isLeftPressed = true;
         }
@@ -32,7 +34,7 @@ class Delivery4 extends Phaser.Scene {
         }
       });
 
-      this.input.on('gameobjectup', (pointer, gameObject) => {
+      this.input.on("gameobjectup", (pointer, gameObject) => {
         if (gameObject === left) {
           isLeftPressed = false;
         }
@@ -52,12 +54,12 @@ class Delivery4 extends Phaser.Scene {
       if (isMobile) {
         //mobile
         if (screenHeight > 720) screenHeight = 720;
-        console.log('Mobile view');
+        console.log("Mobile view");
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
 
         left = this.physics.add
-          .sprite(screenWidth / 2 - screenWidth / 3, screenHeight / 1.2, 'left')
+          .sprite(screenWidth / 2 - screenWidth / 3, screenHeight / 1.2, "left")
           .setScale(5)
           .setSize(15, 15)
           .setInteractive()
@@ -69,7 +71,7 @@ class Delivery4 extends Phaser.Scene {
           .sprite(
             screenWidth / 2 - screenWidth / 8,
             screenHeight / 1.2,
-            'right'
+            "right"
           )
           .setScale(5)
           .setSize(15, 15)
@@ -79,7 +81,7 @@ class Delivery4 extends Phaser.Scene {
           .setScrollFactor(0);
 
         up = this.physics.add
-          .sprite(screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2, 'up')
+          .sprite(screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2, "up")
           .setScale(5)
           .setSize(15, 15)
           .setInteractive()
@@ -98,7 +100,7 @@ class Delivery4 extends Phaser.Scene {
       } else if (tablet) {
         //tablet
         if (screenHeight > 720) screenHeight = 720;
-        console.log('Tablet view');
+        console.log("Tablet view");
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
 
@@ -106,7 +108,7 @@ class Delivery4 extends Phaser.Scene {
           .sprite(
             screenWidth / 2 - screenWidth / 2.5,
             screenHeight / 1.2,
-            'left'
+            "left"
           )
           .setScale(7)
           .setSize(15, 15)
@@ -119,7 +121,7 @@ class Delivery4 extends Phaser.Scene {
           .sprite(
             screenWidth / 2 - screenWidth / 3.5,
             screenHeight / 1.2,
-            'right'
+            "right"
           )
           .setScale(7)
           .setSize(15, 15)
@@ -129,7 +131,7 @@ class Delivery4 extends Phaser.Scene {
           .setScrollFactor(0);
 
         up = this.physics.add
-          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, 'up')
+          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, "up")
           .setScale(7)
           .setSize(15, 15)
           .setInteractive()
@@ -147,28 +149,28 @@ class Delivery4 extends Phaser.Scene {
       }
     } else {
       //default (desktop)
-      console.log('desktop');
+      console.log("desktop");
       camera.setViewport(0, 0, width, height);
     }
   }
   addBackgroundElements(mapWidth, mapHeight) {
     backgrounds = this.add.group();
     let bg = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, 'background')
+      .tileSprite(0, 0, mapWidth, mapHeight, "background")
       .setOrigin(0, 0)
       .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD - 0.1);
     //mid clound
     cloundLayer1 = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer2')
+      .tileSprite(0, 0, mapWidth, mapHeight, "clound-layer2")
       .setOrigin(0, 0)
       .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD);
     // front
     cloundLayer2 = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer1')
+      .tileSprite(0, 0, mapWidth, mapHeight, "clound-layer1")
       .setOrigin(0, 0)
       .setScale(1.4)
       .setDepth(SKY_DEPTH)
@@ -178,7 +180,71 @@ class Delivery4 extends Phaser.Scene {
     backgrounds.add(cloundLayer2);
     backgrounds.add(cloundLayer1);
   }
+  //add platforms
+  addPlatforms(floorHeight) {
+    platforms = this.physics.add.staticGroup();
 
+    let platfromladderup = this.add
+      .image(3264 , 1327, "platform-long1")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+      let platfrom1 = this.add
+      .image(3020 , 871, "platform")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+      let platfrom2 = this.add
+      .image(2196 , 509, "platform-long1")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+      let platfrom3 = this.add
+      .image(1956 , 509, "platform")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+      let platfrom4 = this.add
+      .image(1421 , 959, "platform-long1")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);      
+
+    let ladderup = this.add
+      .image(3622, 1319, "ladder")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    platforms.add(ladderup);
+    platforms.add(platfromladderup);
+  }
+
+  addComponents(){
+    //with platform2
+    this.add
+    .image(3020 -620, 48, 'sakura-tree')
+    .setScale(0.75)
+    .setOrigin(0, 0)
+    .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+    .image(2457, 405, 'stone-wall')
+    .setScale(1)
+    .setOrigin(0, 0)
+    .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    
+    //with platform1
+    this.add
+    .image(3020, 865, 'vine')
+    .setOrigin(0, 0)
+    .setScale(1)
+    .setDepth(MIDDLEGROUND_DEPTH + 1)
+    .flipX=true;
+  }
   create() {
     //config
     const { width, height } = this.scale;
@@ -204,8 +270,11 @@ class Delivery4 extends Phaser.Scene {
     );
     camera = returnCamera;
     this.setDeviceSpecificControls(height, width, camera);
-
+    //background
     this.addBackgroundElements(mapWidth, mapHeight);
+    // platforms
+    this.addPlatforms(floorHeight);
+    this.addComponents();
   }
 
   update(delta, time) {}
