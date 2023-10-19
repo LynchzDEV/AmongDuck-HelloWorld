@@ -43,7 +43,7 @@ const config = {
     // CutScene2, //* 2 cutscene 2 of the story mode
     // CutScene3, //* 3 cutscene 3 of the story mode
     Delivery, //* 4 delivery game
-    // Delivery2, //* 5 delivery game
+    Delivery2, //* 5 delivery game
     Temple, //* 3 temple map that lead to first decision
     PathSelection, //* 4 path selection scene
     CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
