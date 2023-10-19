@@ -88,6 +88,7 @@ class Delivery extends Phaser.Scene {
   }
   loadPlatforms() {
     this.load.image('platform', path.join(PLATFORM_GAME_PATH, 'platform.png'));
+    this.load.image('platform2', path.join(PLATFORM_GAME_PATH, 'platform2.png'));
     this.load.image(
       'tile-platfrom',
       path.join(PLATFORM_GAME_PATH, 'tile-platform.png')
@@ -104,6 +105,12 @@ class Delivery extends Phaser.Scene {
       'platform-long3',
       path.join(PLATFORM_GAME_PATH, 'platform-long3.png')
     );
+    this.load.image(
+      'platform-long4',
+      path.join(PLATFORM_GAME_PATH, 'platform-long4.png')
+    );
+
+    //ground
     this.load.image('ground', path.join(PLATFORM_GAME_PATH, 'ground.png'));
     this.load.image(
       'ground-edge',
@@ -112,6 +119,10 @@ class Delivery extends Phaser.Scene {
     this.load.image(
       'ground-main',
       path.join(PLATFORM_GAME_PATH, 'ground-main.png')
+    );
+    this.load.image(
+      'ground-main3',
+      path.join(PLATFORM_GAME_PATH, 'ground-main3.png')
     );
   }
   loadMainComponents() {
@@ -143,6 +154,10 @@ class Delivery extends Phaser.Scene {
         frameHeight: 147.5,
       }
     );
+
+    //delivery3
+    this.load.image('house3', path.join(COMPONENT_GAME_PATH, 'house3.png'));
+    this.load.image('house4', path.join(COMPONENT_GAME_PATH, 'house4.png'));
   }
   loadComponents() {
     this.load.image(
@@ -175,6 +190,11 @@ class Delivery extends Phaser.Scene {
     this.load.image('grass2', path.join(COMPONENT_GAME_PATH, 'grass2.png'));
     this.load.image('brush', path.join(COMPONENT_GAME_PATH, 'brush.png'));
     this.load.image('tou', path.join(COMPONENT_GAME_PATH, 'tou.png'));
+
+    //delivery3
+    this.load.image('ladder', path.join(COMPONENT_GAME_PATH, 'ladder.png'));
+    this.load.image('straw1', path.join(COMPONENT_GAME_PATH, 'straw1.png'));
+    this.load.image('straw2', path.join(COMPONENT_GAME_PATH, 'straw2.png'));
   }
   loadForeground() {
     this.load.image('water', path.join(FOREGROUND_TEMPLE_PATH, 'Water.png'));
@@ -706,6 +726,12 @@ class Delivery extends Phaser.Scene {
   }
 
   update(delta, time) {
+
+    //dev skip the scene
+    this.scene.start('Delivery2');
+
+
+    
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
     //camera follow player
@@ -756,9 +782,7 @@ class Delivery extends Phaser.Scene {
       const overlapping = this.physics.overlap(player, gate);
       if (overlapping) {
         //skip scene for using preload image from this scene
-        this.time.delayedCall(100, () => {
-          this.scene.start('Delivery2');
-        });
+        this.scene.start('Delivery2');
       }
     }
   }

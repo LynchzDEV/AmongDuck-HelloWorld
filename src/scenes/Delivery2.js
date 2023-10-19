@@ -520,6 +520,13 @@ class Delivery2 extends Phaser.Scene {
   }
 
   update(delta, time) {
+
+     //dev skip the scene
+     this.scene.start('Delivery3');
+
+
+
+
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
     //camera follow player
@@ -527,10 +534,6 @@ class Delivery2 extends Phaser.Scene {
 
     //player drown
     // playerDrown(this, player, shallow_water);
-
-    this.time.delayedCall(100, () => {
-      this.scene.start('Delivery3');
-    });
   }
 }
 

@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import playerMoveTemple from '../utils/playerMoveTemple';
 import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
-import { SKY_DEPTH } from '../utils/mapDepth';
+import { MIDDLEGROUND_DEPTH, SKY_DEPTH } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
@@ -22,6 +22,7 @@ let milk1;
 let milk2;
 let milk3;
 let house;
+let chest;
 //player
 let player;
 
@@ -193,6 +194,65 @@ class Delivery3 extends Phaser.Scene {
   }
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
+    let ground = this.add
+      .image(0, floorHeight, 'ground-main3')
+      .setOrigin(0, 0)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    let platformHouse = this.add
+      .image(647, 1230, 'platform-long4')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    //path to jump
+    let platformToJump1 = this.add
+      .image(2260, 1084, 'platform2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    let platformToJump2 = this.add
+      .image(2628, 986, 'platform')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    //this platform has jump boost
+    let platformToJump3 = this.add
+      .image(2890, 870, 'platform2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    //path to gateNext
+    let platformToGateNext1 = this.add
+      .image(3275, 944, 'platform')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    //this platform has gate.
+    let platformToGateNext2 = this.add
+      .image(3445, 1230, 'platform2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    
+    //path to chest
+    let platformToChest1 = this.add
+      .image(1982, 391, 'platform')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    //path to milk
+    let platformToMilk1 = this.add
+      .image(1053, 220, 'platform2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    
+    let laddlePlatform = this.add
+      .image(0, 0, 'platform')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
   }
 
   create() {
@@ -220,11 +280,16 @@ class Delivery3 extends Phaser.Scene {
     );
     camera = returnCamera;
     this.setDeviceSpecificControls(height, width, camera);
-
+    //add background
     this.addBackgroundElements(mapWidth, mapHeight);
+    //add platforms
+    this.addPlatforms(floorHeight);
   }
 
-  update(delta, time) {}
+  update(delta, time) {
+    //dev skip the scene
+    this.scene.start('Delivery4');
+  }
 }
 
 export default Delivery3;

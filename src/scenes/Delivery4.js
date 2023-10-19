@@ -208,6 +208,8 @@ class Delivery4 extends Phaser.Scene {
     this.addBackgroundElements(mapWidth, mapHeight);
   }
 
-  update(delta, time) {}
+  update(delta, time) {
+    
+  }
 }
 export default Delivery4;
