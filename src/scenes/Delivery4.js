@@ -12,9 +12,9 @@ let backgrounds;
 let cloundLayer1;
 let cloundLayer2;
 
-class Delivery3 extends Phaser.Scene {
+class Delivery4 extends Phaser.Scene {
   constructor() {
-    super('Delivery3');
+    super('Delivery4');
   }
 
   setDeviceSpecificControls(height, width, camera) {
@@ -210,5 +210,4 @@ class Delivery3 extends Phaser.Scene {
 
   update(delta, time) {}
 }
-
-export default Delivery3;
+export default Delivery4;

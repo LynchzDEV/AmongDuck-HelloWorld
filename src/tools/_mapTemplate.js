@@ -210,5 +210,3 @@ class Delivery3 extends Phaser.Scene {
 
   update(delta, time) {}
 }
-
-export default Delivery3;
