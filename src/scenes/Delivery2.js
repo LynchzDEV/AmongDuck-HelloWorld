@@ -221,7 +221,7 @@ class Delivery2 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     platformSlide1 = this.physics.add
-      .image(573, 1230, 'platform')
+      .image(573, 1235, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -305,11 +305,11 @@ class Delivery2 extends Phaser.Scene {
     });
 
     //set move platform
-    this.tweens.add({
+    this.slide = this.tweens.add({
       targets: platformSlide1,
       x: 1075,
       ease: 'Expo.easeInOut',
-      duration: 3500,
+      duration: 3000,
       repeat: -1,
       yoyo: true,
     });
@@ -456,10 +456,10 @@ class Delivery2 extends Phaser.Scene {
     player = this.physics.add
       .sprite(100, floorHeight - 150, 'player')
       .setCollideWorldBounds(true)
-      .setScale(3)
-      .setSize(30, 25)
+      .setScale(0.3)
+      .setSize(200, 200)
       .setDepth(PLAYER_DEPTH);
-
+    player.setFrame(5);
     this.physics.add.collider(player, platforms);
     this.physics.add.collider(player, platformSlide1);
     this.physics.add.collider(player, platformSlide2);
@@ -515,15 +515,11 @@ class Delivery2 extends Phaser.Scene {
     this.addComponents();
     // player
     this.addPlayerAndColider(floorHeight);
-
   }
 
   update(delta, time) {
-
-     //dev skip the scene
-     this.scene.start('Delivery3');
-
-
+    //dev skip the scene
+    //  this.scene.start('Delivery3');
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);

@@ -12,11 +12,11 @@ function setHorizontalMovement(player, isLeft, isRight, normalSpeed, flipLeft) {
   let velocityX = 0;
   if (isLeft) {
     velocityX = -normalSpeed;
-    player.setFlipX(flipLeft);
+    player.setFlipX(!flipLeft);
     logdebug('move left');
   } else if (isRight) {
     velocityX = normalSpeed;
-    player.setFlipX(!flipLeft);
+    player.setFlipX(flipLeft);
     logdebug('move right');
   }
   return velocityX;

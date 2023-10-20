@@ -6,7 +6,7 @@ import {
   COMPONENT_GAME_PATH,
   PLATFORM_GAME_PATH,
   SPRITESHEET_GAME_PATH,
-  PLAYER_SPRITESHEET_PATH, 
+  PLAYER_SPRITESHEET_PATH,
   UI_PATH,
 } from '../utils/mapPath';
 import {
@@ -88,7 +88,10 @@ class Delivery extends Phaser.Scene {
   }
   loadPlatforms() {
     this.load.image('platform', path.join(PLATFORM_GAME_PATH, 'platform.png'));
-    this.load.image('platform2', path.join(PLATFORM_GAME_PATH, 'platform2.png'));
+    this.load.image(
+      'platform2',
+      path.join(PLATFORM_GAME_PATH, 'platform2.png')
+    );
     this.load.image(
       'tile-platfrom',
       path.join(PLATFORM_GAME_PATH, 'tile-platform.png')
@@ -215,10 +218,10 @@ class Delivery extends Phaser.Scene {
   loadPlayer() {
     this.load.spritesheet(
       'player',
-      path.join(PLAYER_SPRITESHEET_PATH, 'oposum.png'),
+      path.join(PLAYER_SPRITESHEET_PATH, 'goose.png'),
       {
-        frameWidth: 36,
-        frameHeight: 28,
+        frameWidth: 292,
+        frameHeight: 292,
       }
     );
   }
@@ -636,7 +639,7 @@ class Delivery extends Phaser.Scene {
       .setScale(3)
       .setSize(30, 25)
       .setDepth(PLAYER_DEPTH);
-
+    player.setFrame(5);
     this.physics.add.collider(player, platforms);
   }
   //animations
@@ -646,7 +649,7 @@ class Delivery extends Phaser.Scene {
       key: 'walk',
       frames: this.anims.generateFrameNumbers('player', {
         start: 0,
-        end: 5,
+        end: 7,
       }),
       frameRate: 10,
       repeat: -1,

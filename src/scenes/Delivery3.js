@@ -437,7 +437,7 @@ class Delivery3 extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    // this.scene.start('Delivery4');
+    this.scene.start('Delivery4');
   }
 }
 
