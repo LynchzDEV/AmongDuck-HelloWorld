@@ -43,8 +43,10 @@ let up;
 let isLeftPressed = false;
 let isRightPressed = false;
 let isUpPressed = false;
-// manage collect item
-let collectItemManager = manageCollectItem();
+//manage collect item
+let collectItemManager;
+const milkTargetSize = 150,
+  gateTargetSize = 90;
 let overlapMilk1 = true;
 let overlapMilk2 = true;
 let overlapMilk3 = true;
@@ -57,6 +59,152 @@ class Delivery extends Phaser.Scene {
     super({
       key: 'Delivery',
     });
+  }
+
+  loadBackground() {
+    this.load.image(
+      'background',
+      path.join(BACKGROUND_GAME_PATH, 'background-pink.png')
+    );
+    this.load.image(
+      'clound-layer1',
+      path.join(BACKGROUND_GAME_PATH, 'bg-pink-layer1.png')
+    );
+    this.load.image(
+      'clound-layer2',
+      path.join(BACKGROUND_GAME_PATH, 'bg-pink-layer2.png')
+    );
+  }
+  loadPlatforms() {
+    this.load.image('platform', path.join(PLATFORM_GAME_PATH, 'platform.png'));
+    this.load.image(
+      'tile-platfrom',
+      path.join(PLATFORM_GAME_PATH, 'tile-platform.png')
+    );
+    this.load.image(
+      'platform-long1',
+      path.join(PLATFORM_GAME_PATH, 'platform-long1.png')
+    );
+    this.load.image(
+      'platform-long2',
+      path.join(PLATFORM_GAME_PATH, 'platform-long2.png')
+    );
+    this.load.image(
+      'platform-long3',
+      path.join(PLATFORM_GAME_PATH, 'platform-long3.png')
+    );
+    this.load.image('ground', path.join(PLATFORM_GAME_PATH, 'ground.png'));
+    this.load.image(
+      'ground-edge',
+      path.join(PLATFORM_GAME_PATH, 'ground-edge.png')
+    );
+    this.load.image(
+      'ground-main',
+      path.join(PLATFORM_GAME_PATH, 'ground-main.png')
+    );
+  }
+  loadMainComponents() {
+    //delivery1
+    this.load.image(
+      'milk-shop',
+      path.join(COMPONENT_GAME_PATH, 'milk-shop.png')
+    );
+    this.load.image('house', path.join(COMPONENT_GAME_PATH, 'house.png'));
+    this.load.image('milk', path.join(COMPONENT_GAME_PATH, 'milk.png'));
+    this.load.image('gate', path.join(COMPONENT_GAME_PATH, 'gate.png'));
+    this.load.image(
+      'gate-active',
+      path.join(COMPONENT_GAME_PATH, 'gate-active.png')
+    );
+    this.load.sign = this.load.image(
+      'sign',
+      path.join(COMPONENT_GAME_PATH, 'sign.png')
+    );
+
+    //delivery2
+    this.load.image('house2', path.join(COMPONENT_GAME_PATH, 'house2.png'));
+    this.load.image('key', path.join(COMPONENT_GAME_PATH, 'key.png'));
+    this.load.spritesheet(
+      'chest',
+      path.join(SPRITESHEET_GAME_PATH, 'chest.png'),
+      {
+        frameWidth: 143.5,
+        frameHeight: 147.5,
+      }
+    );
+  }
+  loadComponents() {
+    this.load.image(
+      'sakura-tree',
+      path.join(COMPONENT_GAME_PATH, 'Sakura tree.png')
+    );
+    this.load.image(
+      'small-sign',
+      path.join(COMPONENT_GAME_PATH, 'small-sign.png')
+    );
+    this.load.image(
+      'statue-stone',
+      path.join(COMPONENT_GAME_PATH, 'statue-stone.png')
+    );
+    this.load.image(
+      'stone-wall',
+      path.join(COMPONENT_GAME_PATH, 'stone-wall.png')
+    );
+    this.load.image('stone', path.join(COMPONENT_GAME_PATH, 'stone.png'));
+    this.load.image('bench', path.join(COMPONENT_GAME_PATH, 'bench.png'));
+    this.load.image('lantern', path.join(COMPONENT_GAME_PATH, 'lantern.png'));
+    this.load.image('grass', path.join(COMPONENT_GAME_PATH, 'grass.png'));
+    this.load.image('vine', path.join(COMPONENT_GAME_PATH, 'vine.png'));
+
+    //delivery2
+    this.load.image('logs', path.join(COMPONENT_GAME_PATH, 'logs.png'));
+    this.load.image('log', path.join(COMPONENT_GAME_PATH, 'log.png'));
+    this.load.image('tree', path.join(COMPONENT_GAME_PATH, 'tree.png'));
+    this.load.image('box', path.join(COMPONENT_GAME_PATH, 'box.png'));
+    this.load.image('grass2', path.join(COMPONENT_GAME_PATH, 'grass2.png'));
+    this.load.image('brush', path.join(COMPONENT_GAME_PATH, 'brush.png'));
+    this.load.image('tou', path.join(COMPONENT_GAME_PATH, 'tou.png'));
+  }
+  loadForeground() {
+    this.load.image('water', path.join(FOREGROUND_TEMPLE_PATH, 'Water.png'));
+    this.load.image(
+      'shadow-platform',
+      path.join(COMPONENT_GAME_PATH, 'shadow-short.png')
+    );
+    this.load.image(
+      'shadow-platform-long2',
+      path.join(COMPONENT_GAME_PATH, 'shadow-long2.png')
+    );
+    this.load.image(
+      'shadow-platform-long1',
+      path.join(COMPONENT_GAME_PATH, 'shadows.png')
+    );
+  }
+  loadPlayer() {
+    this.load.spritesheet(
+      'player',
+      path.join(PLAYER_SPRITESHEET_PATH, 'oposum.png'),
+      {
+        frameWidth: 36,
+        frameHeight: 28,
+      }
+    );
+  }
+  loadUI() {
+    //load button
+    this.load.image('left', path.join(UI_PATH, 'left.png'));
+    this.load.image('right', path.join(UI_PATH, 'right.png'));
+    this.load.image('up', path.join(UI_PATH, 'up.png'));
+  }
+
+  preload() {
+    this.loadBackground();
+    this.loadForeground();
+    this.loadPlatforms();
+    this.loadMainComponents();
+    this.loadComponents();
+    this.loadPlayer();
+    this.loadUI();
   }
 
   setDeviceSpecificControls(height, width, camera) {
@@ -379,7 +527,35 @@ class Delivery extends Phaser.Scene {
     components.add(sign);
 
     // init inventory
-    manageCollectItem().initInventory(this, milk1, 3);
+    collectItemManager = manageCollectItem(this, [
+      {
+        success: false,
+        item: [milk1, milk2, milk3],
+        sizeOfInventory: 3,
+        targetSize: milkTargetSize,
+        alpha: 0.5,
+      },
+      {
+        success: false,
+        item: [gate],
+        sizeOfInventory: 1,
+        targetSize: gateTargetSize,
+        initStartPosX: 50,
+        initStartPosY: 30,
+        alpha: 0,
+        callBack: (item) => {
+          item.setTexture('gate-active');
+          item.flipX = true;
+        },
+      },
+    ]);
+    milk1.collected = false;
+    milk1.delivered = false;
+    milk2.collected = false;
+    milk2.delivered = false;
+    milk3.collected = false;
+    milk3.delivered = false;
+    collectItemManager.initInventory();
   }
   //prop
   addComponents() {
@@ -449,8 +625,8 @@ class Delivery extends Phaser.Scene {
       .setScale(0.3)
       .setSize(180, 200)
       .setDepth(PLAYER_DEPTH);
-
     player.setFrame(5);
+    
     this.physics.add.collider(player, platforms);
   }
   //animations
@@ -488,16 +664,45 @@ class Delivery extends Phaser.Scene {
     //   repeat: -1,
     // });
   }
+  // update item opacity
+  updateItemOpacity(destination) {
+    const playerX = player.x;
+    const playerY = player.y;
+    const destinationX = destination.x;
+    const destinationY = destination.y;
+
+    const distance = Phaser.Math.Distance.Between(
+      playerX,
+      playerY,
+      destinationX,
+      destinationY
+    );
+
+    const minOpacity = collectItemManager.state[0].alpha;
+    const maxOpacity = 1;
+
+    const maxDistance = 2000;
+
+    const opacity = Phaser.Math.Linear(
+      minOpacity,
+      maxOpacity,
+      Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
+    );
+
+    collectItemManager.state[0].item[0].setAlpha(opacity);
+  }
+
   init() {
     overlapMilk1 = true;
     overlapMilk2 = true;
     overlapMilk3 = true;
-    collectItemManager = manageCollectItem();
-    deliverToSign = true;
-    deliverToSakuraTree = true;
-    deliverToHouse = true;
+    collectItemManager = manageCollectItem(this);
+    deliverToSign = true; // temp for testing
+    deliverToSakuraTree = true; // temp for testing
+    deliverToHouse = true; // temp for testing
     this.playerMoveTemple = playerMoveTemple;
   }
+
   create() {
     //config
     const { width, height } = this.scale;
@@ -552,49 +757,55 @@ class Delivery extends Phaser.Scene {
     playerDrown(this, player, shallow_water);
     //player collect milk
     if (overlapMilk1) {
-      overlapMilk1 = !collectItemManager.collect(this, player, milk1);
+      overlapMilk1 = !collectItemManager.collect(
+        player,
+        0,
+        milkTargetSize,
+        milk1
+      );
     }
     if (overlapMilk2) {
-      overlapMilk2 = !collectItemManager.collect(this, player, milk2);
+      overlapMilk2 = !collectItemManager.collect(
+        player,
+        1,
+        milkTargetSize,
+        milk2
+      );
     }
     if (overlapMilk3) {
-      overlapMilk3 = !collectItemManager.collect(this, player, milk3);
+      overlapMilk3 = !collectItemManager.collect(
+        player,
+        2,
+        milkTargetSize,
+        milk3
+      );
     }
-    //player deliver milk
+    // //player deliver milk
     if (deliverToSign) {
-      deliverToSign = !collectItemManager.deliver(this, player, sign);
+      deliverToSign = !collectItemManager.deliver(player, 'milk', sign);
     }
     if (deliverToSakuraTree) {
       deliverToSakuraTree = !collectItemManager.deliver(
-        this,
         player,
+        'milk',
         sakuraTree
       );
     }
     if (deliverToHouse) {
-      deliverToHouse = !collectItemManager.deliver(this, player, house);
+      deliverToHouse = !collectItemManager.deliver(player, 'milk', house);
     }
     // checking for deliver success
     if (
-      !overlapMilk1 &&
-      !overlapMilk2 &&
-      !overlapMilk3 &&
       !deliverToSign &&
       !deliverToSakuraTree &&
       !deliverToHouse
     ) {
-      const temp = gate;
-      gate = this.physics.add
-        .image(3650, 787, 'gate-active')
-        .setOrigin(0, 0)
-        .setScale(1)
-        .setDepth(MIDDLEGROUND_DEPTH);
-      gate.flipX = true;
-
+      gate.setTexture('gate-active');
       const overlapping = this.physics.overlap(player, gate);
       if (overlapping) {
-        //skip scene for using preload image from this scene
         this.scene.start('Delivery2');
+      } else {
+        this.updateItemOpacity(gate);
       }
     }
   }

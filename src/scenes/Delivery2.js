@@ -11,6 +11,7 @@ import {
 } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import { shallowWater, playerDrown } from '../utils/event/drown';
+import { manageCollectItem } from '../utils/event/collectItem';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -31,10 +32,28 @@ let gateNext;
 //interaction
 let key;
 let chest;
+let milk;
 let house;
 let shallow_water;
 //player
 let player;
+//control flow
+let left;
+let right;
+let up;
+let isLeftPressed = false;
+let isRightPressed = false;
+let isUpPressed = false;
+//manage collect item
+let collectItemManager;
+const milkTargetSize = 150,
+  keyTargetSize = 100,
+  gateTargetSize = 90;
+let overlapKey = true;
+let overlapChest = true;
+let overlapMilk = false;
+let deliverToChest = true;
+let deliverToHouse = true; // temp for testing
 
 //control flow
 let left;
@@ -219,6 +238,17 @@ class Delivery2 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
+
+    shallow_water = shallowWater(
+      this,
+      0,
+      mapHeight + 30,
+      mapWidth * 2,
+      200,
+      BACKGROUND_COMPONENT_DEPTH
+    );
+
+    this.physics.add.existing(shallow_water);
   }
   //add platforms
   addPlatforms(floorHeight) {
@@ -268,22 +298,22 @@ class Delivery2 extends Phaser.Scene {
       .setDepth(MIDDLEGROUND_DEPTH);
 
     //path to chest
-    let platformTochest1 = this.add
+    let platformToChest1 = this.add
       .image(1069, 1068, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    let platformTochest2 = this.add
+    let platformToChest2 = this.add
       .image(625, 940, 'platform-long1')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    let platformTochest3 = this.add
+    let platformToChest3 = this.add
       .image(353, 810, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    let platformTochest4 = this.add
+    let platformToChest4 = this.add
       .image(84, 717, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
@@ -302,10 +332,10 @@ class Delivery2 extends Phaser.Scene {
     platforms.add(platformToKey2);
     platforms.add(platformToKey3);
     platforms.add(platformToKey4);
-    platforms.add(platformTochest1);
-    platforms.add(platformTochest2);
-    platforms.add(platformTochest3);
-    platforms.add(platformTochest4);
+    platforms.add(platformToChest1);
+    platforms.add(platformToChest2);
+    platforms.add(platformToChest3);
+    platforms.add(platformToChest4);
     platforms.add(platformGate);
     // Set collision boxes for each platform
     platforms.children.iterate((child) => {
@@ -335,10 +365,11 @@ class Delivery2 extends Phaser.Scene {
     platformSlide2.body.setAllowGravity(false);
     platformSlide2.body.setImmovable(true);
   }
-  //house gate chest key
+
+  //house gate chest key milk
   addMainComponents() {
     components = this.add.group();
-    house = this.add
+    house = this.physics.add // house is not physics object by default, this is for testing
       .image(1439, 834, 'house2')
       .setOrigin(0, 0)
       .setScale(1)
@@ -348,7 +379,7 @@ class Delivery2 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    gateNext = this.add
+    gateNext = this.physics.add
       .image(3600, 274, 'gate')
       .setOrigin(0, 0)
       .setScale(1)
@@ -361,17 +392,60 @@ class Delivery2 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     chest.setFrame(21);
-    key = this.add
+    key = this.physics.add
       .image(2400, 370, 'key')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
+    milk = this.physics.add
+      .image(150 + 40, 615 + 50, 'milk')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    milk.setVisible(false);
 
     components.add(house);
     components.add(gatePrevious);
     components.add(gateNext);
     components.add(chest);
     components.add(key);
+    components.add(milk);
+
+    // init inventory
+    collectItemManager = manageCollectItem(this, [
+      {
+        success: false,
+        item: [key],
+        sizeOfInventory: 1,
+        targetSize: keyTargetSize,
+        initStartPosX: 30,
+        initStartPosY: 30,
+        alpha: 0.5,
+      },
+      {
+        success: false,
+        item: [milk],
+        sizeOfInventory: 1,
+        targetSize: milkTargetSize,
+        alpha: 0.5,
+      },
+      {
+        success: false,
+        item: [gatePrevious],
+        sizeOfInventory: 1,
+        targetSize: gateTargetSize,
+        initStartPosX: 50,
+        initStartPosY: 30,
+        alpha: 0,
+        callBack: (item) => {
+          item.setTexture('gate-active');
+          item.flipX = true;
+        },
+      },
+    ]);
+    key.collected = false;
+    key.delivered = false;
+    collectItemManager.initInventory();
   }
   //add props stone sakura tree logs
   addComponents() {
@@ -484,6 +558,44 @@ class Delivery2 extends Phaser.Scene {
       repeat: 0,
     });
   }
+  //update item opacity
+  updateItemOpacity(destination) {
+    const playerX = player.x;
+    const playerY = player.y;
+    const destinationX = destination.x;
+    const destinationY = destination.y;
+
+    const distance = Phaser.Math.Distance.Between(
+      playerX,
+      playerY,
+      destinationX,
+      destinationY
+    );
+
+    const minOpacity = collectItemManager.state[0].alpha;
+    const maxOpacity = 1;
+
+    const maxDistance = 2000;
+
+    const opacity = Phaser.Math.Linear(
+      minOpacity,
+      maxOpacity,
+      Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
+    );
+
+    collectItemManager.state[0].item[0].setAlpha(opacity);
+  }
+
+  init() {
+    overlapKey = true;
+    overlapChest = true;
+    overlapMilk = false;
+    collectItemManager = manageCollectItem(this);
+    deliverToChest = true; // temp for testing
+    deliverToHouse = true; // temp for testing
+    this.playerMoveTemple = playerMoveTemple;
+  }
+
   create() {
     //config
     const { width, height } = this.scale;
@@ -535,7 +647,53 @@ class Delivery2 extends Phaser.Scene {
     camera.startFollow(player);
 
     //player drown
-    // playerDrown(this, player, shallow_water);
+    playerDrown(this, player, shallow_water);
+
+    //player collect key
+    if (overlapKey) {
+      overlapKey = !collectItemManager.collect(player, 0, keyTargetSize, key);
+    }
+    //player unlock chest
+    if (deliverToChest) {
+      deliverToChest = !collectItemManager.deliver(player, 'key', chest);
+      if (!deliverToChest) {
+        this.anims.play('chest-rotate', chest);
+        this.time.delayedCall(2300, () => {
+          milk.setVisible(true);
+          milk.setVelocityY(-100);
+          this.time.delayedCall(450, () => {
+            milk.setVelocityY(0);
+            // player can collect milk
+            this.time.delayedCall(300, () => {
+              overlapMilk = true;
+            });
+          });
+        });
+      }
+    }
+    //player collect milk
+    if (overlapMilk) {
+      overlapMilk = !collectItemManager.collect(
+        player,
+        0,
+        milkTargetSize,
+        milk
+      );
+    }
+    //player deliver milk
+    if (deliverToHouse) {
+      deliverToHouse = !collectItemManager.deliver(player, 'milk', house);
+    }
+    // checking for deliver success
+    if (!deliverToChest && !deliverToHouse) {
+      gateNext.setTexture('gate-active');
+      const overlapping = this.physics.overlap(player, gateNext);
+      if (overlapping) {
+        this.scene.start('Delivery3');
+      } else {
+        this.updateItemOpacity(gateNext);
+      }
+    }
   }
 }
 
