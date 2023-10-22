@@ -36,6 +36,14 @@ let ladder;
 //player
 let player;
 
+//control flow
+let left;
+let right;
+let up;
+let isLeftPressed = false;
+let isRightPressed = false;
+let isUpPressed = false;
+
 class Delivery3 extends Phaser.Scene {
   constructor() {
     super('Delivery3');

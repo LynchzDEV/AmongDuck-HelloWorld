@@ -36,6 +36,14 @@ let shallow_water;
 //player
 let player;
 
+//control flow
+let left;
+let right;
+let up;
+let isLeftPressed = false;
+let isRightPressed = false;
+let isUpPressed = false;
+
 class Delivery2 extends Phaser.Scene {
   constructor() {
     super({
