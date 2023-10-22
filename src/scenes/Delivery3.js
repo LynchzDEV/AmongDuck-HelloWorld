@@ -2,58 +2,39 @@ import Phaser from 'phaser';
 import playerMoveTemple from '../utils/playerMoveTemple';
 import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
 import {
-  SKY_DEPTH,
-  BACKGROUND_DEPTH,
   BACKGROUND_COMPONENT_DEPTH,
-  MIDDLEGROUND_DEPTH,
-  PLAYER_DEPTH,
   FOREGROUND_DEPTH,
+  MIDDLEGROUND_DEPTH,
+  SKY_DEPTH,
+  PLAYER_DEPTH,
 } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
-import { shallowWater, playerDrown } from '../utils/event/drown';
-import { manageCollectItem } from '../utils/event/collectItem';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
 
-let backgrounds;
+let camera;
 let water;
+let backgrounds;
 let cloundLayer1;
 let cloundLayer2;
 let platforms;
 let components;
-let camera;
-//slide platform
-let platformSlide1;
-let platformSlide2;
+let jumppad1;
+let noGravityPad;
 //gate
 let gatePrevious;
 let gateNext;
 //interaction
-let key;
-let chest;
-let milk;
+let milk1;
 let house;
-let shallow_water;
+let house2;
+let chest;
+let key;
+let sign;
+let ladder;
 //player
 let player;
-//control flow
-let left;
-let right;
-let up;
-let isLeftPressed = false;
-let isRightPressed = false;
-let isUpPressed = false;
-//manage collect item
-let collectItemManager;
-const milkTargetSize = 150,
-  keyTargetSize = 100,
-  gateTargetSize = 90;
-let overlapKey = true;
-let overlapChest = true;
-let overlapMilk = false;
-let deliverToChest = true;
-let deliverToHouse = true; // temp for testing
 
 //control flow
 let left;
@@ -63,11 +44,9 @@ let isLeftPressed = false;
 let isRightPressed = false;
 let isUpPressed = false;
 
-class Delivery2 extends Phaser.Scene {
+class Delivery3 extends Phaser.Scene {
   constructor() {
-    super({
-      key: 'Delivery2',
-    });
+    super('Delivery3');
   }
 
   setDeviceSpecificControls(height, width, camera) {
@@ -238,364 +217,233 @@ class Delivery2 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-
-    shallow_water = shallowWater(
-      this,
-      0,
-      mapHeight + 30,
-      mapWidth * 2,
-      200,
-      BACKGROUND_COMPONENT_DEPTH
-    );
-
-    this.physics.add.existing(shallow_water);
   }
-  //add platforms
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(-810, floorHeight, 1383, 218, 'ground-main')
+      .image(0, floorHeight, 'ground-main3')
       .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    platformSlide1 = this.physics.add
-      .image(573, 1235, 'platform')
-      .setOrigin(0, 0)
-      .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     let platformHouse = this.add
-      .image(1294, 1236, 'platform-long3')
+      .image(647, 1230, 'platform-long4')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    //path to jump
+    let platformToJump1 = this.add
+      .image(2260, 1084, 'platform2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    let platformToJump2 = this.add
+      .image(2628, 986, 'platform')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    //this platform has jump boost
+    let platformToJump3 = this.add
+      .image(2890, 870, 'platform2')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
-    //path to key
-    let platformToKey1 = this.add
-      .image(2268, 1142, 'platform')
+    //path to gateNext
+    let platformToGateNext1 = this.add
+      .image(3275, 944, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    let platformToKey2 = this.add
-      .image(2600, 1032, 'platform-long1')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    platformSlide2 = this.physics.add
-      .image(3066, 893, 'platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    let platformToKey3 = this.add
-      .image(2804, 582, 'platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    //key on this platform
-    let platformToKey4 = this.add
-      .image(2270, 458, 'platform-long1')
+    //this platform has gate.
+    let platformToGateNext2 = this.add
+      .image(3445, 1230, 'platform2')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
     //path to chest
     let platformToChest1 = this.add
-      .image(1069, 1068, 'platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    let platformToChest2 = this.add
-      .image(625, 940, 'platform-long1')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    let platformToChest3 = this.add
-      .image(353, 810, 'platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    let platformToChest4 = this.add
-      .image(84, 717, 'platform')
+      .image(1982, 391, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
-    //gate on this platform
-    let platformGate = this.add
-      .image(3418, 360, 'platform-long1')
+    //path to milk
+    let platformToMilk1 = this.add
+      .image(477, 218, 'platform2')
       .setOrigin(0, 0)
-      .setScale(0.8, 1)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    let ladderPlatform = this.add
+      .image(3435, 231, 'platform2')
+      .setOrigin(0, 0)
+      .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
     platforms.add(ground);
     platforms.add(platformHouse);
-    platforms.add(platformToKey1);
-    platforms.add(platformToKey2);
-    platforms.add(platformToKey3);
-    platforms.add(platformToKey4);
+    platforms.add(platformToJump1);
+    platforms.add(platformToJump2);
+    platforms.add(platformToJump3);
+    platforms.add(platformToGateNext1);
+    platforms.add(platformToGateNext2);
     platforms.add(platformToChest1);
-    platforms.add(platformToChest2);
-    platforms.add(platformToChest3);
-    platforms.add(platformToChest4);
-    platforms.add(platformGate);
+    platforms.add(platformToMilk1);
+    platforms.add(ladderPlatform);
+
     // Set collision boxes for each platform
     platforms.children.iterate((child) => {
       child.body.setSize(child.width, 20).setOffset(0, 0);
     });
-
-    //set move platform
-    this.slide = this.tweens.add({
-      targets: platformSlide1,
-      x: 1075,
-      ease: 'Expo.easeInOut',
-      duration: 3000,
-      repeat: -1,
-      yoyo: true,
-    });
-    this.tweens.add({
-      targets: platformSlide2,
-      y: 443,
-      ease: 'LINEAR',
-      duration: 4000,
-      repeat: -1,
-      yoyo: true,
-    });
-
-    platformSlide1.body.setAllowGravity(false);
-    platformSlide1.body.setImmovable(true);
-    platformSlide2.body.setAllowGravity(false);
-    platformSlide2.body.setImmovable(true);
   }
-
-  //house gate chest key milk
   addMainComponents() {
-    components = this.add.group();
-    house = this.physics.add // house is not physics object by default, this is for testing
-      .image(1439, 834, 'house2')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    gatePrevious = this.add
+    //add gate
+    gatePrevious = this.physics.add
       .image(52, 1140, 'gate-active')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     gateNext = this.physics.add
-      .image(3600, 274, 'gate')
+      .image(3640, 1145, 'gate')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     gateNext.flipX = true;
-    chest = this.physics.add
-      .sprite(150, 615, 'chest')
+    house = this.add
+      .image(1311, 720, 'house4')
       .setOrigin(0, 0)
-      .setSize(100, 100)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    house2 = this.add
+      .image(845, 939, 'house3')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    chest = this.add
+      .sprite(2010, 285, 'chest')
+      .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
+    //default chest frame
     chest.setFrame(21);
-    key = this.physics.add
-      .image(2400, 370, 'key')
+
+    key = this.add
+      .image(2400, 1023, 'key')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    milk = this.physics.add
-      .image(150 + 40, 615 + 50, 'milk')
+    sign = this.add
+      .image(3456, 1088, 'sign')
       .setOrigin(0, 0)
-      .setScale(0.8)
+      .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    milk.setVisible(false);
-
-    components.add(house);
-    components.add(gatePrevious);
-    components.add(gateNext);
-    components.add(chest);
-    components.add(key);
-    components.add(milk);
-
-    // init inventory
-    collectItemManager = manageCollectItem(this, [
-      {
-        success: false,
-        item: [key],
-        sizeOfInventory: 1,
-        targetSize: keyTargetSize,
-        initStartPosX: 30,
-        initStartPosY: 30,
-        alpha: 0.5,
-      },
-      {
-        success: false,
-        item: [milk],
-        sizeOfInventory: 1,
-        targetSize: milkTargetSize,
-        alpha: 0.5,
-      },
-      {
-        success: false,
-        item: [gatePrevious],
-        sizeOfInventory: 1,
-        targetSize: gateTargetSize,
-        initStartPosX: 50,
-        initStartPosY: 30,
-        alpha: 0,
-        callBack: (item) => {
-          item.setTexture('gate-active');
-          item.flipX = true;
-        },
-      },
-    ]);
-    key.collected = false;
-    key.delivered = false;
-    collectItemManager.initInventory();
+    milk1 = this.add
+      .image(555, 107, 'milk')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    ladder = this.add
+      .image(3609, 0, 'ladder')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
   }
-  //add props stone sakura tree logs
+  //props
   addComponents() {
+    //straw
     this.add
-      .image(280, 1120, 'logs')
-      .setScale(1)
+      .image(676, 1148, 'straw1')
       .setOrigin(0, 0)
+      .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(310, 880, 'tree')
-      .setScale(1)
+      .image(751, 1169, 'straw2')
       .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(800, 1050, 'lantern')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+
+    //sakura
+    this.add
+      .image(800, 612, 'sakura-tree')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(FOREGROUND_DEPTH);
+
+    //key brush
+    this.add
+      .image(2350, 1003, 'brush')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1).flipX = true;
+
+    //chest prop
+    this.add
+      .image(1996, 319, 'box')
+      .setOrigin(0, 0)
+      .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     this.add
-      .image(1179, 990, 'log')
-      .setScale(1)
+      .image(2020, 200, 'lantern')
       .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-
-    // chest platform
-    this.add
-      .image(93, 644, 'brush')
       .setScale(1)
-      .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(130, 712, 'vine')
-      .setScale(1)
+      .image(2000, 386, 'vine')
       .setOrigin(0, 0)
+      .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1).flipX = true;
 
+    //milk props
     this.add
-      .image(504, 774, 'grass2')
-      .setScale(1)
+      .image(493, 112, 'bench')
       .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(676, 834, 'stone-wall')
       .setScale(1)
-      .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(662, 870, 'box')
-      .setScale(1)
-      .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(680, 750, 'lantern')
-      .setScale(1)
-      .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
 
-    //house platforms
     this.add
-      .image(1420, 621, 'sakura-tree')
-      .setScale(1)
+      .image(570, 137, 'brush')
       .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1).flipX = true;
 
-    //path to key
+    //ladder props
     this.add
-      .image(2372, 1090, 'stone')
-      .setScale(1)
+      .image(3609, 225, 'vine')
       .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(2637, 930, 'tou')
       .setScale(1)
-      .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(2872, 576, 'vine')
-      .setScale(1)
-      .setOrigin(0, 0)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
-    this.add
-      .image(2804, 558, 'grass')
-      .setScale(1)
-      .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(2322, 352, 'bench')
-      .setScale(1)
-      .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
   }
-  //player and colider
-  addPlayerAndColider(floorHeight) {
+  //adding jumppad
+  addJumppad() {
+    jumppad1 = this.add
+      .image(2914, 861, 'jumppad2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(FOREGROUND_DEPTH);
+
+    //no gravity pad
+    noGravityPad = this.add
+      .image(3445, 1225, 'jumppad2')
+      .setOrigin(0, 0)
+      .setScale(1)  
+      .setDepth(FOREGROUND_DEPTH);
+  }
+  addPlayerAndCollider(floorHeight) {
     //player
     player = this.physics.add
-      .sprite(100, floorHeight - 150, 'player')
+      .sprite(100, floorHeight - 40, 'player')
       .setCollideWorldBounds(true)
       .setScale(0.3)
       .setSize(180, 200)
       .setDepth(PLAYER_DEPTH);
     player.setFrame(5);
     this.physics.add.collider(player, platforms);
-    this.physics.add.collider(player, platformSlide1);
-    this.physics.add.collider(player, platformSlide2);
   }
-  //animation chest
-  addAnimations() {
-    this.anims.create({
-      key: 'chest-rotate',
-      frames: this.anims.generateFrameNumbers('chest', {
-        start: 21,
-        end: 27,
-      }),
-      frameRate: 3,
-      repeat: 0,
-    });
-  }
-  //update item opacity
-  updateItemOpacity(destination) {
-    const playerX = player.x;
-    const playerY = player.y;
-    const destinationX = destination.x;
-    const destinationY = destination.y;
-
-    const distance = Phaser.Math.Distance.Between(
-      playerX,
-      playerY,
-      destinationX,
-      destinationY
-    );
-
-    const minOpacity = collectItemManager.state[0].alpha;
-    const maxOpacity = 1;
-
-    const maxDistance = 2000;
-
-    const opacity = Phaser.Math.Linear(
-      minOpacity,
-      maxOpacity,
-      Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
-    );
-
-    collectItemManager.state[0].item[0].setAlpha(opacity);
-  }
-
-  init() {
-    overlapKey = true;
-    overlapChest = true;
-    overlapMilk = false;
-    collectItemManager = manageCollectItem(this);
-    deliverToChest = true; // temp for testing
-    deliverToHouse = true; // temp for testing
-    this.playerMoveTemple = playerMoveTemple;
-  }
-
   create() {
     //config
     const { width, height } = this.scale;
@@ -621,80 +469,32 @@ class Delivery2 extends Phaser.Scene {
     );
     camera = returnCamera;
     this.setDeviceSpecificControls(height, width, camera);
-
-    this.addAnimations();
-    // background
+    //add background
     this.addBackgroundElements(mapWidth, mapHeight);
-    // foreground
+    //add foreground
     this.addForegroundElements(mapWidth, mapHeight);
-    // platforms
+    //add platforms
     this.addPlatforms(floorHeight);
-    // main components
+    //add main components
     this.addMainComponents();
-    // props
+    //add props
     this.addComponents();
-    // player
-    this.addPlayerAndColider(floorHeight);
+    //add player
+    this.addPlayerAndCollider(floorHeight);
+    //add jumppad
+    this.addJumppad();
   }
 
   update(delta, time) {
     //dev skip the scene
-     this.scene.start('Delivery3');
+    this.scene.start('Delivery4');
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
+
     //camera follow player
     camera.startFollow(player);
-
-    //player drown
-    playerDrown(this, player, shallow_water);
-
-    //player collect key
-    if (overlapKey) {
-      overlapKey = !collectItemManager.collect(player, 0, keyTargetSize, key);
-    }
-    //player unlock chest
-    if (deliverToChest) {
-      deliverToChest = !collectItemManager.deliver(player, 'key', chest);
-      if (!deliverToChest) {
-        this.anims.play('chest-rotate', chest);
-        this.time.delayedCall(2300, () => {
-          milk.setVisible(true);
-          milk.setVelocityY(-100);
-          this.time.delayedCall(450, () => {
-            milk.setVelocityY(0);
-            // player can collect milk
-            this.time.delayedCall(300, () => {
-              overlapMilk = true;
-            });
-          });
-        });
-      }
-    }
-    //player collect milk
-    if (overlapMilk) {
-      overlapMilk = !collectItemManager.collect(
-        player,
-        0,
-        milkTargetSize,
-        milk
-      );
-    }
-    //player deliver milk
-    if (deliverToHouse) {
-      deliverToHouse = !collectItemManager.deliver(player, 'milk', house);
-    }
-    // checking for deliver success
-    if (!deliverToChest && !deliverToHouse) {
-      gateNext.setTexture('gate-active');
-      const overlapping = this.physics.overlap(player, gateNext);
-      if (overlapping) {
-        this.scene.start('Delivery3');
-      } else {
-        this.updateItemOpacity(gateNext);
-      }
-    }
   }
 }
 
-export default Delivery2;
+export default Delivery3;

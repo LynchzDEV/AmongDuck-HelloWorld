@@ -1,14 +1,4 @@
 import Phaser from 'phaser';
-import path from 'path';
-import {
-  FOREGROUND_TEMPLE_PATH,
-  BACKGROUND_GAME_PATH,
-  COMPONENT_GAME_PATH,
-  PLATFORM_GAME_PATH,
-  SPRITESHEET_GAME_PATH,
-  PLAYER_SPRITESHEET_PATH,
-  UI_PATH,
-} from '../utils/mapPath';
 import {
   SKY_DEPTH,
   BACKGROUND_DEPTH,
@@ -17,12 +7,9 @@ import {
   PLAYER_DEPTH,
   FOREGROUND_DEPTH,
 } from '../utils/mapDepth';
-
 import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
-
 import playerMoveTemple from '../utils/playerMoveTemple';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
-
 import { shallowWater, playerDrown } from '../utils/event/drown';
 import { manageCollectItem } from '../utils/event/collectItem';
 
@@ -635,17 +622,11 @@ class Delivery extends Phaser.Scene {
     player = this.physics.add
       .sprite(100, floorHeight - 150, 'player')
       .setCollideWorldBounds(true)
-      .setScale(3)
-      .setSize(30, 25)
+      .setScale(0.3)
+      .setSize(180, 200)
       .setDepth(PLAYER_DEPTH);
-
-    // player = this.physics.add
-    //   .sprite(1102 - 65, 584 + 55, 'player')
-    //   .setCollideWorldBounds(true)
-    //   .setScale(3)
-    //   .setSize(30, 25)
-    //   .setDepth(PLAYER_DEPTH);
-
+    player.setFrame(5);
+    
     this.physics.add.collider(player, platforms);
   }
   //animations
@@ -655,7 +636,7 @@ class Delivery extends Phaser.Scene {
       key: 'walk',
       frames: this.anims.generateFrameNumbers('player', {
         start: 0,
-        end: 5,
+        end: 7,
       }),
       frameRate: 10,
       repeat: -1,
@@ -765,6 +746,9 @@ class Delivery extends Phaser.Scene {
   }
 
   update(delta, time) {
+    //dev skip the scene
+    this.scene.start('Delivery2');
+
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
     //camera follow player
