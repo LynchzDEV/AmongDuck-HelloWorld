@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import playerMoveTemple from '../utils/playerMoveTemple';
 import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
-import { SKY_DEPTH } from '../utils/mapDepth';
+import { FOREGROUND_DEPTH, PLAYER_DEPTH, SKY_DEPTH } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import {
   MIDDLEGROUND_DEPTH,
@@ -16,7 +16,8 @@ let backgrounds;
 let cloundLayer1;
 let cloundLayer2;
 let platforms;
-let platfromSlide;
+let jumppad1;
+let jumppad2;
 //interaciton
 let milk;
 
@@ -191,62 +192,45 @@ class Delivery4 extends Phaser.Scene {
     platforms = this.physics.add.staticGroup();
 
     let platfromladderup = this.add
-      .image(3264, 1327, 'platform-long1')
+      .image(3264, 1257, 'clound-long1')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
+      .setDepth(PLAYER_DEPTH + 1);
 
     let platform1 = this.add
-      .image(3020, 871, 'platform')
+      .image(3007, 837, 'clound')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
+      .setDepth(PLAYER_DEPTH + 1);
 
     let platform2 = this.add
-      .image(2196, 509, 'platform-long1')
+      .image(2157, 455, 'clound-long2')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
+      .setDepth(PLAYER_DEPTH + 1);
 
-    platfromSlide = this.physics.add
-      .image(1956, 509, 'platform')
+    let platoform3 = this.add
+      .image(1404, 905, 'clound-long1')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-
-    let platoform4 = this.add
-      .image(1421, 959, 'platform-long1')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
+      .setDepth(PLAYER_DEPTH + 1);
 
     let ladderup = this.add
       .image(3622, 1319, 'ladder')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
+      .setDepth(PLAYER_DEPTH + 1);
 
     platforms.add(ladderup);
     platforms.add(platfromladderup);
     platforms.add(platform1);
     platforms.add(platform2);
-    // platforms.add(platfromSlide);
-    platforms.add(platoform4);
+    platforms.add(platoform3);
 
     // Set collision boxes for each platform
     platforms.children.iterate((child) => {
-      child.body.setSize(child.width, 20).setOffset(0,20);
+      child.body.setSize(child.width, 20).setOffset(0, child.height - 20);
     });
-
-    const slidePlatforms = this.tweens.add({
-      targets: platfromSlide,
-      y: 509 + 450,
-      ease: 'POWER1',
-      duration: 3000,
-      yoyo: true,
-      repeat: -1,
-    });
-
   }
   addMainComponents() {
     milk = this.add
@@ -255,44 +239,30 @@ class Delivery4 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
   }
-  addComponents() {
-    //with platform2
-    this.add
-      .image(3020 - 620, 48, 'sakura-tree')
-      .setScale(0.75)
-      .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(2457, 405, 'stone-wall')
-      .setScale(1)
-      .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-
-    //with platform1
-    this.add
-      .image(3020, 865, 'vine')
+  addJumpPad() {
+    jumppad1 = this.add
+      .image(3309, 1370, 'jumppad1')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH + 1).flipX = true;
-
-    //last platform
-    this.add
-      .image(1421, 826, 'logs')
-      .setScale(1.3)
+      .setDepth(FOREGROUND_DEPTH);
+    //change depth to Player_depth for hiding it, because platform is player_depth + 1
+    jumppad2 = this.add
+      .image(3041, 900, 'jumppad1')
       .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH)
-      .flipX  = true;
+      .setScale(1)
+      .setDepth(FOREGROUND_DEPTH);
   }
+
   create() {
     //config
     const { width, height } = this.scale;
     // main scale
-    // const mapWidth = width * 3;
-    // const mapHeight = height * 2;
+    const mapWidth = width * 3;
+    const mapHeight = height * 2;
 
     //Dev scale 3840 * 1440
-    const mapWidth = width;
-    const mapHeight = height;
+    // const mapWidth = width;
+    // const mapHeight = height;
 
     const floorHeight = mapHeight - 215;
 
@@ -314,12 +284,10 @@ class Delivery4 extends Phaser.Scene {
     this.addPlatforms();
     //main components
     this.addMainComponents();
-    //components
-    this.addComponents();
+    //jumppad
+    this.addJumpPad();
   }
 
-  update(delta, time) {
-    
-  }
+  update(delta, time) {}
 }
 export default Delivery4;

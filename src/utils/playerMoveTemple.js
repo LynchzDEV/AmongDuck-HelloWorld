@@ -1,4 +1,4 @@
-let gravity = 550;
+let gravity = 250;
 let holdTime = 0;
 const debug = true;
 

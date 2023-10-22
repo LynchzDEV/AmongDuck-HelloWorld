@@ -127,6 +127,11 @@ class Delivery extends Phaser.Scene {
       'ground-main3',
       path.join(PLATFORM_GAME_PATH, 'ground-main3.png')
     );
+
+    //clound
+    this.load.image('clound', path.join(PLATFORM_GAME_PATH, 'cl.png'));
+    this.load.image('clound-long1', path.join(PLATFORM_GAME_PATH, 'cl-long.png'));
+    this.load.image('clound-long2', path.join(PLATFORM_GAME_PATH, 'cl-long2.png'));
   }
   loadMainComponents() {
     //delivery1
@@ -199,6 +204,10 @@ class Delivery extends Phaser.Scene {
     this.load.image('ladder', path.join(COMPONENT_GAME_PATH, 'ladder.png'));
     this.load.image('straw1', path.join(COMPONENT_GAME_PATH, 'straw1.png'));
     this.load.image('straw2', path.join(COMPONENT_GAME_PATH, 'straw2.png'));
+
+    //jumppad
+    this.load.image('jumppad1', path.join(COMPONENT_GAME_PATH, 'jumppad1.png'));
+    this.load.image('jumppad2', path.join(COMPONENT_GAME_PATH, 'jumppad2.png'));
   }
   loadForeground() {
     this.load.image('water', path.join(FOREGROUND_TEMPLE_PATH, 'Water.png'));
@@ -626,19 +635,13 @@ class Delivery extends Phaser.Scene {
   //player and colider
   addPlayerAndColider(floorHeight) {
     // player
-    // player = this.physics.add
-    //   .sprite(100, floorHeight - 150, 'player')
-    //   .setCollideWorldBounds(true)
-    //   .setScale(3)
-    //   .setSize(30, 25)
-    //   .setDepth(PLAYER_DEPTH);
-
     player = this.physics.add
-      .sprite(1102 - 65, 584 + 55, 'player')
+      .sprite(100, floorHeight - 150, 'player')
       .setCollideWorldBounds(true)
-      .setScale(3)
+      .setScale(0.5)
       .setSize(30, 25)
       .setDepth(PLAYER_DEPTH);
+
     player.setFrame(5);
     this.physics.add.collider(player, platforms);
   }
@@ -731,7 +734,7 @@ class Delivery extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    this.scene.start('Delivery2');
+    // this.scene.start('Delivery2');
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);

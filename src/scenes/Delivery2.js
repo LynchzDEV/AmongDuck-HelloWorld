@@ -480,12 +480,12 @@ class Delivery2 extends Phaser.Scene {
     //config
     const { width, height } = this.scale;
     // main scale
-    // const mapWidth = width * 3;
-    // const mapHeight = height * 2;
+    const mapWidth = width * 3;
+    const mapHeight = height * 2;
 
     //Dev scale 3840 * 1440
-    const mapWidth = width;
-    const mapHeight = height;
+    // const mapWidth = width;
+    // const mapHeight = height;
 
     const floorHeight = mapHeight - 215;
 
@@ -519,7 +519,7 @@ class Delivery2 extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-     this.scene.start('Delivery3');
+    //  this.scene.start('Delivery3');
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
