@@ -55,14 +55,6 @@ let overlapMilk = false;
 let deliverToChest = true;
 let deliverToHouse = true; // temp for testing
 
-//control flow
-let left;
-let right;
-let up;
-let isLeftPressed = false;
-let isRightPressed = false;
-let isUpPressed = false;
-
 class Delivery2 extends Phaser.Scene {
   constructor() {
     super({
