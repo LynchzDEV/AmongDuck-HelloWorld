@@ -56,8 +56,10 @@ let up;
 let isLeftPressed = false;
 let isRightPressed = false;
 let isUpPressed = false;
-// manage collect item
-let collectItemManager = manageCollectItem();
+//manage collect item
+let collectItemManager;
+const milkTargetSize = 150,
+  gateTargetSize = 90;
 let overlapMilk1 = true;
 let overlapMilk2 = true;
 let overlapMilk3 = true;
@@ -136,8 +138,8 @@ class Delivery extends Phaser.Scene {
     this.load.image('house2', path.join(COMPONENT_GAME_PATH, 'house2.png'));
     this.load.image('key', path.join(COMPONENT_GAME_PATH, 'key.png'));
     this.load.spritesheet(
-      'chess',
-      path.join(SPRITESHEET_GAME_PATH, 'chess.png'),
+      'chest',
+      path.join(SPRITESHEET_GAME_PATH, 'chest.png'),
       {
         frameWidth: 143.5,
         frameHeight: 147.5,
@@ -538,7 +540,35 @@ class Delivery extends Phaser.Scene {
     components.add(sign);
 
     // init inventory
-    manageCollectItem().initInventory(this, milk1, 3);
+    collectItemManager = manageCollectItem(this, [
+      {
+        success: false,
+        item: [milk1, milk2, milk3],
+        sizeOfInventory: 3,
+        targetSize: milkTargetSize,
+        alpha: 0.5,
+      },
+      {
+        success: false,
+        item: [gate],
+        sizeOfInventory: 1,
+        targetSize: gateTargetSize,
+        initStartPosX: 50,
+        initStartPosY: 30,
+        alpha: 0,
+        callBack: (item) => {
+          item.setTexture('gate-active');
+          item.flipX = true;
+        },
+      },
+    ]);
+    milk1.collected = false;
+    milk1.delivered = false;
+    milk2.collected = false;
+    milk2.delivered = false;
+    milk3.collected = false;
+    milk3.delivered = false;
+    collectItemManager.initInventory();
   }
   //prop
   addComponents() {
@@ -602,19 +632,19 @@ class Delivery extends Phaser.Scene {
   //player and colider
   addPlayerAndColider(floorHeight) {
     // player
-    // player = this.physics.add
-    //   .sprite(100, floorHeight - 150, 'player')
-    //   .setCollideWorldBounds(true)
-    //   .setScale(3)
-    //   .setSize(30, 25)
-    //   .setDepth(PLAYER_DEPTH);
-
     player = this.physics.add
-      .sprite(1102 - 65, 584 + 55, 'player')
+      .sprite(100, floorHeight - 150, 'player')
       .setCollideWorldBounds(true)
       .setScale(3)
       .setSize(30, 25)
       .setDepth(PLAYER_DEPTH);
+
+    // player = this.physics.add
+    //   .sprite(1102 - 65, 584 + 55, 'player')
+    //   .setCollideWorldBounds(true)
+    //   .setScale(3)
+    //   .setSize(30, 25)
+    //   .setDepth(PLAYER_DEPTH);
 
     this.physics.add.collider(player, platforms);
   }
@@ -653,16 +683,45 @@ class Delivery extends Phaser.Scene {
     //   repeat: -1,
     // });
   }
+  // update item opacity
+  updateItemOpacity(destination) {
+    const playerX = player.x;
+    const playerY = player.y;
+    const destinationX = destination.x;
+    const destinationY = destination.y;
+
+    const distance = Phaser.Math.Distance.Between(
+      playerX,
+      playerY,
+      destinationX,
+      destinationY
+    );
+
+    const minOpacity = collectItemManager.state[0].alpha;
+    const maxOpacity = 1;
+
+    const maxDistance = 2000;
+
+    const opacity = Phaser.Math.Linear(
+      minOpacity,
+      maxOpacity,
+      Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
+    );
+
+    collectItemManager.state[0].item[0].setAlpha(opacity);
+  }
+
   init() {
     overlapMilk1 = true;
     overlapMilk2 = true;
     overlapMilk3 = true;
-    collectItemManager = manageCollectItem();
-    deliverToSign = true;
-    deliverToSakuraTree = true;
-    deliverToHouse = true;
+    collectItemManager = manageCollectItem(this);
+    deliverToSign = true; // temp for testing
+    deliverToSakuraTree = true; // temp for testing
+    deliverToHouse = true; // temp for testing
     this.playerMoveTemple = playerMoveTemple;
   }
+
   create() {
     //config
     const { width, height } = this.scale;
@@ -714,51 +773,55 @@ class Delivery extends Phaser.Scene {
     playerDrown(this, player, shallow_water);
     //player collect milk
     if (overlapMilk1) {
-      overlapMilk1 = !collectItemManager.collect(this, player, milk1);
+      overlapMilk1 = !collectItemManager.collect(
+        player,
+        0,
+        milkTargetSize,
+        milk1
+      );
     }
     if (overlapMilk2) {
-      overlapMilk2 = !collectItemManager.collect(this, player, milk2);
+      overlapMilk2 = !collectItemManager.collect(
+        player,
+        1,
+        milkTargetSize,
+        milk2
+      );
     }
     if (overlapMilk3) {
-      overlapMilk3 = !collectItemManager.collect(this, player, milk3);
+      overlapMilk3 = !collectItemManager.collect(
+        player,
+        2,
+        milkTargetSize,
+        milk3
+      );
     }
-    //player deliver milk
+    // //player deliver milk
     if (deliverToSign) {
-      deliverToSign = !collectItemManager.deliver(this, player, sign);
+      deliverToSign = !collectItemManager.deliver(player, 'milk', sign);
     }
     if (deliverToSakuraTree) {
       deliverToSakuraTree = !collectItemManager.deliver(
-        this,
         player,
+        'milk',
         sakuraTree
       );
     }
     if (deliverToHouse) {
-      deliverToHouse = !collectItemManager.deliver(this, player, house);
+      deliverToHouse = !collectItemManager.deliver(player, 'milk', house);
     }
     // checking for deliver success
     if (
-      !overlapMilk1 &&
-      !overlapMilk2 &&
-      !overlapMilk3 &&
       !deliverToSign &&
       !deliverToSakuraTree &&
       !deliverToHouse
     ) {
-      const temp = gate;
-      gate = this.physics.add
-        .image(3650, 787, 'gate-active')
-        .setOrigin(0, 0)
-        .setScale(1)
-        .setDepth(MIDDLEGROUND_DEPTH);
-      gate.flipX = true;
-
+      gate.setTexture('gate-active');
       const overlapping = this.physics.overlap(player, gate);
       if (overlapping) {
-        //skip scene for using preload image from this scene
-        this.time.delayedCall(100, () => {
-          this.scene.start('Delivery2');
-        });
+        this.scene.start('Delivery2');
+      } else {
+        this.updateItemOpacity(gate);
       }
     }
   }

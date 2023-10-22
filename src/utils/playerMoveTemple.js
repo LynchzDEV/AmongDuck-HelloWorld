@@ -1,4 +1,5 @@
 let gravity = 550;
+// let gravity = 200; // this is for testing
 let holdTime = 0;
 const debug = true;
 
