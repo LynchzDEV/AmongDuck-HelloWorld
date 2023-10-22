@@ -7,8 +7,6 @@ import _forest1 from './tools/_Forest1';
 
 import MainMenu from './scenes/cutscene/MainMenu';
 import CutScene1 from './scenes/CUTSCENE/CutScene1';
-import CutScene2 from './scenes/CUTSCENE/CutScene2';
-import CutScene3 from './scenes/CUTSCENE/CutScene3';
 import Delivery from './scenes/Delivery';
 import Delivery2 from './scenes/Delivery2';
 import Delivery3 from './scenes/Delivery3';
@@ -42,8 +40,6 @@ const config = {
     // _forest1, //!  forest1 template [dev mode]
     // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
     // CutScene1, //* 1 cutscene 1 of the story mode
-    // CutScene2, //* 2 cutscene 2 of the story mode
-    // CutScene3, //* 3 cutscene 3 of the story mode
     Delivery, //* 4 delivery game
     Delivery2, //* 5 delivery game
     Delivery3, //* 6 delivery game

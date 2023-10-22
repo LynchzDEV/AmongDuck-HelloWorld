@@ -519,7 +519,7 @@ class Delivery2 extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    //  this.scene.start('Delivery3');
+     this.scene.start('Delivery3');
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);

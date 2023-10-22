@@ -187,7 +187,7 @@ class Delivery4 extends Phaser.Scene {
     backgrounds.add(cloundLayer1);
   }
   //add platforms
-  addPlatforms(floorHeight) {
+  addPlatforms() {
     platforms = this.physics.add.staticGroup();
 
     let platfromladderup = this.add
@@ -235,7 +235,7 @@ class Delivery4 extends Phaser.Scene {
 
     // Set collision boxes for each platform
     platforms.children.iterate((child) => {
-      child.body.setSize(child.width, 20).setOffset(0, 0);
+      child.body.setSize(child.width, 20).setOffset(0,20);
     });
 
     const slidePlatforms = this.tweens.add({
@@ -311,20 +311,11 @@ class Delivery4 extends Phaser.Scene {
     //background
     this.addBackgroundElements(mapWidth, mapHeight);
     // platforms
-    this.addPlatforms(floorHeight);
+    this.addPlatforms();
     //main components
     this.addMainComponents();
     //components
     this.addComponents();
-  }
-
-  checkPlayerJump(player){
-    if(player.body.velocity.y > 0){
-      this.slidePlatforms.duration(1000);
-    }
-    else if(player.body.velocity.y < 0){
-      this.slidePlatforms.duration(3000);
-    }
   }
 
   update(delta, time) {
