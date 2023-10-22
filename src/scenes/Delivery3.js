@@ -6,6 +6,7 @@ import {
   FOREGROUND_DEPTH,
   MIDDLEGROUND_DEPTH,
   SKY_DEPTH,
+  PLAYER_DEPTH,
 } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 
@@ -19,6 +20,8 @@ let cloundLayer1;
 let cloundLayer2;
 let platforms;
 let components;
+let jumppad1;
+let noGravityPad;
 //gate
 let gatePrevious;
 let gateNext;
@@ -199,6 +202,14 @@ class Delivery3 extends Phaser.Scene {
     backgrounds.add(cloundLayer2);
     backgrounds.add(cloundLayer1);
   }
+  //water
+  addForegroundElements(mapWidth, mapHeight) {
+    water = this.add
+      .tileSprite(0, mapHeight - 150, mapWidth, 200, 'water')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+  }
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
     let ground = this.add
@@ -285,7 +296,7 @@ class Delivery3 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     gateNext = this.physics.add
-      .image(3640, 1140, 'gate')
+      .image(3640, 1145, 'gate')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -399,7 +410,32 @@ class Delivery3 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
   }
+  //adding jumppad
+  addJumppad() {
+    jumppad1 = this.add
+      .image(2914, 861, 'jumppad2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(FOREGROUND_DEPTH);
 
+    //no gravity pad
+    noGravityPad = this.add
+      .image(3445, 1225, 'jumppad2')
+      .setOrigin(0, 0)
+      .setScale(1)  
+      .setDepth(FOREGROUND_DEPTH);
+  }
+  addPlayerAndCollider(floorHeight) {
+    //player
+    player = this.physics.add
+      .sprite(100, floorHeight - 40, 'player')
+      .setCollideWorldBounds(true)
+      .setScale(0.3)
+      .setSize(180, 200)
+      .setDepth(PLAYER_DEPTH);
+    player.setFrame(5);
+    this.physics.add.collider(player, platforms);
+  }
   create() {
     //config
     const { width, height } = this.scale;
@@ -427,17 +463,29 @@ class Delivery3 extends Phaser.Scene {
     this.setDeviceSpecificControls(height, width, camera);
     //add background
     this.addBackgroundElements(mapWidth, mapHeight);
+    //add foreground
+    this.addForegroundElements(mapWidth, mapHeight);
     //add platforms
     this.addPlatforms(floorHeight);
     //add main components
     this.addMainComponents();
     //add props
     this.addComponents();
+    //add player
+    this.addPlayerAndCollider(floorHeight);
+    //add jumppad
+    this.addJumppad();
   }
 
   update(delta, time) {
     //dev skip the scene
-    // this.scene.start('Delivery4');
+    this.scene.start('Delivery4');
+
+    //testing movement
+    this.playerMoveTemple(player, 1000, false, false, null, null, null);
+
+    //camera follow player
+    camera.startFollow(player);
   }
 }
 

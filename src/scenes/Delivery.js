@@ -1,14 +1,4 @@
 import Phaser from 'phaser';
-import path from 'path';
-import {
-  FOREGROUND_TEMPLE_PATH,
-  BACKGROUND_GAME_PATH,
-  COMPONENT_GAME_PATH,
-  PLATFORM_GAME_PATH,
-  SPRITESHEET_GAME_PATH,
-  PLAYER_SPRITESHEET_PATH,
-  UI_PATH,
-} from '../utils/mapPath';
 import {
   SKY_DEPTH,
   BACKGROUND_DEPTH,
@@ -17,12 +7,9 @@ import {
   PLAYER_DEPTH,
   FOREGROUND_DEPTH,
 } from '../utils/mapDepth';
-
 import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
-
 import playerMoveTemple from '../utils/playerMoveTemple';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
-
 import { shallowWater, playerDrown } from '../utils/event/drown';
 import { manageCollectItem } from '../utils/event/collectItem';
 
@@ -70,185 +57,6 @@ class Delivery extends Phaser.Scene {
     super({
       key: 'Delivery',
     });
-  }
-
-  loadBackground() {
-    this.load.image(
-      'background',
-      path.join(BACKGROUND_GAME_PATH, 'background-pink.png')
-    );
-    this.load.image(
-      'clound-layer1',
-      path.join(BACKGROUND_GAME_PATH, 'bg-pink-layer1.png')
-    );
-    this.load.image(
-      'clound-layer2',
-      path.join(BACKGROUND_GAME_PATH, 'bg-pink-layer2.png')
-    );
-  }
-  loadPlatforms() {
-    this.load.image('platform', path.join(PLATFORM_GAME_PATH, 'platform.png'));
-    this.load.image(
-      'platform2',
-      path.join(PLATFORM_GAME_PATH, 'platform2.png')
-    );
-    this.load.image(
-      'tile-platfrom',
-      path.join(PLATFORM_GAME_PATH, 'tile-platform.png')
-    );
-    this.load.image(
-      'platform-long1',
-      path.join(PLATFORM_GAME_PATH, 'platform-long1.png')
-    );
-    this.load.image(
-      'platform-long2',
-      path.join(PLATFORM_GAME_PATH, 'platform-long2.png')
-    );
-    this.load.image(
-      'platform-long3',
-      path.join(PLATFORM_GAME_PATH, 'platform-long3.png')
-    );
-    this.load.image(
-      'platform-long4',
-      path.join(PLATFORM_GAME_PATH, 'platform-long4.png')
-    );
-
-    //ground
-    this.load.image('ground', path.join(PLATFORM_GAME_PATH, 'ground.png'));
-    this.load.image(
-      'ground-edge',
-      path.join(PLATFORM_GAME_PATH, 'ground-edge.png')
-    );
-    this.load.image(
-      'ground-main',
-      path.join(PLATFORM_GAME_PATH, 'ground-main.png')
-    );
-    this.load.image(
-      'ground-main3',
-      path.join(PLATFORM_GAME_PATH, 'ground-main3.png')
-    );
-
-    //clound
-    this.load.image('clound', path.join(PLATFORM_GAME_PATH, 'cl.png'));
-    this.load.image('clound-long1', path.join(PLATFORM_GAME_PATH, 'cl-long.png'));
-    this.load.image('clound-long2', path.join(PLATFORM_GAME_PATH, 'cl-long2.png'));
-  }
-  loadMainComponents() {
-    //delivery1
-    this.load.image(
-      'milk-shop',
-      path.join(COMPONENT_GAME_PATH, 'milk-shop.png')
-    );
-    this.load.image('house', path.join(COMPONENT_GAME_PATH, 'house.png'));
-    this.load.image('milk', path.join(COMPONENT_GAME_PATH, 'milk.png'));
-    this.load.image('gate', path.join(COMPONENT_GAME_PATH, 'gate.png'));
-    this.load.image(
-      'gate-active',
-      path.join(COMPONENT_GAME_PATH, 'gate-active.png')
-    );
-    this.load.sign = this.load.image(
-      'sign',
-      path.join(COMPONENT_GAME_PATH, 'sign.png')
-    );
-
-    //delivery2
-    this.load.image('house2', path.join(COMPONENT_GAME_PATH, 'house2.png'));
-    this.load.image('key', path.join(COMPONENT_GAME_PATH, 'key.png'));
-    this.load.spritesheet(
-      'chest',
-      path.join(SPRITESHEET_GAME_PATH, 'chest.png'),
-      {
-        frameWidth: 143.5,
-        frameHeight: 147.5,
-      }
-    );
-
-    //delivery3
-    this.load.image('house3', path.join(COMPONENT_GAME_PATH, 'house3.png'));
-    this.load.image('house4', path.join(COMPONENT_GAME_PATH, 'house4.png'));
-    this.load.image('ladder', path.join(COMPONENT_GAME_PATH, 'ladder.png'));
-  }
-  loadComponents() {
-    this.load.image(
-      'sakura-tree',
-      path.join(COMPONENT_GAME_PATH, 'Sakura tree.png')
-    );
-    this.load.image(
-      'small-sign',
-      path.join(COMPONENT_GAME_PATH, 'small-sign.png')
-    );
-    this.load.image(
-      'statue-stone',
-      path.join(COMPONENT_GAME_PATH, 'statue-stone.png')
-    );
-    this.load.image(
-      'stone-wall',
-      path.join(COMPONENT_GAME_PATH, 'stone-wall.png')
-    );
-    this.load.image('stone', path.join(COMPONENT_GAME_PATH, 'stone.png'));
-    this.load.image('bench', path.join(COMPONENT_GAME_PATH, 'bench.png'));
-    this.load.image('lantern', path.join(COMPONENT_GAME_PATH, 'lantern.png'));
-    this.load.image('grass', path.join(COMPONENT_GAME_PATH, 'grass.png'));
-    this.load.image('vine', path.join(COMPONENT_GAME_PATH, 'vine.png'));
-
-    //delivery2
-    this.load.image('logs', path.join(COMPONENT_GAME_PATH, 'logs.png'));
-    this.load.image('log', path.join(COMPONENT_GAME_PATH, 'log.png'));
-    this.load.image('tree', path.join(COMPONENT_GAME_PATH, 'tree.png'));
-    this.load.image('box', path.join(COMPONENT_GAME_PATH, 'box.png'));
-    this.load.image('grass2', path.join(COMPONENT_GAME_PATH, 'grass2.png'));
-    this.load.image('brush', path.join(COMPONENT_GAME_PATH, 'brush.png'));
-    this.load.image('tou', path.join(COMPONENT_GAME_PATH, 'tou.png'));
-
-    //delivery3
-    this.load.image('ladder', path.join(COMPONENT_GAME_PATH, 'ladder.png'));
-    this.load.image('straw1', path.join(COMPONENT_GAME_PATH, 'straw1.png'));
-    this.load.image('straw2', path.join(COMPONENT_GAME_PATH, 'straw2.png'));
-
-    //jumppad
-    this.load.image('jumppad1', path.join(COMPONENT_GAME_PATH, 'jumppad1.png'));
-    this.load.image('jumppad2', path.join(COMPONENT_GAME_PATH, 'jumppad2.png'));
-  }
-  loadForeground() {
-    this.load.image('water', path.join(FOREGROUND_TEMPLE_PATH, 'Water.png'));
-    this.load.image(
-      'shadow-platform',
-      path.join(COMPONENT_GAME_PATH, 'shadow-short.png')
-    );
-    this.load.image(
-      'shadow-platform-long2',
-      path.join(COMPONENT_GAME_PATH, 'shadow-long2.png')
-    );
-    this.load.image(
-      'shadow-platform-long1',
-      path.join(COMPONENT_GAME_PATH, 'shadows.png')
-    );
-  }
-  loadPlayer() {
-    this.load.spritesheet(
-      'player',
-      path.join(PLAYER_SPRITESHEET_PATH, 'goose.png'),
-      {
-        frameWidth: 292,
-        frameHeight: 292,
-      }
-    );
-  }
-  loadUI() {
-    //load button
-    this.load.image('left', path.join(UI_PATH, 'left.png'));
-    this.load.image('right', path.join(UI_PATH, 'right.png'));
-    this.load.image('up', path.join(UI_PATH, 'up.png'));
-  }
-
-  preload() {
-    this.loadBackground();
-    this.loadForeground();
-    this.loadPlatforms();
-    this.loadMainComponents();
-    this.loadComponents();
-    this.loadPlayer();
-    this.loadUI();
   }
 
   setDeviceSpecificControls(height, width, camera) {
@@ -638,8 +446,8 @@ class Delivery extends Phaser.Scene {
     player = this.physics.add
       .sprite(100, floorHeight - 150, 'player')
       .setCollideWorldBounds(true)
-      .setScale(0.5)
-      .setSize(30, 25)
+      .setScale(0.3)
+      .setSize(180, 200)
       .setDepth(PLAYER_DEPTH);
 
     player.setFrame(5);
@@ -734,7 +542,7 @@ class Delivery extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    // this.scene.start('Delivery2');
+    this.scene.start('Delivery2');
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);

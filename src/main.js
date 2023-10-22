@@ -17,6 +17,7 @@ import CodingPath from './scenes/CodingPath';
 import DesignPath from './scenes/DesignPath';
 import Ending from './scenes/CUTSCENE/Ending';
 import Summarize from './scenes/CUTSCENE/Summarize';
+import LoadScene from './scenes/LoadScene';
 
 const config = {
   type: Phaser.AUTO,
@@ -30,7 +31,7 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
+      debug: false,
     },
   },
   scene: [
@@ -38,6 +39,7 @@ const config = {
     // _mobilesite, //! dev mode
     // _movementTemplate, //! movement template
     // _forest1, //!  forest1 template [dev mode]
+    LoadScene, //* 0 load scene
     // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
     // CutScene1, //* 1 cutscene 1 of the story mode
     Delivery, //* 4 delivery game

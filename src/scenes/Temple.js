@@ -45,76 +45,6 @@ class Temple extends Phaser.Scene {
     super('Temple');
   }
 
-  loadBackground() {
-    //load background
-    this.load.image('sky', path.join(BACKGROUND_TEMPLE_PATH, 'skyP01.png'));
-    this.load.image('sky2', path.join(BACKGROUND_TEMPLE_PATH, 'skyP02.png'));
-    this.load.image('sky3', path.join(BACKGROUND_TEMPLE_PATH, 'skyP03.png'));
-    this.load.image('City', path.join(BACKGROUND_TEMPLE_PATH, 'City.png'));
-    this.load.image(
-      'fuji',
-      path.join(BACKGROUND_TEMPLE_PATH, 'Volcano fuji.png')
-    );
-    this.load.image(
-      'bgTree',
-      path.join(BACKGROUND_TEMPLE_PATH, 'Background Trees.png')
-    );
-    this.load.image('bushes', path.join(BACKGROUND_TEMPLE_PATH, 'Bushes.png'));
-    this.load.image(
-      'peddlerCar',
-      path.join(COMPONENT_TEMPLE_PATH, 'Trading Cart.png')
-    );
-    this.load.image('ground', path.join(COMPONENT_TEMPLE_PATH, 'ground.png'));
-    this.load.image(
-      'groundShadow',
-      path.join(COMPONENT_TEMPLE_PATH, 'platformShadow.png')
-    );
-  }
-  loadForeground() {
-    //load foreground
-    this.load.image(
-      'tree',
-      path.join(FOREGROUND_TEMPLE_PATH, 'Sakura Tree.png')
-    );
-    this.load.spritesheet('water', path.join('assets', 'anim', 'water.png'), {
-      frameWidth: 1839,
-      frameHeight: 252,
-    });
-    this.load.spritesheet('sakura', path.join('assets', 'anim', 'sakura.png'), {
-      frameWidth: 320,
-      frameHeight: 320,
-    });
-  }
-  loadComponents() {
-    // load components
-    this.load.image('House', path.join(COMPONENT_TEMPLE_PATH, 'House.png'));
-    this.load.image('torii', path.join(COMPONENT_TEMPLE_PATH, 'Arc.png'));
-  }
-  loadPlayer() {
-    //load player
-    this.load.spritesheet(
-      'player',
-      path.join(PLAYER_SPRITESHEET_PATH, 'oposum.png'),
-      {
-        frameWidth: 36,
-        frameHeight: 28,
-      }
-    );
-  }
-  loadUI() {
-    //load button
-    this.load.image('left', path.join(UI_PATH, 'left.png'));
-    this.load.image('right', path.join(UI_PATH, 'right.png'));
-    this.load.image('up', path.join(UI_PATH, 'up.png'));
-  }
-  preload() {
-    this.loadBackground();
-    this.loadForeground();
-    this.loadComponents();
-    this.loadPlayer();
-    this.loadUI();
-  }
-
   setDeviceSpecificControls(height, width, camera) {
     //camera and control for each device
     if (isMobile || tablet) {
@@ -361,13 +291,14 @@ class Temple extends Phaser.Scene {
     player = this.physics.add
       .sprite(300, height - 300, 'player')
       .setCollideWorldBounds(true)
-      .setScale(3)
+      .setScale(0.3)
+      .setSize(180,200)
       .setDepth(PLAYER_DEPTH);
 
     //ground physics
     grounds = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(0, floorHeight + 98, mapWidth * 5, 250, 'ground')
+      .tileSprite(0, floorHeight + 98, mapWidth * 5, 250, 'ground-temple')
       .setOrigin(0, 0)
       .setScale(0.2)
       .setDepth(PLAYER_DEPTH + 2)
@@ -387,7 +318,7 @@ class Temple extends Phaser.Scene {
   addForegroundElements(width, height, mapWidth, floorHeight) {
     //adding water
     water = this.add
-      .sprite(0, 450, 'water')
+      .sprite(0, 450, 'water-sprite')
       .setOrigin(0, 0)
       .setScale(1.1)
       .setDepth(PLAYER_DEPTH)
@@ -396,7 +327,7 @@ class Temple extends Phaser.Scene {
     water.anims.play('waterAnim', true);
 
     water = this.add
-      .sprite(1840, 450, 'water')
+      .sprite(1840, 450, 'water-sprite')
       .setOrigin(0, 0)
       .setScale(1.1)
       .setDepth(PLAYER_DEPTH)
@@ -405,7 +336,7 @@ class Temple extends Phaser.Scene {
     water.anims.play('waterAnim', true);
 
     water = this.add
-      .sprite(3680, 450, 'water')
+      .sprite(3680, 450, 'water-sprite')
       .setOrigin(0, 0)
       .setScale(1.1)
       .setDepth(PLAYER_DEPTH)
@@ -417,7 +348,7 @@ class Temple extends Phaser.Scene {
     foreground = this.add.group();
 
     let tree = this.add
-      .tileSprite(0, 300, mapWidth * 4, height * 2, 'tree')
+      .tileSprite(0, 300, mapWidth * 4, height * 2, 'tree-sakura')
       .setOrigin(0, 0)
       .setScale(0.5)
       .setDepth(FOREGROUND_DEPTH)
@@ -446,21 +377,10 @@ class Temple extends Phaser.Scene {
     foreground.add(water);
   }
   addAnimations() {
-    //animations for testing
-    this.anims.create({
-      key: 'walk',
-      frames: this.anims.generateFrameNumbers('player', {
-        start: 0,
-        end: 5,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
     //water animation
     this.anims.create({
       key: 'waterAnim',
-      frames: this.anims.generateFrameNumbers('water', {
+      frames: this.anims.generateFrameNumbers('water-sprite', {
         start: 0,
         end: 5,
       }),
@@ -471,7 +391,7 @@ class Temple extends Phaser.Scene {
     //sakura animation
     this.anims.create({
       key: 'sakura',
-      frames: this.anims.generateFrameNumbers('sakura', {
+      frames: this.anims.generateFrameNumbers('sakura-sprite', {
         start: 0,
         end: 20,
       }),

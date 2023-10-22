@@ -20,6 +20,8 @@ let jumppad1;
 let jumppad2;
 //interaciton
 let milk;
+//player
+let player;
 
 class Delivery4 extends Phaser.Scene {
   constructor() {
@@ -229,7 +231,7 @@ class Delivery4 extends Phaser.Scene {
 
     // Set collision boxes for each platform
     platforms.children.iterate((child) => {
-      child.body.setSize(child.width, 20).setOffset(0, child.height - 20);
+      child.body.setSize(child.width, 20).setOffset(0, child.height - 30);
     });
   }
   addMainComponents() {
@@ -238,6 +240,17 @@ class Delivery4 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
+  }
+  addPlayerAndCollider() {
+    //player
+    player = this.physics.add
+      .sprite(3622, 1319, 'player')
+      .setCollideWorldBounds(true)
+      .setScale(0.3)
+      .setSize(180, 200)
+      .setDepth(PLAYER_DEPTH);
+    player.setFrame(5);
+    this.physics.add.collider(player, platforms);
   }
   addJumpPad() {
     jumppad1 = this.add
@@ -264,8 +277,6 @@ class Delivery4 extends Phaser.Scene {
     // const mapWidth = width;
     // const mapHeight = height;
 
-    const floorHeight = mapHeight - 215;
-
     //binding function
     this.playerMoveTemple = playerMoveTemple;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
@@ -284,10 +295,22 @@ class Delivery4 extends Phaser.Scene {
     this.addPlatforms();
     //main components
     this.addMainComponents();
+    //player
+    this.addPlayerAndCollider();
     //jumppad
     this.addJumpPad();
   }
 
-  update(delta, time) {}
+  update(delta, time) {
+    // start temple scene
+    this.scene.start('Temple');
+
+
+    //testing movement
+    this.playerMoveTemple(player, 1000, false, false, null, null, null);
+
+    //camera follow player
+    camera.startFollow(player);
+  }
 }
 export default Delivery4;

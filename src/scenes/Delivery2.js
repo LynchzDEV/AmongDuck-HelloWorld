@@ -457,7 +457,7 @@ class Delivery2 extends Phaser.Scene {
       .sprite(100, floorHeight - 150, 'player')
       .setCollideWorldBounds(true)
       .setScale(0.3)
-      .setSize(200, 200)
+      .setSize(180, 200)
       .setDepth(PLAYER_DEPTH);
     player.setFrame(5);
     this.physics.add.collider(player, platforms);
@@ -519,7 +519,7 @@ class Delivery2 extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    //  this.scene.start('Delivery3');
+     this.scene.start('Delivery3');
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
