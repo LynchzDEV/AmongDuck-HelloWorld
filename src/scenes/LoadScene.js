@@ -139,7 +139,7 @@ class LoadScene extends Phaser.Scene {
     this.load.image('ladder', path.join(COMPONENT_GAME_PATH, 'ladder.png'));
 
     // load components temple
-    this.load.image('House', path.join(COMPONENT_TEMPLE_PATH, 'House.png'));
+    this.load.image('HouseTemple', path.join(COMPONENT_TEMPLE_PATH, 'House.png'));
     this.load.image('torii', path.join(COMPONENT_TEMPLE_PATH, 'Arc.png'));
   }
   loadComponents() {

@@ -270,7 +270,7 @@ class Temple extends Phaser.Scene {
     //components background
     components = this.add.group();
     let house = this.add
-      .image(mapWidth / 2 - 620, floorHeight - 220, 'House')
+      .image(mapWidth / 2 - 620, floorHeight - 220, 'HouseTemple')
       .setOrigin(0, 0)
       .setScale(0.8)
       .setDepth(MIDDLEGROUND_DEPTH)
@@ -348,7 +348,7 @@ class Temple extends Phaser.Scene {
     foreground = this.add.group();
 
     let tree = this.add
-      .tileSprite(0, 300, mapWidth * 4, height * 2, 'tree-sakura')
+      .tileSprite(0, 300, mapWidth * 4, height * 2, 'tree')
       .setOrigin(0, 0)
       .setScale(0.5)
       .setDepth(FOREGROUND_DEPTH)
@@ -363,7 +363,7 @@ class Temple extends Phaser.Scene {
 
       // Create a sakura sprite at position (x, y)
       let sakura = this.add
-        .sprite(x, y, 'sakura')
+        .sprite(x, y, 'sakura-sprite')
         .setOrigin(0, 0)
         .setScale(0.8)
         .setDepth(FOREGROUND_DEPTH)
@@ -393,7 +393,7 @@ class Temple extends Phaser.Scene {
       key: 'sakura',
       frames: this.anims.generateFrameNumbers('sakura-sprite', {
         start: 0,
-        end: 20,
+        end: 19,
       }),
       frameRate: 8,
       repeat: -1,
@@ -447,8 +447,8 @@ class Temple extends Phaser.Scene {
 
     //scrolling background
     sky.tilePositionX += 0.015;
-    sky2.tilePositionX += 0.05;
-    sky3.tilePositionX += 0.1;
+    sky2.tilePositionX += 0.035;
+    sky3.tilePositionX += 0.055;
   }
 }
 export default Temple;
