@@ -1,41 +1,41 @@
 import Phaser from 'phaser';
-import {
-  SKY_DEPTH,
-  BACKGROUND_DEPTH,
-  BACKGROUND_COMPONENT_DEPTH,
-  MIDDLEGROUND_DEPTH,
-  PLAYER_DEPTH,
-  FOREGROUND_DEPTH,
-} from '../utils/mapDepth';
-import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
 import playerMoveTemple from '../utils/playerMoveTemple';
+import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
+import {
+  BACKGROUND_COMPONENT_DEPTH,
+  FOREGROUND_DEPTH,
+  MIDDLEGROUND_DEPTH,
+  SKY_DEPTH,
+  PLAYER_DEPTH,
+} from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
-import { shallowWater, playerDrown } from '../utils/event/drown';
-import { manageCollectItem } from '../utils/event/collectItem';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
 
-//bg component
-let backgrounds;
+let camera;
 let water;
-let shallow_water;
+let backgrounds;
 let cloundLayer1;
 let cloundLayer2;
 let platforms;
 let components;
-// player
-let player;
-let camera;
-//interactive
-let milkShop;
-let house;
-let gate;
+let jumppad1;
+let noGravityPad;
+//gate
+let gatePrevious;
+let gateNext;
+//interaction
 let milk1;
-let milk2; // have to modify position for testing
-let milk3; // have to modify position for testing
+let house;
+let house2;
+let chest;
+let key;
 let sign;
-let sakuraTree; // temp for testing
+let ladder;
+//player
+let player;
+
 //control flow
 let left;
 let right;
@@ -43,20 +43,10 @@ let up;
 let isLeftPressed = false;
 let isRightPressed = false;
 let isUpPressed = false;
-// manage collect item
-let collectItemManager = manageCollectItem();
-let overlapMilk1 = true;
-let overlapMilk2 = true;
-let overlapMilk3 = true;
-let deliverToSign = true; // temp for testing
-let deliverToSakuraTree = true; // temp for testing
-let deliverToHouse = true; // temp for testing
 
-class Delivery extends Phaser.Scene {
+class Delivery3 extends Phaser.Scene {
   constructor() {
-    super({
-      key: 'Delivery',
-    });
+    super('Delivery3');
   }
 
   setDeviceSpecificControls(height, width, camera) {
@@ -198,21 +188,21 @@ class Delivery extends Phaser.Scene {
     let bg = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'background')
       .setOrigin(0, 0)
-      .setScale(1.6)
+      .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD - 0.1);
-    //front clound
+    //mid clound
     cloundLayer1 = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer2')
       .setOrigin(0, 0)
-      .setScale(1.6)
+      .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD);
-    // mid clound
+    // front
     cloundLayer2 = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer1')
       .setOrigin(0, 0)
-      .setScale(1.6)
+      .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD2);
 
@@ -220,283 +210,239 @@ class Delivery extends Phaser.Scene {
     backgrounds.add(cloundLayer2);
     backgrounds.add(cloundLayer1);
   }
-  //water and shadows
-  addForeground(mapWidth, mapHeight) {
-    shallow_water = shallowWater(
-      this,
-      0,
-      mapHeight - 20,
-      mapWidth * 2,
-      200,
-      BACKGROUND_COMPONENT_DEPTH
-    );
-
-    this.physics.add.existing(shallow_water);
-
+  //water
+  addForegroundElements(mapWidth, mapHeight) {
     water = this.add
-      .tileSprite(0, mapHeight - 200, mapWidth, 200, 'water')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-
-    //add shadows
-    this.add
-      .image(1370, mapHeight - 80, 'shadow-platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(1650, mapHeight - 80, 'shadow-platform-long1')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(2110, mapHeight - 80, 'shadow-platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(2380, mapHeight - 110, 'shadow-platform-long2')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(mapWidth - 300, mapHeight - 80, 'shadow-platform')
+      .tileSprite(0, mapHeight - 150, mapWidth, 200, 'water')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
   }
-  //platforms
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(0, floorHeight, 1383, 218, 'ground-main')
+      .image(0, floorHeight, 'ground-main3')
       .setOrigin(0, 0)
-      .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-
-    let platformSmall = this.add
-      .image(1405, 1100, 'platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-
-    let platformVine = this.add
-      .image(1355, 860, 'platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-
-    let platformStatue_long = this.add
-      .image(1659, 1002, 'platform-long1')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-
-    let platformGlass = this.add
-      .image(2124, 921, 'platform')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-
     let platformHouse = this.add
-      .image(2375, 847, 'platform-long2')
+      .image(647, 1230, 'platform-long4')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    //path to jump
+    let platformToJump1 = this.add
+      .image(2260, 1084, 'platform2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    let platformToJump2 = this.add
+      .image(2628, 986, 'platform')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    //this platform has jump boost
+    let platformToJump3 = this.add
+      .image(2890, 870, 'platform2')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
-    let platformGate = this.add
-      .image(3549, 872, 'platform')
+    //path to gateNext
+    let platformToGateNext1 = this.add
+      .image(3275, 944, 'platform')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    //this platform has gate.
+    let platformToGateNext2 = this.add
+      .image(3445, 1230, 'platform2')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
-    let platformSakuraTree = this.add
-      .image(929 - 65, 695 + 55, 'platform-long1') // modified platform position for testing
+    //path to chest
+    let platformToChest1 = this.add
+      .image(1982, 391, 'platform')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    //path to milk
+    let platformToMilk1 = this.add
+      .image(477, 218, 'platform2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    let ladderPlatform = this.add
+      .image(3435, 231, 'platform2')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
     platforms.add(ground);
-    platforms.add(platformSmall);
-    platforms.add(platformVine);
-    platforms.add(platformStatue_long);
-    platforms.add(platformGlass);
     platforms.add(platformHouse);
-    platforms.add(platformGate);
-    platforms.add(platformSakuraTree);
+    platforms.add(platformToJump1);
+    platforms.add(platformToJump2);
+    platforms.add(platformToJump3);
+    platforms.add(platformToGateNext1);
+    platforms.add(platformToGateNext2);
+    platforms.add(platformToChest1);
+    platforms.add(platformToMilk1);
+    platforms.add(ladderPlatform);
+
     // Set collision boxes for each platform
     platforms.children.iterate((child) => {
       child.body.setSize(child.width, 20).setOffset(0, 0);
     });
   }
-  //house, milk shop, milk, gate, sign
   addMainComponents() {
-    components = this.add.group();
-    milkShop = this.add
-      .image(574, 884, 'milk-shop')
+    //add gate
+    gatePrevious = this.physics.add
+      .image(52, 1140, 'gate-active')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    gateNext = this.physics.add
+      .image(3640, 1145, 'gate')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    gateNext.flipX = true;
+    house = this.add
+      .image(1311, 720, 'house4')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    house = this.physics.add
-      .image(2620, 400, 'house')
+    house2 = this.add
+      .image(845, 939, 'house3')
       .setOrigin(0, 0)
       .setScale(1)
-      .setSize(150, 400) // temp for testing
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    milk1 = this.physics.add
-      .image(1102 - 65, 595 + 55, 'milk') // modified platform position for testing
-      .setOrigin(0, 0)
-      .setScale(0.8)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    milk2 = this.physics.add
-      .image(100, this.scale.height * 2 - 215 - 150, 'milk')
-      .setOrigin(0, 0)
-      .setScale(0.8)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    milk3 = this.physics.add
-      .image(1950, 925, 'milk')
-      .setOrigin(0, 0)
-      .setScale(0.8)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    gate = this.physics.add
-      .image(3650, 787, 'gate')
+    chest = this.add
+      .sprite(2010, 285, 'chest')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    gate.flipX = true;
-    // sign is not physics object by default, this is for testing
-    sign = this.physics.add
-      .image(2447, 701, 'sign')
+    //default chest frame
+    chest.setFrame(21);
+
+    key = this.add
+      .image(2400, 1023, 'key')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-
-    components.add(milkShop);
-    components.add(house);
-    components.add(milk1);
-    components.add(gate);
-    components.add(sign);
-
-    // init inventory
-    manageCollectItem().initInventory(this, milk1, 3);
+    sign = this.add
+      .image(3456, 1088, 'sign')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    milk1 = this.add
+      .image(555, 107, 'milk')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    ladder = this.add
+      .image(3609, 0, 'ladder')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH);
   }
-  //prop
+  //props
   addComponents() {
-    //sakura milk shop
-    // sakura tree is not physics object by default, this is for testing
-    sakuraTree = this.physics.add
-      .image(141, 612, 'sakura-tree')
+    //straw
+    this.add
+      .image(676, 1148, 'straw1')
       .setOrigin(0, 0)
       .setScale(1)
-      .setSize(50, 600) // temp for testing
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
-    sakuraTree.flipX = true;
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(700 - 65, 266 + 55, 'sakura-tree') // modified platform position for testing
-      .setOrigin(0, 0)
-      .setScale(0.7)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
-    this.add
-      .image(1704, 907, 'stone-wall')
+      .image(751, 1169, 'straw2')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(1950, 825, 'statue-stone')
+      .image(800, 1050, 'lantern')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+
+    //sakura
     this.add
-      .image(1075 - 65, 589 + 55, 'bench') // modified platform position for testing
+      .image(800, 612, 'sakura-tree')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+      .setDepth(FOREGROUND_DEPTH);
+
+    //key brush
     this.add
-      .image(1377, 818, 'stone')
+      .image(2350, 1003, 'brush')
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1).flipX = true;
+
+    //chest prop
     this.add
-      .image(1430, 978, 'lantern')
+      .image(1996, 319, 'box')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
-    //add vine on platformVine
     this.add
-      .image(1432, 855, 'vine')
+      .image(2020, 200, 'lantern')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+    this.add
+      .image(2000, 386, 'vine')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(MIDDLEGROUND_DEPTH + 1).flipX = true;
+
+    //milk props
+    this.add
+      .image(493, 112, 'bench')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+
+    this.add
+      .image(570, 137, 'brush')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1).flipX = true;
+
+    //ladder props
+    this.add
+      .image(3609, 225, 'vine')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
-    this.add
-      .image(2210, 895, 'grass')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(PLAYER_DEPTH + 1);
-    //sakura house
-    this.add
-      .image(2400, 238, 'sakura-tree')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
   }
-  //player and colider
-  addPlayerAndColider(floorHeight) {
-    // player
+  //adding jumppad
+  addJumppad() {
+    jumppad1 = this.add
+      .image(2914, 861, 'jumppad2')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setDepth(FOREGROUND_DEPTH);
+
+    //no gravity pad
+    noGravityPad = this.add
+      .image(3445, 1225, 'jumppad2')
+      .setOrigin(0, 0)
+      .setScale(1)  
+      .setDepth(FOREGROUND_DEPTH);
+  }
+  addPlayerAndCollider(floorHeight) {
+    //player
     player = this.physics.add
-      .sprite(100, floorHeight - 150, 'player')
+      .sprite(100, floorHeight - 40, 'player')
       .setCollideWorldBounds(true)
       .setScale(0.3)
       .setSize(180, 200)
       .setDepth(PLAYER_DEPTH);
-
     player.setFrame(5);
     this.physics.add.collider(player, platforms);
-  }
-  //animations
-  addAnimations() {
-    //animations for testing
-    this.anims.create({
-      key: 'walk',
-      frames: this.anims.generateFrameNumbers('player', {
-        start: 0,
-        end: 7,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    // //water animation
-    // this.anims.create({
-    //   key: 'waterAnim',
-    //   frames: this.anims.generateFrameNumbers('water', {
-    //     start: 0,
-    //     end: 5,
-    //   }),
-    //   frameRate: 5.5,
-    //   repeat: -1,
-    // });
-
-    // //sakura animation
-    // this.anims.create({
-    //   key: 'sakura',
-    //   frames: this.anims.generateFrameNumbers('sakura', {
-    //     start: 0,
-    //     end: 20,
-    //   }),
-    //   frameRate: 8,
-    //   repeat: -1,
-    // });
-  }
-  init() {
-    overlapMilk1 = true;
-    overlapMilk2 = true;
-    overlapMilk3 = true;
-    collectItemManager = manageCollectItem();
-    deliverToSign = true;
-    deliverToSakuraTree = true;
-    deliverToHouse = true;
-    this.playerMoveTemple = playerMoveTemple;
   }
   create() {
     //config
@@ -523,81 +469,32 @@ class Delivery extends Phaser.Scene {
     );
     camera = returnCamera;
     this.setDeviceSpecificControls(height, width, camera);
-
-    //animations
-    this.addAnimations();
-    //background
+    //add background
     this.addBackgroundElements(mapWidth, mapHeight);
-    //foreground
-    this.addForeground(mapWidth, mapHeight);
-    //platforms
+    //add foreground
+    this.addForegroundElements(mapWidth, mapHeight);
+    //add platforms
     this.addPlatforms(floorHeight);
-    //main components
+    //add main components
     this.addMainComponents();
-    //components pragob
+    //add props
     this.addComponents();
-    //player and colider
-    this.addPlayerAndColider(floorHeight);
+    //add player
+    this.addPlayerAndCollider(floorHeight);
+    //add jumppad
+    this.addJumppad();
   }
 
   update(delta, time) {
     //dev skip the scene
-    this.scene.start('Delivery2');
+    this.scene.start('Delivery4');
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
+
     //camera follow player
     camera.startFollow(player);
-    //player drown
-    playerDrown(this, player, shallow_water);
-    //player collect milk
-    if (overlapMilk1) {
-      overlapMilk1 = !collectItemManager.collect(this, player, milk1);
-    }
-    if (overlapMilk2) {
-      overlapMilk2 = !collectItemManager.collect(this, player, milk2);
-    }
-    if (overlapMilk3) {
-      overlapMilk3 = !collectItemManager.collect(this, player, milk3);
-    }
-    //player deliver milk
-    if (deliverToSign) {
-      deliverToSign = !collectItemManager.deliver(this, player, sign);
-    }
-    if (deliverToSakuraTree) {
-      deliverToSakuraTree = !collectItemManager.deliver(
-        this,
-        player,
-        sakuraTree
-      );
-    }
-    if (deliverToHouse) {
-      deliverToHouse = !collectItemManager.deliver(this, player, house);
-    }
-    // checking for deliver success
-    if (
-      !overlapMilk1 &&
-      !overlapMilk2 &&
-      !overlapMilk3 &&
-      !deliverToSign &&
-      !deliverToSakuraTree &&
-      !deliverToHouse
-    ) {
-      const temp = gate;
-      gate = this.physics.add
-        .image(3650, 787, 'gate-active')
-        .setOrigin(0, 0)
-        .setScale(1)
-        .setDepth(MIDDLEGROUND_DEPTH);
-      gate.flipX = true;
-
-      const overlapping = this.physics.overlap(player, gate);
-      if (overlapping) {
-        //skip scene for using preload image from this scene
-        this.scene.start('Delivery2');
-      }
-    }
   }
 }
 
-export default Delivery;
+export default Delivery3;

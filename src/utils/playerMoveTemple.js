@@ -1,4 +1,4 @@
-let gravity = 550;
+let gravity = 250;
 let holdTime = 0;
 const debug = true;
 
@@ -12,11 +12,11 @@ function setHorizontalMovement(player, isLeft, isRight, normalSpeed, flipLeft) {
   let velocityX = 0;
   if (isLeft) {
     velocityX = -normalSpeed;
-    player.setFlipX(flipLeft);
+    player.setFlipX(!flipLeft);
     logdebug('move left');
   } else if (isRight) {
     velocityX = normalSpeed;
-    player.setFlipX(!flipLeft);
+    player.setFlipX(flipLeft);
     logdebug('move right');
   }
   return velocityX;

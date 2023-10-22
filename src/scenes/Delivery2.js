@@ -30,11 +30,19 @@ let gatePrevious;
 let gateNext;
 //interaction
 let key;
-let chess;
+let chest;
 let house;
 let shallow_water;
 //player
 let player;
+
+//control flow
+let left;
+let right;
+let up;
+let isLeftPressed = false;
+let isRightPressed = false;
+let isUpPressed = false;
 
 class Delivery2 extends Phaser.Scene {
   constructor() {
@@ -204,6 +212,7 @@ class Delivery2 extends Phaser.Scene {
     backgrounds.add(cloundLayer2);
     backgrounds.add(cloundLayer1);
   }
+  //water
   addForegroundElements(mapWidth, mapHeight) {
     water = this.add
       .tileSprite(0, mapHeight - 150, mapWidth, 200, 'water')
@@ -220,7 +229,7 @@ class Delivery2 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     platformSlide1 = this.physics.add
-      .image(573, 1230, 'platform')
+      .image(573, 1235, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -258,23 +267,23 @@ class Delivery2 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
-    //path to chess
-    let platformToChess1 = this.add
+    //path to chest
+    let platformTochest1 = this.add
       .image(1069, 1068, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    let platformToChess2 = this.add
+    let platformTochest2 = this.add
       .image(625, 940, 'platform-long1')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    let platformToChess3 = this.add
+    let platformTochest3 = this.add
       .image(353, 810, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    let platformToChess4 = this.add
+    let platformTochest4 = this.add
       .image(84, 717, 'platform')
       .setOrigin(0, 0)
       .setScale(1)
@@ -293,10 +302,10 @@ class Delivery2 extends Phaser.Scene {
     platforms.add(platformToKey2);
     platforms.add(platformToKey3);
     platforms.add(platformToKey4);
-    platforms.add(platformToChess1);
-    platforms.add(platformToChess2);
-    platforms.add(platformToChess3);
-    platforms.add(platformToChess4);
+    platforms.add(platformTochest1);
+    platforms.add(platformTochest2);
+    platforms.add(platformTochest3);
+    platforms.add(platformTochest4);
     platforms.add(platformGate);
     // Set collision boxes for each platform
     platforms.children.iterate((child) => {
@@ -304,11 +313,11 @@ class Delivery2 extends Phaser.Scene {
     });
 
     //set move platform
-    this.tweens.add({
+    this.slide = this.tweens.add({
       targets: platformSlide1,
       x: 1075,
       ease: 'Expo.easeInOut',
-      duration: 3500,
+      duration: 3000,
       repeat: -1,
       yoyo: true,
     });
@@ -326,7 +335,7 @@ class Delivery2 extends Phaser.Scene {
     platformSlide2.body.setAllowGravity(false);
     platformSlide2.body.setImmovable(true);
   }
-  //house gate chess key
+  //house gate chest key
   addMainComponents() {
     components = this.add.group();
     house = this.add
@@ -345,12 +354,13 @@ class Delivery2 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     gateNext.flipX = true;
-    chess = this.physics.add
-      .sprite(150, 615, 'chess')
+    chest = this.physics.add
+      .sprite(150, 615, 'chest')
       .setOrigin(0, 0)
       .setSize(100, 100)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
+    chest.setFrame(21);
     key = this.add
       .image(2400, 370, 'key')
       .setOrigin(0, 0)
@@ -360,7 +370,7 @@ class Delivery2 extends Phaser.Scene {
     components.add(house);
     components.add(gatePrevious);
     components.add(gateNext);
-    components.add(chess);
+    components.add(chest);
     components.add(key);
   }
   //add props stone sakura tree logs
@@ -381,7 +391,7 @@ class Delivery2 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
 
-    // chess platform
+    // chest platform
     this.add
       .image(93, 644, 'brush')
       .setScale(1)
@@ -454,19 +464,19 @@ class Delivery2 extends Phaser.Scene {
     player = this.physics.add
       .sprite(100, floorHeight - 150, 'player')
       .setCollideWorldBounds(true)
-      .setScale(3)
-      .setSize(30, 25)
+      .setScale(0.3)
+      .setSize(180, 200)
       .setDepth(PLAYER_DEPTH);
-
+    player.setFrame(5);
     this.physics.add.collider(player, platforms);
     this.physics.add.collider(player, platformSlide1);
     this.physics.add.collider(player, platformSlide2);
   }
-  //animation chess
+  //animation chest
   addAnimations() {
     this.anims.create({
-      key: 'chess-rotate',
-      frames: this.anims.generateFrameNumbers('chess', {
+      key: 'chest-rotate',
+      frames: this.anims.generateFrameNumbers('chest', {
         start: 21,
         end: 27,
       }),
@@ -513,12 +523,12 @@ class Delivery2 extends Phaser.Scene {
     this.addComponents();
     // player
     this.addPlayerAndColider(floorHeight);
-
-    //test animation chess
-    this.anims.play('chess-rotate', chess);
   }
 
   update(delta, time) {
+    //dev skip the scene
+     this.scene.start('Delivery3');
+
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
     //camera follow player
