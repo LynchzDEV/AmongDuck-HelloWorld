@@ -36,8 +36,9 @@ let milk2; // have to modify position for testing
 let milk3; // have to modify position for testing
 let sign;
 let sakuraTree; // temp for testing
-
+//npc
 let npc1;
+let npc2;
 //control flow
 let left;
 let right;
@@ -490,8 +491,18 @@ class Delivery extends Phaser.Scene {
       .sprite(890, 1120, 'npc1')
       .setOrigin(0, 0)
       .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    npc2 = this.add
+      .sprite(2770, 758, 'npc2')
+      .setOrigin(0, 0) // if 
+      .setScale(0.7)
       .setDepth(MIDDLEGROUND_DEPTH)
-      .flipX = true;
+
+    npc1.anims.play('idle_npc1', true);
+    npc2.anims.play('idle_npc2', true);
+
+    npc1.flipX = true;
+    npc2.flipX = true;
   }
   //animations
   addAnimations() {
@@ -506,27 +517,27 @@ class Delivery extends Phaser.Scene {
       repeat: -1,
     });
 
-    // //water animation
-    // this.anims.create({
-    //   key: 'waterAnim',
-    //   frames: this.anims.generateFrameNumbers('water', {
-    //     start: 0,
-    //     end: 5,
-    //   }),
-    //   frameRate: 5.5,
-    //   repeat: -1,
-    // });
+    // sprite sheet for npc1
+    this.anims.create({
+      key: 'idle_npc1',
+      frames: this.anims.generateFrameNumbers('npc1', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
 
-    // //sakura animation
-    // this.anims.create({
-    //   key: 'sakura',
-    //   frames: this.anims.generateFrameNumbers('sakura', {
-    //     start: 0,
-    //     end: 20,
-    //   }),
-    //   frameRate: 8,
-    //   repeat: -1,
-    // });
+    // sprite sheet for npc2
+    this.anims.create({
+      key: 'idle_npc2',
+      frames: this.anims.generateFrameNumbers('npc2', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
   }
   // update item opacity
   updateItemOpacity(destination) {

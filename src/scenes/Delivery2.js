@@ -538,6 +538,12 @@ class Delivery2 extends Phaser.Scene {
     this.physics.add.collider(player, platformSlide1);
     this.physics.add.collider(player, platformSlide2);
   }
+
+  //npc
+  addNpc(){
+    
+  }
+
   //animation chest
   addAnimations() {
     this.anims.create({
@@ -627,6 +633,7 @@ class Delivery2 extends Phaser.Scene {
     this.addComponents();
     // player
     this.addPlayerAndColider(floorHeight);
+
   }
 
   update(delta, time) {
