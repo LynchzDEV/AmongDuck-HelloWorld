@@ -36,6 +36,8 @@ let milk2; // have to modify position for testing
 let milk3; // have to modify position for testing
 let sign;
 let sakuraTree; // temp for testing
+
+let npc1;
 //control flow
 let left;
 let right;
@@ -482,6 +484,9 @@ class Delivery extends Phaser.Scene {
     player.setFrame(5);
     
     this.physics.add.collider(player, platforms);
+  }
+  addNpc(){
+    npc1 = this.add.sprite(100, 100, 'npc1').setScale(0.5);
   }
   //animations
   addAnimations() {
