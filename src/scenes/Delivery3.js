@@ -440,6 +440,7 @@ class Delivery3 extends Phaser.Scene {
     npc5.flipX = true;
   }
   addAnimations() {
+    //npc4
     this.anims.create({
       key: 'idle_npc4',
       frames: this.anims.generateFrameNumbers('npc4', {
@@ -449,6 +450,7 @@ class Delivery3 extends Phaser.Scene {
       frameRate: 1,
       repeat: -1,
     });
+    //npc5
     this.anims.create({
       key: 'idle_npc5',
       frames: this.anims.generateFrameNumbers('npc5', {
