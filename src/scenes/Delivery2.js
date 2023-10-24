@@ -548,12 +548,11 @@ class Delivery2 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(0.8)
       .setDepth(MIDDLEGROUND_DEPTH);
-
     npc3.anims.play('idle_npc3', true);
     npc3.flipX = true;
   }
 
-  //animation chest
+  //animation chest npc
   addAnimations() {
     this.anims.create({
       key: 'chest-rotate',

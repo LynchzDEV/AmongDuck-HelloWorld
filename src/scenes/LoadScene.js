@@ -269,7 +269,7 @@ class LoadScene extends Phaser.Scene {
       'npc4',
       path.join(SPRITESHEET_GAME_PATH, 'chinese_woman.png'),
       {
-        frameWidth: 98,
+        frameWidth: 97.5,
         frameHeight: 127,
       }
     );
