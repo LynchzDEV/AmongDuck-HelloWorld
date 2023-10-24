@@ -231,6 +231,9 @@ class LoadScene extends Phaser.Scene {
       }
     );
   }
+  loadNpc() {
+    
+  }
   loadPlayer() {
     this.load.spritesheet(
       'player',
@@ -254,6 +257,7 @@ class LoadScene extends Phaser.Scene {
     this.loadPlatforms();
     this.loadMainComponents();
     this.loadComponents();
+    this.loadNpc();
     this.loadPlayer();
     this.loadUI();
   }
