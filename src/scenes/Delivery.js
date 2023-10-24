@@ -482,11 +482,16 @@ class Delivery extends Phaser.Scene {
       .setSize(180, 200)
       .setDepth(PLAYER_DEPTH);
     player.setFrame(5);
-    
+
     this.physics.add.collider(player, platforms);
   }
-  addNpc(){
-    npc1 = this.add.sprite(100, 100, 'npc1').setScale(0.5);
+  addNpc() {
+    npc1 = this.add
+      .sprite(890, 1120, 'npc1')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH)
+      .flipX = true;
   }
   //animations
   addAnimations() {
@@ -602,11 +607,13 @@ class Delivery extends Phaser.Scene {
     this.addComponents();
     //player and colider
     this.addPlayerAndColider(floorHeight);
+    //npc
+    this.addNpc();
   }
 
   update(delta, time) {
     //dev skip the scene
-    this.scene.start('Delivery2');
+    // this.scene.start('Delivery2');
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
@@ -654,11 +661,7 @@ class Delivery extends Phaser.Scene {
       deliverToHouse = !collectItemManager.deliver(player, 'milk', house);
     }
     // checking for deliver success
-    if (
-      !deliverToSign &&
-      !deliverToSakuraTree &&
-      !deliverToHouse
-    ) {
+    if (!deliverToSign && !deliverToSakuraTree && !deliverToHouse) {
       gate.setTexture('gate-active');
       const overlapping = this.physics.overlap(player, gate);
       if (overlapping) {
