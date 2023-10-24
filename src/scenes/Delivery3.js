@@ -33,6 +33,10 @@ let chest;
 let key;
 let sign;
 let ladder;
+
+//npc
+let npc4;
+let npc5;
 //player
 let player;
 
@@ -418,6 +422,23 @@ class Delivery3 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
   }
+
+  //npc
+  addNpc() {
+    npc4 = this.physics.add
+      .image(1067, 1133, 'npc4')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    npc5 = this.physics.add
+      .image(1805, 1125, 'npc5')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    
+    npc5.flipX = true;
+  }
+
   //adding jumppad
   addJumppad() {
     jumppad1 = this.add
@@ -430,7 +451,7 @@ class Delivery3 extends Phaser.Scene {
     noGravityPad = this.add
       .image(3445, 1225, 'jumppad2')
       .setOrigin(0, 0)
-      .setScale(1)  
+      .setScale(1)
       .setDepth(FOREGROUND_DEPTH);
   }
   addPlayerAndCollider(floorHeight) {
@@ -444,6 +465,7 @@ class Delivery3 extends Phaser.Scene {
     player.setFrame(5);
     this.physics.add.collider(player, platforms);
   }
+
   create() {
     //config
     const { width, height } = this.scale;
@@ -451,7 +473,7 @@ class Delivery3 extends Phaser.Scene {
     const mapWidth = width * 3;
     const mapHeight = height * 2;
 
-    //Dev scale 3840 * 1440
+    //! Dev scale 3840 * 1440
     // const mapWidth = width;
     // const mapHeight = height;
 
@@ -469,6 +491,7 @@ class Delivery3 extends Phaser.Scene {
     );
     camera = returnCamera;
     this.setDeviceSpecificControls(height, width, camera);
+
     //add background
     this.addBackgroundElements(mapWidth, mapHeight);
     //add foreground
@@ -481,13 +504,15 @@ class Delivery3 extends Phaser.Scene {
     this.addComponents();
     //add player
     this.addPlayerAndCollider(floorHeight);
+    //add npc
+    this.addNpc();
     //add jumppad
     this.addJumppad();
   }
 
   update(delta, time) {
     //dev skip the scene
-    this.scene.start('Delivery4');
+    // this.scene.start('Delivery4'); //! dev mode
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);

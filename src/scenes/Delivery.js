@@ -487,14 +487,14 @@ class Delivery extends Phaser.Scene {
     this.physics.add.collider(player, platforms);
   }
   addNpc() {
-    npc1 = this.add
+    npc1 = this.physics.add
       .sprite(890, 1120, 'npc1')
       .setOrigin(0, 0)
       .setScale(0.8)
       .setDepth(MIDDLEGROUND_DEPTH);
-    npc2 = this.add
+    npc2 = this.physics.add
       .sprite(2770, 758, 'npc2')
-      .setOrigin(0, 0) // if 
+      .setOrigin(0, 0)
       .setScale(0.7)
       .setDepth(MIDDLEGROUND_DEPTH)
 
@@ -624,7 +624,7 @@ class Delivery extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    this.scene.start('Delivery2');
+    this.scene.start('Delivery2'); //! dev mode
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
