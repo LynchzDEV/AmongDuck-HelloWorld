@@ -35,6 +35,8 @@ let chest;
 let milk;
 let house;
 let shallow_water;
+//npc
+let npc3;
 //player
 let player;
 //control flow
@@ -540,8 +542,15 @@ class Delivery2 extends Phaser.Scene {
   }
 
   //npc
-  addNpc(){
-    
+  addNpc() {
+    npc3 = this.physics.add
+      .sprite(1881, 1149, 'npc3')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    npc3.anims.play('idle_npc3', true);
+    npc3.flipX = true;
   }
 
   //animation chest
@@ -554,6 +563,17 @@ class Delivery2 extends Phaser.Scene {
       }),
       frameRate: 3,
       repeat: 0,
+    });
+
+     // sprite sheet for npc1
+     this.anims.create({
+      key: 'idle_npc3',
+      frames: this.anims.generateFrameNumbers('npc3', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
     });
   }
   //update item opacity
@@ -633,7 +653,8 @@ class Delivery2 extends Phaser.Scene {
     this.addComponents();
     // player
     this.addPlayerAndColider(floorHeight);
-
+    // npc
+    this.addNpc();
   }
 
   update(delta, time) {
