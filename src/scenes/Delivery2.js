@@ -544,7 +544,7 @@ class Delivery2 extends Phaser.Scene {
   //npc
   addNpc() {
     npc3 = this.physics.add
-      .sprite(1881, 1149, 'npc3')
+      .sprite(1900, 1149, 'npc3')
       .setOrigin(0, 0)
       .setScale(0.8)
       .setDepth(MIDDLEGROUND_DEPTH);
