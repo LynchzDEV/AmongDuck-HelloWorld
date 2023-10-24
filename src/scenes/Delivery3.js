@@ -33,6 +33,9 @@ let chest;
 let key;
 let sign;
 let ladder;
+
+//npc
+let npc4, npc5;
 //player
 let player;
 
@@ -418,6 +421,46 @@ class Delivery3 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
   }
+
+  //npc
+  addNpc() {
+    npc4 = this.physics.add
+      .sprite(1067, 1133, 'npc4')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    npc5 = this.physics.add
+      .sprite(1805, 1125, 'npc5')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    npc4.anims.play('idle_npc4', true);
+    npc5.anims.play('idle_npc5', true);
+    npc5.flipX = true;
+  }
+  addAnimations() {
+    //npc4
+    this.anims.create({
+      key: 'idle_npc4',
+      frames: this.anims.generateFrameNumbers('npc4', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
+    //npc5
+    this.anims.create({
+      key: 'idle_npc5',
+      frames: this.anims.generateFrameNumbers('npc5', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
+  }
   //adding jumppad
   addJumppad() {
     jumppad1 = this.add
@@ -426,11 +469,11 @@ class Delivery3 extends Phaser.Scene {
       .setScale(1)
       .setDepth(FOREGROUND_DEPTH);
 
-    //no gravity pad
+    //no gravity pad on nextGate platform
     noGravityPad = this.add
       .image(3445, 1225, 'jumppad2')
       .setOrigin(0, 0)
-      .setScale(1)  
+      .setScale(1)
       .setDepth(FOREGROUND_DEPTH);
   }
   addPlayerAndCollider(floorHeight) {
@@ -444,6 +487,7 @@ class Delivery3 extends Phaser.Scene {
     player.setFrame(5);
     this.physics.add.collider(player, platforms);
   }
+
   create() {
     //config
     const { width, height } = this.scale;
@@ -451,7 +495,7 @@ class Delivery3 extends Phaser.Scene {
     const mapWidth = width * 3;
     const mapHeight = height * 2;
 
-    //Dev scale 3840 * 1440
+    //! Dev scale 3840 * 1440
     // const mapWidth = width;
     // const mapHeight = height;
 
@@ -469,6 +513,9 @@ class Delivery3 extends Phaser.Scene {
     );
     camera = returnCamera;
     this.setDeviceSpecificControls(height, width, camera);
+
+    //add animations
+    this.addAnimations();
     //add background
     this.addBackgroundElements(mapWidth, mapHeight);
     //add foreground
@@ -481,13 +528,15 @@ class Delivery3 extends Phaser.Scene {
     this.addComponents();
     //add player
     this.addPlayerAndCollider(floorHeight);
+    //add npc
+    this.addNpc();
     //add jumppad
     this.addJumppad();
   }
 
   update(delta, time) {
     //dev skip the scene
-    this.scene.start('Delivery4');
+    // this.scene.start('Delivery4'); //! dev mode
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);

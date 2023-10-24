@@ -97,7 +97,10 @@ class LoadScene extends Phaser.Scene {
     );
 
     //load platforms temple
-    this.load.image('ground-temple', path.join(COMPONENT_TEMPLE_PATH, 'ground.png'));
+    this.load.image(
+      'ground-temple',
+      path.join(COMPONENT_TEMPLE_PATH, 'ground.png')
+    );
     this.load.image(
       'groundShadow',
       path.join(COMPONENT_TEMPLE_PATH, 'platformShadow.png')
@@ -139,7 +142,10 @@ class LoadScene extends Phaser.Scene {
     this.load.image('ladder', path.join(COMPONENT_GAME_PATH, 'ladder.png'));
 
     // load components temple
-    this.load.image('HouseTemple', path.join(COMPONENT_TEMPLE_PATH, 'House.png'));
+    this.load.image(
+      'HouseTemple',
+      path.join(COMPONENT_TEMPLE_PATH, 'House.png')
+    );
     this.load.image('torii', path.join(COMPONENT_TEMPLE_PATH, 'Arc.png'));
   }
   loadComponents() {
@@ -231,6 +237,52 @@ class LoadScene extends Phaser.Scene {
       }
     );
   }
+  loadNpc() {
+    this.load.spritesheet(
+      'npc1',
+      path.join(SPRITESHEET_GAME_PATH, 'atok.png'),
+      {
+        frameWidth: 112.5,
+        frameHeight: 130,
+      }
+    );
+
+    this.load.spritesheet(
+      'npc2',
+      path.join(SPRITESHEET_GAME_PATH, 'village_head.png'),
+      {
+        frameWidth: 113.5,
+        frameHeight: 134,
+      }
+    );
+
+    this.load.spritesheet(
+      'npc3',
+      path.join(SPRITESHEET_GAME_PATH, 'uncle_fisherman.png'),
+      {
+        frameWidth: 100,
+        frameHeight: 115,
+      }
+    );
+
+    this.load.spritesheet(
+      'npc4',
+      path.join(SPRITESHEET_GAME_PATH, 'chinese_woman.png'),
+      {
+        frameWidth: 97.5,
+        frameHeight: 127,
+      }
+    );
+
+    this.load.spritesheet(
+      'npc5',
+      path.join(SPRITESHEET_GAME_PATH, 'malay_woman.png'),
+      {
+        frameWidth: 117,
+        frameHeight: 141,
+      }
+    );
+  }
   loadPlayer() {
     this.load.spritesheet(
       'player',
@@ -254,6 +306,7 @@ class LoadScene extends Phaser.Scene {
     this.loadPlatforms();
     this.loadMainComponents();
     this.loadComponents();
+    this.loadNpc();
     this.loadPlayer();
     this.loadUI();
   }

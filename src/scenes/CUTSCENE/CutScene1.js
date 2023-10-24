@@ -55,25 +55,26 @@ class CutScene1 extends Phaser.Scene {
   }
 
   update(delta, time) {
-        // Update the cutscene frame by frame
-        this.input.on('pointerdown', function(pointer) {
-          // Handle the pointerdown event
-          if (currentFrame < scenes.length - 1) {
-              if (this.time.now > delayBetweenScenes) {
-                  currentFrame++;
-                  this.currentScene.setTexture(scenes[currentFrame]);
-                  this.currentWord.setTexture(words[currentFrame]);
-                  console.log(currentFrame);
-                  console.log(thistime.now)
-                  this.time.delayedCall(delayBetweenScenes, function() {
-                      // Do something after the delay
-                  }, [], this);
-              }
-          } else {
-              // The cutscene is over, proceed to the next scene or level
-          }
-      }, this);
-          // The cutscene is over, proceed to the next scene or level
+    this.scene.start("Delivery");
+      //   // Update the cutscene frame by frame
+      //   this.input.on('pointerdown', function(pointer) {
+      //     // Handle the pointerdown event
+      //     if (currentFrame < scenes.length - 1) {
+      //         if (this.time.now > delayBetweenScenes) {
+      //             currentFrame++;
+      //             this.currentScene.setTexture(scenes[currentFrame]);
+      //             this.currentWord.setTexture(words[currentFrame]);
+      //             console.log(currentFrame);
+      //             console.log(thistime.now)
+      //             this.time.delayedCall(delayBetweenScenes, function() {
+      //                 // Do something after the delay
+      //             }, [], this);
+      //         }
+      //     } else {
+      //         // The cutscene is over, proceed to the next scene or level
+      //     }
+      // }, this);
+      //     // The cutscene is over, proceed to the next scene or level
   
   }
 }

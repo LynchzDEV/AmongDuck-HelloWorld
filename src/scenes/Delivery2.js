@@ -35,6 +35,8 @@ let chest;
 let milk;
 let house;
 let shallow_water;
+//npc
+let npc3;
 //player
 let player;
 //control flow
@@ -538,7 +540,19 @@ class Delivery2 extends Phaser.Scene {
     this.physics.add.collider(player, platformSlide1);
     this.physics.add.collider(player, platformSlide2);
   }
-  //animation chest
+
+  //npc
+  addNpc() {
+    npc3 = this.physics.add
+      .sprite(1900, 1149, 'npc3')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    npc3.anims.play('idle_npc3', true);
+    npc3.flipX = true;
+  }
+
+  //animation chest npc
   addAnimations() {
     this.anims.create({
       key: 'chest-rotate',
@@ -548,6 +562,17 @@ class Delivery2 extends Phaser.Scene {
       }),
       frameRate: 3,
       repeat: 0,
+    });
+
+     // sprite sheet for npc1
+     this.anims.create({
+      key: 'idle_npc3',
+      frames: this.anims.generateFrameNumbers('npc3', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
     });
   }
   //update item opacity
@@ -627,11 +652,13 @@ class Delivery2 extends Phaser.Scene {
     this.addComponents();
     // player
     this.addPlayerAndColider(floorHeight);
+    // npc
+    this.addNpc();
   }
 
   update(delta, time) {
     //dev skip the scene
-     this.scene.start('Delivery3');
+     this.scene.start('Delivery3'); //! dev mode
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
