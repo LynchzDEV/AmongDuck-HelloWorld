@@ -15,15 +15,14 @@ export const updateTextOpacity = (player, destination, item) => {
   const minOpacity = 0  ;
   const maxOpacity = 1;
 
-  const maxDistance = 250;
+  const maxDistance = 200;
 
   const opacity = Phaser.Math.Linear(
     minOpacity,
     maxOpacity,
-    // Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
-    1.6 - distance / maxDistance
+    2 - distance / maxDistance // 2 is the slope of the line
   );
-  console.log(opacity);
+  // console.log(opacity); //! debug check opacity
 
   item.setAlpha(opacity);
 };

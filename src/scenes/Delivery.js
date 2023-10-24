@@ -522,7 +522,7 @@ class Delivery extends Phaser.Scene {
   //message
   addMessage() {
     this.messageNpc1 = this.add
-      .image(1131, 993, 'message-npc1')
+      .image(1131, 993, 'message-n1')
       .setOrigin(0, 0)
       .setAlpha(0)
       .setScale(1)
@@ -621,9 +621,12 @@ class Delivery extends Phaser.Scene {
     //player drown
     playerDrown(this, player, shallow_water);
 
-    //npc1 dialog
-    if(overlabNPC1){
-      this.updateTextOpacity(player, npc1, this.messageNpc1);
+    //? npc1 message check When milk1 collected this text will be disappear
+    if(overlapMilk1){
+      //updateTextOpacity(player, target, message)
+      this.updateTextOpacity(player, this.messageNpc1, this.messageNpc1);
+    } else {
+      this.messageNpc1.setAlpha(0);
     }
 
     //player collect milk

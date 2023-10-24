@@ -285,7 +285,15 @@ class LoadScene extends Phaser.Scene {
     );
   }
   loadMessage(){
-    this.load.image('message-npc1', path.join(TEXT_GAME_PATH, 'message-npc1.png'));
+    this.load.image('message-n1', path.join(TEXT_GAME_PATH, 'message-npc1.png'));
+    this.load.image('message-n2', path.join(TEXT_GAME_PATH, 'message-npc2.png'));
+    this.load.image('message-n3', path.join(TEXT_GAME_PATH, 'message-npc3.png'));
+    this.load.image('message-n4', path.join(TEXT_GAME_PATH, 'message-npc4.png'));
+    this.load.image('message-n5', path.join(TEXT_GAME_PATH, 'message-npc5.png'));
+    this.load.image('thx', path.join(TEXT_GAME_PATH, 'thx.png'));
+    this.load.image('require1', path.join(TEXT_GAME_PATH, 'require1.png'));
+    this.load.image('require2', path.join(TEXT_GAME_PATH, 'require2.png'));
+    this.load.image('rigroll', path.join(TEXT_GAME_PATH, 'rigroll.png'));
   }
   loadPlayer() {
     this.load.spritesheet(
@@ -311,6 +319,7 @@ class LoadScene extends Phaser.Scene {
     this.loadMainComponents();
     this.loadComponents();
     this.loadNpc();
+    this.loadMessage();
     this.loadPlayer();
     this.loadUI();
   }
@@ -318,7 +327,7 @@ class LoadScene extends Phaser.Scene {
   create() {
     this.add.text(20, 20, 'Loading game...');
     //if you need to add more text before dowloading, add here
-    this.scene.start('CutScene1');
+    this.scene.start('Delivery');
   }
 }
 export default LoadScene;

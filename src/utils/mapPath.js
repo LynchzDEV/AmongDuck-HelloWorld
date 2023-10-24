@@ -64,5 +64,5 @@ export const TEXT_GAME_PATH = path.join(
   'assets',
   'image',
   'game-scene',
-  'texts'
+  'npc_text'
 )
