@@ -11,17 +11,11 @@ let scenes = [
   "scene6",
   "scene7",
 ];
-let words = [
-  "word1",
-  "word2",
-  "word3",
-  "word4",
-  "word5",
-  "word6",
-  "word7",
-];
-let currentFrame = 0;
-let delayBetweenScenes = 1000 ;
+let words = ["word1", "word2", "word3", "word4", "word5", "word6", "word7"];
+let currentFrameIndex = 0;
+let delayText = 10000;
+let delayTransition = 2000;
+let currentFrame;
 
 class CutScene1 extends Phaser.Scene {
   constructor() {
@@ -47,35 +41,36 @@ class CutScene1 extends Phaser.Scene {
     this.load.image("word7", path.join(CUTSCENE_PATH, "wordcs7.png"));
   }
 
-  animateCutScene() {}
-
   create() {
-    this.currentScene = this.add.image(0,0,scenes[currentFrame]).setOrigin(0,0).setScale(0.5);
-    this.currentWord = this.add.image(0,0,words[currentFrame]).setOrigin(0,0).setScale(0.5);
+    const self = this;
+    currentFrame = this.add.image(0, 0, scenes[currentFrameIndex]).setOrigin(0,0).setScale(0.5);
+    const currentWord = this.add.image(400, 100, words[currentFrameIndex]).setOrigin(0,0).setScale(0.5);
+
+    function showNextFrame() {
+      currentFrameIndex++;
+      if (currentFrameIndex < 3) {
+        currentFrame.setTexture(scenes[currentFrameIndex]);
+        currentWord.setTexture(words[currentFrameIndex]);
+        // Set a time delay before showing the next frame
+        self.time.addEvent({
+          delay: delayText,
+          callback: showNextFrame,
+        });
+      } else if(currentFrameIndex < 7) {
+        currentFrame.setTexture(scenes[currentFrameIndex]);
+        currentWord.setTexture(words[currentFrameIndex]);
+        // Set a time delay before showing the next frame
+        self.time.addEvent({
+          delay: delayTransition,
+          callback: showNextFrame,
+        });
+        // End of cutscene, you can add your logic for what happens after the cutscene
+      }
+    }
+    showNextFrame();
   }
 
-  update(delta, time) {
-        // Update the cutscene frame by frame
-        this.input.on('pointerdown', function(pointer) {
-          // Handle the pointerdown event
-          if (currentFrame < scenes.length - 1) {
-              if (this.time.now > delayBetweenScenes) {
-                  currentFrame++;
-                  this.currentScene.setTexture(scenes[currentFrame]);
-                  this.currentWord.setTexture(words[currentFrame]);
-                  console.log(currentFrame);
-                  console.log(thistime.now)
-                  this.time.delayedCall(delayBetweenScenes, function() {
-                      // Do something after the delay
-                  }, [], this);
-              }
-          } else {
-              // The cutscene is over, proceed to the next scene or level
-          }
-      }, this);
-          // The cutscene is over, proceed to the next scene or level
-  
-  }
+  update(delta, time) {}
 }
 
 export default CutScene1;
