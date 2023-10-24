@@ -12,16 +12,18 @@ export const updateTextOpacity = (player, destination, item) => {
     destinationY
   );
 
-  const minOpacity = item.alpha;
+  const minOpacity = 0  ;
   const maxOpacity = 1;
 
-  const maxDistance = 300;
+  const maxDistance = 250;
 
   const opacity = Phaser.Math.Linear(
     minOpacity,
     maxOpacity,
-    Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
+    // Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
+    1.6 - distance / maxDistance
   );
+  console.log(opacity);
 
   item.setAlpha(opacity);
 };

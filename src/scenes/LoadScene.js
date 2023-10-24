@@ -10,6 +10,7 @@ import {
   SPRITESHEET_GAME_PATH,
   PLAYER_SPRITESHEET_PATH,
   UI_PATH,
+  TEXT_GAME_PATH,
 } from '../utils/mapPath';
 
 class LoadScene extends Phaser.Scene {
@@ -282,6 +283,9 @@ class LoadScene extends Phaser.Scene {
         frameHeight: 141,
       }
     );
+  }
+  loadMessage(){
+    this.load.image('message-npc1', path.join(TEXT_GAME_PATH, 'message-npc1.png'));
   }
   loadPlayer() {
     this.load.spritesheet(

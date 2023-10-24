@@ -59,3 +59,10 @@ export const SPRITESHEET_GAME_PATH = path.join(
   'game-scene',
   'spritesheets'
 )
+
+export const TEXT_GAME_PATH = path.join(
+  'assets',
+  'image',
+  'game-scene',
+  'texts'
+)

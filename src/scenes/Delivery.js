@@ -12,6 +12,7 @@ import playerMoveTemple from '../utils/playerMoveTemple';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import { shallowWater, playerDrown } from '../utils/event/drown';
 import { manageCollectItem } from '../utils/event/collectItem';
+import { updateTextOpacity } from '../utils/event/updateTextOpacity';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -37,6 +38,8 @@ let sakuraTree; // temp for testing
 //npc
 let npc1;
 let npc2;
+//manage text
+let overlabNPC1 = true;
 //control flow
 let left;
 let right;
@@ -516,6 +519,15 @@ class Delivery extends Phaser.Scene {
       repeat: -1,
     });
   }
+  //message
+  addMessage() {
+    this.messageNpc1 = this.add
+      .image(1131, 993, 'message-npc1')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+  }
   // update item opacity
   updateItemOpacity(destination) {
     const playerX = player.x;
@@ -551,14 +563,6 @@ class Delivery extends Phaser.Scene {
     this.playerMoveTemple = playerMoveTemple;
   }
 
-  // addMessage() {
-  //   this.messageNpc1 = this.add
-  //     .image(890, 1120, 'gate')
-  //     .setOrigin(0, 0)
-  //     .setAlpha(0)
-  //     .setScale(1)
-  //     .setDepth(PLAYER_DEPTH);
-  // }
   create() {
     //config
     const { width, height } = this.scale;
@@ -575,6 +579,7 @@ class Delivery extends Phaser.Scene {
     //binding function
     this.playerMoveTemple = playerMoveTemple;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
+    this.updateTextOpacity = updateTextOpacity;
 
     //setting world and camera
     const returnCamera = this.setWorldBoundsAndCamera(
@@ -602,7 +607,7 @@ class Delivery extends Phaser.Scene {
     //npc
     this.addNpc();
     //message
-    // this.addMessage();
+    this.addMessage();
   }
 
   update(delta, time) {
@@ -615,6 +620,12 @@ class Delivery extends Phaser.Scene {
     camera.startFollow(player);
     //player drown
     playerDrown(this, player, shallow_water);
+
+    //npc1 dialog
+    if(overlabNPC1){
+      this.updateTextOpacity(player, npc1, this.messageNpc1);
+    }
+
     //player collect milk
     if (overlapMilk1) {
       overlapMilk1 = !collectItemManager.collect(
@@ -626,7 +637,6 @@ class Delivery extends Phaser.Scene {
     }
     if (deliverToNPC2) {
       deliverToNPC2 = !collectItemManager.deliver(player, 'milk', npc2);
-      
     }
     // checking for deliver success
     if (!deliverToNPC2) {
