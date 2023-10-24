@@ -32,6 +32,8 @@ let milkShop;
 let house;
 let gate;
 let milk1;
+let milk2; // have to modify position for testing
+let milk3; // have to modify position for testing
 let sign;
 let sakuraTree; // temp for testing
 //npc
@@ -49,7 +51,11 @@ let collectItemManager;
 const milkTargetSize = 150,
   gateTargetSize = 90;
 let overlapMilk1 = true;
-let deliverToNPC2 = true;
+let overlapMilk2 = true;
+let overlapMilk3 = true;
+let deliverToSign = true; // temp for testing
+let deliverToSakuraTree = true; // temp for testing
+let deliverToHouse = true; // temp for testing
 
 class Delivery extends Phaser.Scene {
   constructor() {
@@ -311,7 +317,7 @@ class Delivery extends Phaser.Scene {
       .setDepth(MIDDLEGROUND_DEPTH);
 
     let platformSakuraTree = this.add
-      .image(929, 695, 'platform-long1')
+      .image(929 - 65, 695 + 55, 'platform-long1') // modified platform position for testing
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -337,13 +343,24 @@ class Delivery extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    house = this.add
+    house = this.physics.add
       .image(2620, 400, 'house')
       .setOrigin(0, 0)
       .setScale(1)
+      .setSize(150, 400) // temp for testing
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     milk1 = this.physics.add
       .image(1102 - 65, 595 + 55, 'milk') // modified platform position for testing
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    milk2 = this.physics.add
+      .image(100, this.scale.height * 2 - 215 - 150, 'milk')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    milk3 = this.physics.add
+      .image(1950, 925, 'milk')
       .setOrigin(0, 0)
       .setScale(0.8)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -353,7 +370,8 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     gate.flipX = true;
-    sign = this.add
+    // sign is not physics object by default, this is for testing
+    sign = this.physics.add
       .image(2447, 701, 'sign')
       .setOrigin(0, 0)
       .setScale(1)
@@ -369,8 +387,8 @@ class Delivery extends Phaser.Scene {
     collectItemManager = manageCollectItem(this, [
       {
         success: false,
-        item: [milk1],
-        sizeOfInventory: 1,
+        item: [milk1, milk2, milk3],
+        sizeOfInventory: 3,
         targetSize: milkTargetSize,
         alpha: 0.5,
       },
@@ -390,19 +408,25 @@ class Delivery extends Phaser.Scene {
     ]);
     milk1.collected = false;
     milk1.delivered = false;
+    milk2.collected = false;
+    milk2.delivered = false;
+    milk3.collected = false;
+    milk3.delivered = false;
     collectItemManager.initInventory();
   }
   //prop
   addComponents() {
     //sakura milk shop
-    sakuraTree = this.add
+    // sakura tree is not physics object by default, this is for testing
+    sakuraTree = this.physics.add
       .image(141, 612, 'sakura-tree')
       .setOrigin(0, 0)
       .setScale(1)
+      .setSize(50, 600) // temp for testing
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     sakuraTree.flipX = true;
     this.add
-      .image(700, 266, 'sakura-tree')
+      .image(700 - 65, 266 + 55, 'sakura-tree') // modified platform position for testing
       .setOrigin(0, 0)
       .setScale(0.7)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
@@ -417,7 +441,7 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     this.add
-      .image(1075, 589, 'bench')
+      .image(1075 - 65, 589 + 55, 'bench') // modified platform position for testing
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
@@ -467,13 +491,12 @@ class Delivery extends Phaser.Scene {
       .sprite(890, 1120, 'npc1')
       .setOrigin(0, 0)
       .setScale(0.8)
-      // .setSize(400, 200) // testing opacity
       .setDepth(MIDDLEGROUND_DEPTH);
     npc2 = this.physics.add
       .sprite(2770, 758, 'npc2')
       .setOrigin(0, 0)
       .setScale(0.7)
-      .setDepth(MIDDLEGROUND_DEPTH);
+      .setDepth(MIDDLEGROUND_DEPTH)
 
     npc1.anims.play('idle_npc1', true);
     npc2.anims.play('idle_npc2', true);
@@ -546,19 +569,15 @@ class Delivery extends Phaser.Scene {
 
   init() {
     overlapMilk1 = true;
+    overlapMilk2 = true;
+    overlapMilk3 = true;
     collectItemManager = manageCollectItem(this);
-    deliverToNPC2 = true; // deliver to npc2 ( the guy on the left of the home)
+    deliverToSign = true; // temp for testing
+    deliverToSakuraTree = true; // temp for testing
+    deliverToHouse = true; // temp for testing
     this.playerMoveTemple = playerMoveTemple;
   }
 
-  // addMessage() {
-  //   this.messageNpc1 = this.add
-  //     .image(890, 1120, 'gate')
-  //     .setOrigin(0, 0)
-  //     .setAlpha(0)
-  //     .setScale(1)
-  //     .setDepth(PLAYER_DEPTH);
-  // }
   create() {
     //config
     const { width, height } = this.scale;
@@ -601,8 +620,6 @@ class Delivery extends Phaser.Scene {
     this.addPlayerAndColider(floorHeight);
     //npc
     this.addNpc();
-    //message
-    // this.addMessage();
   }
 
   update(delta, time) {
@@ -624,12 +641,38 @@ class Delivery extends Phaser.Scene {
         milk1
       );
     }
-    if (deliverToNPC2) {
-      deliverToNPC2 = !collectItemManager.deliver(player, 'milk', npc2);
-      
+    if (overlapMilk2) {
+      overlapMilk2 = !collectItemManager.collect(
+        player,
+        1,
+        milkTargetSize,
+        milk2
+      );
+    }
+    if (overlapMilk3) {
+      overlapMilk3 = !collectItemManager.collect(
+        player,
+        2,
+        milkTargetSize,
+        milk3
+      );
+    }
+    // //player deliver milk
+    if (deliverToSign) {
+      deliverToSign = !collectItemManager.deliver(player, 'milk', sign);
+    }
+    if (deliverToSakuraTree) {
+      deliverToSakuraTree = !collectItemManager.deliver(
+        player,
+        'milk',
+        sakuraTree
+      );
+    }
+    if (deliverToHouse) {
+      deliverToHouse = !collectItemManager.deliver(player, 'milk', house);
     }
     // checking for deliver success
-    if (!deliverToNPC2) {
+    if (!deliverToSign && !deliverToSakuraTree && !deliverToHouse) {
       gate.setTexture('gate-active');
       const overlapping = this.physics.overlap(player, gate);
       if (overlapping) {
