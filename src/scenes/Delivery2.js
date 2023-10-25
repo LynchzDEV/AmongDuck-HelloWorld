@@ -12,6 +12,7 @@ import {
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import { shallowWater, playerDrown } from '../utils/event/drown';
 import { manageCollectItem } from '../utils/event/collectItem';
+import { updateTextOpacity } from '../utils/event/updateTextOpacity';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -55,7 +56,7 @@ let overlapKey = true;
 let overlapChest = true;
 let overlapMilk = false;
 let deliverToChest = true;
-let deliverToHouse = true; // temp for testing
+let deliverToNpc3 = true; // temp for testing
 
 class Delivery2 extends Phaser.Scene {
   constructor() {
@@ -552,6 +553,25 @@ class Delivery2 extends Phaser.Scene {
     npc3.flipX = true;
   }
 
+   //message
+   addMessage() {
+    //message for npc interaction
+    this.messageNpc3 = this.add
+      .image(1911, 1040, 'message-n3')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+
+    //message require milk
+    this.requireNpc3 = this.add
+      .image(1983, 1181, 'require1')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+  }
+
   //animation chest npc
   addAnimations() {
     this.anims.create({
@@ -609,7 +629,7 @@ class Delivery2 extends Phaser.Scene {
     overlapMilk = false;
     collectItemManager = manageCollectItem(this);
     deliverToChest = true; // temp for testing
-    deliverToHouse = true; // temp for testing
+    deliverToNpc3 = true; // temp for testing
     this.playerMoveTemple = playerMoveTemple;
   }
 
@@ -629,6 +649,7 @@ class Delivery2 extends Phaser.Scene {
     //binding function
     this.playerMoveTemple = playerMoveTemple;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
+    this.updateTextOpacity = updateTextOpacity;
 
     //setting world and camera
     const returnCamera = this.setWorldBoundsAndCamera(
@@ -654,6 +675,8 @@ class Delivery2 extends Phaser.Scene {
     this.addPlayerAndColider(floorHeight);
     // npc
     this.addNpc();
+    // message
+    this.addMessage();
   }
 
   update(delta, time) {
@@ -667,6 +690,14 @@ class Delivery2 extends Phaser.Scene {
 
     //player drown
     playerDrown(this, player, shallow_water);
+
+    //? npc1 message check When object collected this text will be disappear
+    if (deliverToNpc3) {
+      //updateTextOpacity(player, target, message)
+      this.updateTextOpacity(player, this.requireNpc3, this.requireNpc3);
+    } else {
+      this.requireNpc3.setAlpha(0);
+    }
 
     //player collect key
     if (overlapKey) {
@@ -700,11 +731,11 @@ class Delivery2 extends Phaser.Scene {
       );
     }
     //player deliver milk
-    if (deliverToHouse) {
-      deliverToHouse = !collectItemManager.deliver(player, 'milk', house);
+    if (deliverToNpc3) {
+      deliverToNpc3 = !collectItemManager.deliver(player, 'milk', npc3);
     }
     // checking for deliver success
-    if (!deliverToChest && !deliverToHouse) {
+    if (!deliverToChest && !deliverToNpc3) {
       gateNext.setTexture('gate-active');
       const overlapping = this.physics.overlap(player, gateNext);
       if (overlapping) {

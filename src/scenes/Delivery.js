@@ -627,7 +627,7 @@ class Delivery extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    // this.scene.start('Delivery2'); //! dev mode
+    this.scene.start('Delivery2'); //! dev mode
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
