@@ -336,6 +336,7 @@ class Delivery4 extends Phaser.Scene {
     //camera follow player
     camera.startFollow(player);
 
+    //? ester egg
     if(playerEsterEgg){
       this.updateTextOpacity(player, {x:1000, y: 1200}, this.rigroll);
     } else {
