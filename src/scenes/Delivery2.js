@@ -364,7 +364,7 @@ class Delivery2 extends Phaser.Scene {
   //house gate chest key milk
   addMainComponents() {
     components = this.add.group();
-    house = this.physics.add // house is not physics object by default, this is for testing
+    house = this.add
       .image(1439, 834, 'house2')
       .setOrigin(0, 0)
       .setScale(1)
@@ -545,9 +545,9 @@ class Delivery2 extends Phaser.Scene {
   //npc
   addNpc() {
     npc3 = this.physics.add
-      .sprite(1900, 1149, 'npc3')
+      .sprite(1900, 1148, 'npc3')
       .setOrigin(0, 0)
-      .setScale(0.8)
+      .setScale(0.2)
       .setDepth(MIDDLEGROUND_DEPTH);
     npc3.anims.play('idle_npc3', true);
     npc3.flipX = true;

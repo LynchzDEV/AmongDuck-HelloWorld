@@ -243,8 +243,8 @@ class LoadScene extends Phaser.Scene {
       'npc1',
       path.join(SPRITESHEET_GAME_PATH, 'atok.png'),
       {
-        frameWidth: 112.5,
-        frameHeight: 130,
+        frameWidth: 332,
+        frameHeight: 516,
       }
     );
 
@@ -252,8 +252,8 @@ class LoadScene extends Phaser.Scene {
       'npc2',
       path.join(SPRITESHEET_GAME_PATH, 'village_head.png'),
       {
-        frameWidth: 113.5,
-        frameHeight: 134,
+        frameWidth: 336,
+        frameHeight: 536,
       }
     );
 
@@ -261,8 +261,8 @@ class LoadScene extends Phaser.Scene {
       'npc3',
       path.join(SPRITESHEET_GAME_PATH, 'uncle_fisherman.png'),
       {
-        frameWidth: 100,
-        frameHeight: 115,
+        frameWidth: 332,
+        frameHeight: 466,
       }
     );
 
@@ -270,8 +270,8 @@ class LoadScene extends Phaser.Scene {
       'npc4',
       path.join(SPRITESHEET_GAME_PATH, 'chinese_woman.png'),
       {
-        frameWidth: 97.5,
-        frameHeight: 127,
+        frameWidth: 312,
+        frameHeight: 508,
       }
     );
 
@@ -279,8 +279,16 @@ class LoadScene extends Phaser.Scene {
       'npc5',
       path.join(SPRITESHEET_GAME_PATH, 'malay_woman.png'),
       {
-        frameWidth: 117,
-        frameHeight: 141,
+        frameWidth: 332,
+        frameHeight: 524,
+      }
+    );
+    this.load.spritesheet(
+      'npc6',
+      path.join(SPRITESHEET_GAME_PATH, 'indian_woman.png'),
+      {
+        frameWidth: 292,
+        frameHeight: 532,
       }
     );
   }

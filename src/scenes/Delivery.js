@@ -467,19 +467,19 @@ class Delivery extends Phaser.Scene {
   }
   addNpc() {
     npc1 = this.physics.add
-      .sprite(890, 1120, 'npc1')
+      .sprite(890, 1120, 'npc2')
       .setOrigin(0, 0)
-      .setScale(0.8)
+      .setScale(0.2)
       // .setSize(400, 200) // testing opacity
       .setDepth(MIDDLEGROUND_DEPTH);
     npc2 = this.physics.add
-      .sprite(2770, 758, 'npc2')
+      .sprite(2770, 758- 15, 'npc6')
       .setOrigin(0, 0)
-      .setScale(0.7)
+      .setScale(0.2)
       .setDepth(MIDDLEGROUND_DEPTH);
 
-    npc1.anims.play('idle_npc1', true);
-    npc2.anims.play('idle_npc2', true);
+    npc1.anims.play('idle_npc2', true);
+    npc2.anims.play('idle_npc6', true);
 
     npc1.flipX = true;
     npc2.flipX = true;
@@ -499,8 +499,8 @@ class Delivery extends Phaser.Scene {
 
     // sprite sheet for npc1
     this.anims.create({
-      key: 'idle_npc1',
-      frames: this.anims.generateFrameNumbers('npc1', {
+      key: 'idle_npc6',
+      frames: this.anims.generateFrameNumbers('npc6', {
         start: 0,
         end: 1,
       }),
