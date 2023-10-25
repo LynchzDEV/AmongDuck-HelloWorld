@@ -521,8 +521,23 @@ class Delivery extends Phaser.Scene {
   }
   //message
   addMessage() {
+    //message for npc interaction
     this.messageNpc1 = this.add
       .image(1131, 993, 'message-n1')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+    this.messageNpc2 = this.add
+      .image(2522, 687, 'message-n2')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+
+    //message require milk
+    this.requireNpc2 = this.add
+      .image(2628, 784, 'require1')
       .setOrigin(0, 0)
       .setAlpha(0)
       .setScale(1)
@@ -622,11 +637,11 @@ class Delivery extends Phaser.Scene {
     playerDrown(this, player, shallow_water);
 
     //? npc1 message check When milk1 collected this text will be disappear
-    if(overlapMilk1){
+    if (overlapMilk1) {
       //updateTextOpacity(player, target, message)
-      this.updateTextOpacity(player, this.messageNpc1, this.messageNpc1);
+      this.updateTextOpacity(player, this.requireNpc2, this.requireNpc2);
     } else {
-      this.messageNpc1.setAlpha(0);
+      this.requireNpc2.setAlpha(0);
     }
 
     //player collect milk
