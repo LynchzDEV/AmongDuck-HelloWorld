@@ -10,6 +10,7 @@ import {
   SPRITESHEET_GAME_PATH,
   PLAYER_SPRITESHEET_PATH,
   UI_PATH,
+  TEXT_GAME_PATH,
 } from '../utils/mapPath';
 
 class LoadScene extends Phaser.Scene {
@@ -242,8 +243,8 @@ class LoadScene extends Phaser.Scene {
       'npc1',
       path.join(SPRITESHEET_GAME_PATH, 'atok.png'),
       {
-        frameWidth: 112.5,
-        frameHeight: 130,
+        frameWidth: 332,
+        frameHeight: 516,
       }
     );
 
@@ -251,8 +252,8 @@ class LoadScene extends Phaser.Scene {
       'npc2',
       path.join(SPRITESHEET_GAME_PATH, 'village_head.png'),
       {
-        frameWidth: 113.5,
-        frameHeight: 134,
+        frameWidth: 336,
+        frameHeight: 536,
       }
     );
 
@@ -260,8 +261,8 @@ class LoadScene extends Phaser.Scene {
       'npc3',
       path.join(SPRITESHEET_GAME_PATH, 'uncle_fisherman.png'),
       {
-        frameWidth: 100,
-        frameHeight: 115,
+        frameWidth: 332,
+        frameHeight: 466,
       }
     );
 
@@ -269,8 +270,8 @@ class LoadScene extends Phaser.Scene {
       'npc4',
       path.join(SPRITESHEET_GAME_PATH, 'chinese_woman.png'),
       {
-        frameWidth: 97.5,
-        frameHeight: 127,
+        frameWidth: 312,
+        frameHeight: 508,
       }
     );
 
@@ -278,10 +279,29 @@ class LoadScene extends Phaser.Scene {
       'npc5',
       path.join(SPRITESHEET_GAME_PATH, 'malay_woman.png'),
       {
-        frameWidth: 117,
-        frameHeight: 141,
+        frameWidth: 332,
+        frameHeight: 524,
       }
     );
+    this.load.spritesheet(
+      'npc6',
+      path.join(SPRITESHEET_GAME_PATH, 'indian_woman.png'),
+      {
+        frameWidth: 292,
+        frameHeight: 532,
+      }
+    );
+  }
+  loadMessage(){
+    this.load.image('message-n1', path.join(TEXT_GAME_PATH, 'message-npc1.png'));
+    this.load.image('message-n2', path.join(TEXT_GAME_PATH, 'message-npc2.png'));
+    this.load.image('message-n3', path.join(TEXT_GAME_PATH, 'message-npc3.png'));
+    this.load.image('message-n4', path.join(TEXT_GAME_PATH, 'message-npc4.png'));
+    this.load.image('message-n5', path.join(TEXT_GAME_PATH, 'message-npc5.png'));
+    this.load.image('thx', path.join(TEXT_GAME_PATH, 'thx.png'));
+    this.load.image('require1', path.join(TEXT_GAME_PATH, 'require1.png'));
+    this.load.image('require2', path.join(TEXT_GAME_PATH, 'require2.png'));
+    this.load.image('rigroll', path.join(TEXT_GAME_PATH, 'rigroll.png'));
   }
   loadPlayer() {
     this.load.spritesheet(
@@ -307,6 +327,7 @@ class LoadScene extends Phaser.Scene {
     this.loadMainComponents();
     this.loadComponents();
     this.loadNpc();
+    this.loadMessage();
     this.loadPlayer();
     this.loadUI();
   }
@@ -314,7 +335,7 @@ class LoadScene extends Phaser.Scene {
   create() {
     this.add.text(20, 20, 'Loading game...');
     //if you need to add more text before dowloading, add here
-    this.scene.start('CutScene1');
+    this.scene.start('Delivery');
   }
 }
 export default LoadScene;
