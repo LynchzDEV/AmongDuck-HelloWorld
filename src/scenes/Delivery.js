@@ -12,6 +12,7 @@ import playerMoveTemple from '../utils/playerMoveTemple';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import { shallowWater, playerDrown } from '../utils/event/drown';
 import { manageCollectItem } from '../utils/event/collectItem';
+import { updateTextOpacity } from '../utils/event/updateTextOpacity';
 
 // ! test new class for collect item
 import {
@@ -41,13 +42,19 @@ let camera;
 let milkShop;
 let house;
 let gate;
-let milkA;
-let milkB; // have to modify position for testing
-let milkC; // have to modify position for testing
-let sign;
-let sakuraTree; // temp for testing
-let shallow_water;
-//control flow
+let milkA; // ! set new pos [event_handling]
+let milkB; // ! set new pos [event_handling]
+let milkC; // ! set new pos [event_handling]
+let sign; // ! temp for testing [event_handling]
+let sakuraTree; // ! temp for testing [event_handling]
+let shallow_water; // ! new logic for drown [event_handling]
+let milk1; // ! must modify to new structure
+//npc // ! must modify to new structure
+let npc1;
+let npc2;
+//manage text // ! must modify to new structure
+let overlabNPC1 = true;
+//control flow // ! must modify for interact-btn
 let left;
 let right;
 let up;
@@ -59,11 +66,7 @@ let collectItemManager;
 const milkTargetSize = 150,
   gateTargetSize = 90;
 let overlapMilk1 = true;
-let overlapMilk2 = true;
-let overlapMilk3 = true;
-let deliverToSign = true; // temp for testing
-let deliverToSakuraTree = true; // temp for testing
-let deliverToHouse = true; // temp for testing
+let deliverToNPC2 = true;
 
 let CND_Milks_Task;
 
@@ -327,7 +330,7 @@ class Delivery extends Phaser.Scene {
       .setDepth(MIDDLEGROUND_DEPTH);
 
     let platformSakuraTree = this.add
-      .image(929 - 65, 695 + 55, 'platform-long1') // modified platform position for testing
+      .image(929, 695, 'platform-long1')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -353,11 +356,10 @@ class Delivery extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    house = this.physics.add
+    house = this.add
       .image(2620, 400, 'house')
       .setOrigin(0, 0)
       .setScale(1)
-      .setSize(150, 400) // temp for testing
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     // milk1 = this.physics.add
     //   .image(1102 - 65, 595 + 55, 'milk') // modified platform position for testing
@@ -423,6 +425,7 @@ class Delivery extends Phaser.Scene {
     // ! components.add(sign);
 
     // init inventory
+    
     // collectItemManager = manageCollectItem(this, [
     //   {
     //     success: false,
@@ -464,16 +467,14 @@ class Delivery extends Phaser.Scene {
   //prop
   addComponents() {
     //sakura milk shop
-    // sakura tree is not physics object by default, this is for testing
-    sakuraTree = this.physics.add
+    sakuraTree = this.add
       .image(141, 612, 'sakura-tree')
       .setOrigin(0, 0)
       .setScale(1)
-      .setSize(50, 600) // temp for testing
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     sakuraTree.flipX = true;
     this.add
-      .image(700 - 65, 266 + 55, 'sakura-tree') // modified platform position for testing
+      .image(700, 266, 'sakura-tree')
       .setOrigin(0, 0)
       .setScale(0.7)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
@@ -488,7 +489,7 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     this.add
-      .image(1075 - 65, 589 + 55, 'bench') // modified platform position for testing
+      .image(1075, 589, 'bench')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
@@ -533,6 +534,25 @@ class Delivery extends Phaser.Scene {
 
     this.physics.add.collider(player, platforms);
   }
+  addNpc() {
+    npc1 = this.physics.add
+      .sprite(890, 1120, 'npc2')
+      .setOrigin(0, 0)
+      .setScale(0.2)
+      // .setSize(400, 200) // testing opacity
+      .setDepth(MIDDLEGROUND_DEPTH);
+    npc2 = this.physics.add
+      .sprite(2770, 758- 15, 'npc6')
+      .setOrigin(0, 0)
+      .setScale(0.2)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    npc1.anims.play('idle_npc2', true);
+    npc2.anims.play('idle_npc6', true);
+
+    npc1.flipX = true;
+    npc2.flipX = true;
+  }
   //animations
   addAnimations() {
     //animations for testing
@@ -546,27 +566,51 @@ class Delivery extends Phaser.Scene {
       repeat: -1,
     });
 
-    // //water animation
-    // this.anims.create({
-    //   key: 'waterAnim',
-    //   frames: this.anims.generateFrameNumbers('water', {
-    //     start: 0,
-    //     end: 5,
-    //   }),
-    //   frameRate: 5.5,
-    //   repeat: -1,
-    // });
+    // sprite sheet for npc1
+    this.anims.create({
+      key: 'idle_npc6',
+      frames: this.anims.generateFrameNumbers('npc6', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
 
-    // //sakura animation
-    // this.anims.create({
-    //   key: 'sakura',
-    //   frames: this.anims.generateFrameNumbers('sakura', {
-    //     start: 0,
-    //     end: 20,
-    //   }),
-    //   frameRate: 8,
-    //   repeat: -1,
-    // });
+    // sprite sheet for npc2
+    this.anims.create({
+      key: 'idle_npc2',
+      frames: this.anims.generateFrameNumbers('npc2', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
+  }
+  //message
+  addMessage() {
+    //message for npc interaction
+    this.messageNpc1 = this.add
+      .image(1131, 993, 'message-n1')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+    this.messageNpc2 = this.add
+      .image(2522, 687, 'message-n2')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+
+    //message require milk
+    this.requireNpc2 = this.add
+      .image(2628, 784, 'require1')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
   }
   // update item opacity
   updateItemOpacity(destination) {
@@ -598,12 +642,8 @@ class Delivery extends Phaser.Scene {
 
   init() {
     overlapMilk1 = true;
-    overlapMilk2 = true;
-    overlapMilk3 = true;
     collectItemManager = manageCollectItem(this);
-    deliverToSign = true; // temp for testing
-    deliverToSakuraTree = true; // temp for testing
-    deliverToHouse = true; // temp for testing
+    deliverToNPC2 = true; // deliver to npc2 ( the guy on the left of the home)
     this.playerMoveTemple = playerMoveTemple;
   }
 
@@ -614,7 +654,7 @@ class Delivery extends Phaser.Scene {
     const mapWidth = width * 3;
     const mapHeight = height * 2;
 
-    //Dev scale 3840 * 1440
+    //!Dev scale 3840 * 1440
     // const mapWidth = width;
     // const mapHeight = height;
 
@@ -623,6 +663,7 @@ class Delivery extends Phaser.Scene {
     //binding function
     this.playerMoveTemple = playerMoveTemple;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
+    this.updateTextOpacity = updateTextOpacity;
 
     //setting world and camera
     const returnCamera = this.setWorldBoundsAndCamera(
@@ -647,6 +688,10 @@ class Delivery extends Phaser.Scene {
     this.addComponents();
     //player and colider
     this.addPlayerAndColider(floorHeight);
+    //npc
+    this.addNpc();
+    //message
+    this.addMessage();
   }
 
   update(delta, time) {
@@ -672,6 +717,7 @@ class Delivery extends Phaser.Scene {
     camera.startFollow(player);
     //player drown
     playerDrown(this, player, shallow_water);
+
     // //player collect milk
     // if (overlapMilk1) {
     //   overlapMilk1 = !collectItemManager.collect(
@@ -723,6 +769,15 @@ class Delivery extends Phaser.Scene {
     // }
     CND_TaskManager.handleCollectItem(player, [CND_Milks_Task]);
     CND_TaskManager.handleDeliverItem(player, sign, [CND_Milks_Task]);
+
+    // ? npc1 message check When milk1 collected this text will be disappear
+    // ! must modify by [event_handling]
+    if (overlapMilk1) {
+      //updateTextOpacity(player, target, message)
+      this.updateTextOpacity(player, this.requireNpc2, this.requireNpc2);
+    } else {
+      this.requireNpc2.setAlpha(0);
+    }
   }
 }
 

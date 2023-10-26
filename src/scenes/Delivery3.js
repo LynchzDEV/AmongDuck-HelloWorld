@@ -12,6 +12,7 @@ import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import { shallowWater, playerDrown } from '../utils/event/drown';
 import { manageCollectItem } from '../utils/event/collectItem';
 import handleInteractiveBtn from '../utils/collisionUtils';
+import { updateTextOpacity } from '../utils/event/updateTextOpacity'; // ! new func
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -39,6 +40,8 @@ let key;
 let sign;
 let ladder;
 let shallow_water;
+//npc // ! new component
+let npc4, npc5;
 //player
 let player;
 
@@ -61,6 +64,10 @@ let overlapChest = true;
 let overlapMilkInChest = false;
 let overlapMilkOnBench = true;
 let deliverToChest = true;
+
+//Overlap
+let deliverToNpc4 = true;
+let deliverToNpc5 = true;
 
 class Delivery3 extends Phaser.Scene {
   constructor() {
@@ -502,6 +509,77 @@ class Delivery3 extends Phaser.Scene {
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
   }
+
+  //npc
+  addNpc() {
+    npc4 = this.physics.add
+      .sprite(859, 1130, 'npc4')
+      .setOrigin(0, 0)
+      .setScale(0.2)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    npc5 = this.physics.add
+      .sprite(1900, 1130, 'npc5')
+      .setOrigin(0, 0)
+      .setScale(0.2)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    npc4.anims.play('idle_npc4', true);
+    npc5.anims.play('idle_npc5', true);
+    npc5.flipX = true;
+  }
+  //message
+  addMessage() {
+    //message for npc interaction
+    this.messageNpc4 = this.add
+      .image(639, 1025, 'message-n4')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+    this.messageNpc5 = this.add
+      .image(1918, 1042, 'message-n5')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+
+    //message require milk
+    this.requireNpc4 = this.add
+      .image(703, 1167, 'require1')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+    this.requireNpc5 = this.add
+      .image(1971, 1169, 'require2')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+  }
+
+  addAnimations() {
+    //npc4
+    this.anims.create({
+      key: 'idle_npc4',
+      frames: this.anims.generateFrameNumbers('npc4', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
+    //npc5
+    this.anims.create({
+      key: 'idle_npc5',
+      frames: this.anims.generateFrameNumbers('npc5', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
+  }
   //adding jumppad
   addJumppad() {
     jumppad1 = this.add
@@ -510,7 +588,7 @@ class Delivery3 extends Phaser.Scene {
       .setScale(1)
       .setDepth(FOREGROUND_DEPTH);
 
-    //no gravity pad
+    //no gravity pad on nextGate platform
     noGravityPad = this.add
       .image(3445, 1225, 'jumppad2')
       .setOrigin(0, 0)
@@ -534,6 +612,7 @@ class Delivery3 extends Phaser.Scene {
     player.setFrame(5);
     this.physics.add.collider(player, platforms);
   }
+
   create() {
     //config
     const { width, height } = this.scale;
@@ -541,7 +620,7 @@ class Delivery3 extends Phaser.Scene {
     const mapWidth = width * 3;
     const mapHeight = height * 2;
 
-    //Dev scale 3840 * 1440
+    //! Dev scale 3840 * 1440
     // const mapWidth = width;
     // const mapHeight = height;
 
@@ -550,6 +629,7 @@ class Delivery3 extends Phaser.Scene {
     //binding function
     this.playerMoveTemple = playerMoveTemple;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
+    this.updateTextOpacity = updateTextOpacity;
 
     //setting world and camera
     const returnCamera = this.setWorldBoundsAndCamera(
@@ -559,8 +639,10 @@ class Delivery3 extends Phaser.Scene {
     );
     camera = returnCamera;
     this.setDeviceSpecificControls(height, width, camera);
-    //add interaction key
+    // ! add interaction key
     this.interactKey = this.input.keyboard.addKey('e');
+    //add animations
+    this.addAnimations();
     //add background
     this.addBackgroundElements(mapWidth, mapHeight);
     //add foreground
@@ -573,8 +655,12 @@ class Delivery3 extends Phaser.Scene {
     this.addComponents();
     //add player
     this.addPlayerAndCollider(floorHeight);
+    //add npc
+    this.addNpc();
     //add jumppad
     this.addJumppad();
+    //add message
+    this.addMessage();
   }
 
   update(delta, time) {
@@ -656,6 +742,20 @@ class Delivery3 extends Phaser.Scene {
         milkTargetSize,
         milkOnBench
       );
+    // ! new logic from Scope, I have to read this carefully
+    //? npc1 message check When object collected this text will be disappear
+    if (deliverToNpc4) {
+      //updateTextOpacity(player, target, message)
+      this.updateTextOpacity(player, this.requireNpc4, this.requireNpc4);
+    } else {
+      this.requireNpc4.setAlpha(0);
+    }
+    //? npc1 message check When object collected this text will be disappear
+    if (deliverToNpc5) {
+      //updateTextOpacity(player, target, message)
+      this.updateTextOpacity(player, this.requireNpc5, this.requireNpc5);
+    } else {
+      this.requireNpc5.setAlpha(0);
     }
   }
 }

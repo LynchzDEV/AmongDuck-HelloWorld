@@ -7,7 +7,9 @@ import {
   MIDDLEGROUND_DEPTH,
   BACKGROUND_COMPONENT_DEPTH,
 } from '../utils/mapDepth';
+
 import { manageCollectItem } from '../utils/event/collectItem';
+import { updateTextOpacity } from '../utils/event/updateTextOpacity'; // ! new func
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -31,6 +33,9 @@ let up;
 let isLeftPressed = false;
 let isRightPressed = false;
 let isUpPressed = false;
+
+//message easter egg
+let playerEsterEgg = true; 
 
 class Delivery4 extends Phaser.Scene {
   constructor() {
@@ -291,6 +296,15 @@ class Delivery4 extends Phaser.Scene {
       .setDepth(FOREGROUND_DEPTH);
   }
 
+  addMessageEasterEgg() {
+    this.rigroll = this.add
+      .image(0, 1286, 'rigroll')
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setAlpha(0)
+      .setDepth(MIDDLEGROUND_DEPTH)
+  }
+
   create() {
     //config
     const { width, height } = this.scale;
@@ -305,6 +319,7 @@ class Delivery4 extends Phaser.Scene {
     //binding function
     this.playerMoveTemple = playerMoveTemple;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
+    this.updateTextOpacity = updateTextOpacity;
 
     //setting world and camera
     const returnCamera = this.setWorldBoundsAndCamera(
@@ -324,6 +339,9 @@ class Delivery4 extends Phaser.Scene {
     this.addPlayerAndCollider();
     //jumppad
     this.addJumpPad();
+
+    //message easter egg
+    this.addMessageEasterEgg();
   }
 
   update(delta, time) {
@@ -336,6 +354,13 @@ class Delivery4 extends Phaser.Scene {
 
     //camera follow player
     camera.startFollow(player);
+
+    //? ester egg
+    if(playerEsterEgg){
+      this.updateTextOpacity(player, {x:1000, y: 1200}, this.rigroll);
+    } else {
+      this.rigroll.setAlpha(0);
+    }
   }
 }
 export default Delivery4;
