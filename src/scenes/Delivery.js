@@ -13,13 +13,23 @@ import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import { shallowWater, playerDrown } from '../utils/event/drown';
 import { manageCollectItem } from '../utils/event/collectItem';
 
+// ! test new class for collect item
+import {
+  CND_TaskManager,
+  CND_Task,
+  MilkItem,
+  CollectableItem,
+  Item,
+  Target,
+  OverlapObject,
+} from '../utils/event/TaskManager';
+
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
 
 //bg component
 let backgrounds;
 let water;
-let shallow_water;
 let cloundLayer1;
 let cloundLayer2;
 let platforms;
@@ -31,11 +41,12 @@ let camera;
 let milkShop;
 let house;
 let gate;
-let milk1;
-let milk2; // have to modify position for testing
-let milk3; // have to modify position for testing
+let milkA;
+let milkB; // have to modify position for testing
+let milkC; // have to modify position for testing
 let sign;
 let sakuraTree; // temp for testing
+let shallow_water;
 //control flow
 let left;
 let right;
@@ -54,157 +65,13 @@ let deliverToSign = true; // temp for testing
 let deliverToSakuraTree = true; // temp for testing
 let deliverToHouse = true; // temp for testing
 
+let CND_Milks_Task;
+
 class Delivery extends Phaser.Scene {
   constructor() {
     super({
       key: 'Delivery',
     });
-  }
-
-  loadBackground() {
-    this.load.image(
-      'background',
-      path.join(BACKGROUND_GAME_PATH, 'background-pink.png')
-    );
-    this.load.image(
-      'clound-layer1',
-      path.join(BACKGROUND_GAME_PATH, 'bg-pink-layer1.png')
-    );
-    this.load.image(
-      'clound-layer2',
-      path.join(BACKGROUND_GAME_PATH, 'bg-pink-layer2.png')
-    );
-  }
-  loadPlatforms() {
-    this.load.image('platform', path.join(PLATFORM_GAME_PATH, 'platform.png'));
-    this.load.image(
-      'tile-platfrom',
-      path.join(PLATFORM_GAME_PATH, 'tile-platform.png')
-    );
-    this.load.image(
-      'platform-long1',
-      path.join(PLATFORM_GAME_PATH, 'platform-long1.png')
-    );
-    this.load.image(
-      'platform-long2',
-      path.join(PLATFORM_GAME_PATH, 'platform-long2.png')
-    );
-    this.load.image(
-      'platform-long3',
-      path.join(PLATFORM_GAME_PATH, 'platform-long3.png')
-    );
-    this.load.image('ground', path.join(PLATFORM_GAME_PATH, 'ground.png'));
-    this.load.image(
-      'ground-edge',
-      path.join(PLATFORM_GAME_PATH, 'ground-edge.png')
-    );
-    this.load.image(
-      'ground-main',
-      path.join(PLATFORM_GAME_PATH, 'ground-main.png')
-    );
-  }
-  loadMainComponents() {
-    //delivery1
-    this.load.image(
-      'milk-shop',
-      path.join(COMPONENT_GAME_PATH, 'milk-shop.png')
-    );
-    this.load.image('house', path.join(COMPONENT_GAME_PATH, 'house.png'));
-    this.load.image('milk', path.join(COMPONENT_GAME_PATH, 'milk.png'));
-    this.load.image('gate', path.join(COMPONENT_GAME_PATH, 'gate.png'));
-    this.load.image(
-      'gate-active',
-      path.join(COMPONENT_GAME_PATH, 'gate-active.png')
-    );
-    this.load.sign = this.load.image(
-      'sign',
-      path.join(COMPONENT_GAME_PATH, 'sign.png')
-    );
-
-    //delivery2
-    this.load.image('house2', path.join(COMPONENT_GAME_PATH, 'house2.png'));
-    this.load.image('key', path.join(COMPONENT_GAME_PATH, 'key.png'));
-    this.load.spritesheet(
-      'chest',
-      path.join(SPRITESHEET_GAME_PATH, 'chest.png'),
-      {
-        frameWidth: 143.5,
-        frameHeight: 147.5,
-      }
-    );
-  }
-  loadComponents() {
-    this.load.image(
-      'sakura-tree',
-      path.join(COMPONENT_GAME_PATH, 'Sakura tree.png')
-    );
-    this.load.image(
-      'small-sign',
-      path.join(COMPONENT_GAME_PATH, 'small-sign.png')
-    );
-    this.load.image(
-      'statue-stone',
-      path.join(COMPONENT_GAME_PATH, 'statue-stone.png')
-    );
-    this.load.image(
-      'stone-wall',
-      path.join(COMPONENT_GAME_PATH, 'stone-wall.png')
-    );
-    this.load.image('stone', path.join(COMPONENT_GAME_PATH, 'stone.png'));
-    this.load.image('bench', path.join(COMPONENT_GAME_PATH, 'bench.png'));
-    this.load.image('lantern', path.join(COMPONENT_GAME_PATH, 'lantern.png'));
-    this.load.image('grass', path.join(COMPONENT_GAME_PATH, 'grass.png'));
-    this.load.image('vine', path.join(COMPONENT_GAME_PATH, 'vine.png'));
-
-    //delivery2
-    this.load.image('logs', path.join(COMPONENT_GAME_PATH, 'logs.png'));
-    this.load.image('log', path.join(COMPONENT_GAME_PATH, 'log.png'));
-    this.load.image('tree', path.join(COMPONENT_GAME_PATH, 'tree.png'));
-    this.load.image('box', path.join(COMPONENT_GAME_PATH, 'box.png'));
-    this.load.image('grass2', path.join(COMPONENT_GAME_PATH, 'grass2.png'));
-    this.load.image('brush', path.join(COMPONENT_GAME_PATH, 'brush.png'));
-    this.load.image('tou', path.join(COMPONENT_GAME_PATH, 'tou.png'));
-  }
-  loadForeground() {
-    this.load.image('water', path.join(FOREGROUND_TEMPLE_PATH, 'Water.png'));
-    this.load.image(
-      'shadow-platform',
-      path.join(COMPONENT_GAME_PATH, 'shadow-short.png')
-    );
-    this.load.image(
-      'shadow-platform-long2',
-      path.join(COMPONENT_GAME_PATH, 'shadow-long2.png')
-    );
-    this.load.image(
-      'shadow-platform-long1',
-      path.join(COMPONENT_GAME_PATH, 'shadows.png')
-    );
-  }
-  loadPlayer() {
-    this.load.spritesheet(
-      'player',
-      path.join(PLAYER_SPRITESHEET_PATH, 'oposum.png'),
-      {
-        frameWidth: 36,
-        frameHeight: 28,
-      }
-    );
-  }
-  loadUI() {
-    //load button
-    this.load.image('left', path.join(UI_PATH, 'left.png'));
-    this.load.image('right', path.join(UI_PATH, 'right.png'));
-    this.load.image('up', path.join(UI_PATH, 'up.png'));
-  }
-
-  preload() {
-    this.loadBackground();
-    this.loadForeground();
-    this.loadPlatforms();
-    this.loadMainComponents();
-    this.loadComponents();
-    this.loadPlayer();
-    this.loadUI();
   }
 
   setDeviceSpecificControls(height, width, camera) {
@@ -492,21 +359,42 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setSize(150, 400) // temp for testing
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    milk1 = this.physics.add
-      .image(1102 - 65, 595 + 55, 'milk') // modified platform position for testing
-      .setOrigin(0, 0)
-      .setScale(0.8)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    milk2 = this.physics.add
-      .image(100, this.scale.height * 2 - 215 - 150, 'milk')
-      .setOrigin(0, 0)
-      .setScale(0.8)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    milk3 = this.physics.add
-      .image(1950, 925, 'milk')
-      .setOrigin(0, 0)
-      .setScale(0.8)
-      .setDepth(MIDDLEGROUND_DEPTH);
+    // milk1 = this.physics.add
+    //   .image(1102 - 65, 595 + 55, 'milk') // modified platform position for testing
+    //   .setOrigin(0, 0)
+    //   .setScale(0.8)
+    //   .setDepth(MIDDLEGROUND_DEPTH);
+    milkA = new MilkItem(
+      this.physics,
+      [1102 - 65, 595 + 55],
+      0.8,
+      MIDDLEGROUND_DEPTH,
+      150
+    );
+    // milk2 = this.physics.add
+    //   .image(100, this.scale.height * 2 - 215 - 150, 'milk')
+    //   .setOrigin(0, 0)
+    //   .setScale(0.8)
+    //   .setDepth(MIDDLEGROUND_DEPTH);
+    milkB = new MilkItem(
+      this.physics,
+      [100, this.scale.height * 2 - 215 - 150],
+      0.8,
+      MIDDLEGROUND_DEPTH,
+      150
+    );
+    // milk3 = this.physics.add
+    //   .image(1950, 925, 'milk')
+    //   .setOrigin(0, 0)
+    //   .setScale(0.8)
+    //   .setDepth(MIDDLEGROUND_DEPTH);
+    milkC = new MilkItem(
+      this.physics,
+      [1950, 925],
+      0.8,
+      MIDDLEGROUND_DEPTH,
+      150
+    );
     gate = this.physics.add
       .image(3650, 787, 'gate')
       .setOrigin(0, 0)
@@ -514,48 +402,64 @@ class Delivery extends Phaser.Scene {
       .setDepth(MIDDLEGROUND_DEPTH);
     gate.flipX = true;
     // sign is not physics object by default, this is for testing
-    sign = this.physics.add
-      .image(2447, 701, 'sign')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
+    // sign = this.physics.add
+    //   .image(2447, 701, 'sign')
+    //   .setOrigin(0, 0)
+    //   .setScale(1)
+    //   .setDepth(MIDDLEGROUND_DEPTH);
+    sign = new Target(
+      { itemKey: milkA.textureKey, qty: 1 },
+      this.physics,
+      [2447, 701],
+      'sign',
+      1,
+      MIDDLEGROUND_DEPTH
+    );
 
     components.add(milkShop);
     components.add(house);
-    components.add(milk1);
+    // ! components.add(milk1);
     components.add(gate);
-    components.add(sign);
+    // ! components.add(sign);
 
     // init inventory
-    collectItemManager = manageCollectItem(this, [
-      {
-        success: false,
-        item: [milk1, milk2, milk3],
-        sizeOfInventory: 3,
-        targetSize: milkTargetSize,
-        alpha: 0.5,
-      },
-      {
-        success: false,
-        item: [gate],
-        sizeOfInventory: 1,
-        targetSize: gateTargetSize,
-        initStartPosX: 50,
-        initStartPosY: 30,
-        alpha: 0,
-        callBack: (item) => {
-          item.setTexture('gate-active');
-          item.flipX = true;
-        },
-      },
-    ]);
-    milk1.collected = false;
-    milk1.delivered = false;
-    milk2.collected = false;
-    milk2.delivered = false;
-    milk3.collected = false;
-    milk3.delivered = false;
-    collectItemManager.initInventory();
+    // collectItemManager = manageCollectItem(this, [
+    //   {
+    //     success: false,
+    //     item: [milk1, milk2, milk3],
+    //     sizeOfInventory: 3,
+    //     targetSize: milkTargetSize,
+    //     alpha: 0.5,
+    //   },
+    //   {
+    //     success: false,
+    //     item: [gate],
+    //     sizeOfInventory: 1,
+    //     targetSize: gateTargetSize,
+    //     initStartPosX: 50,
+    //     initStartPosY: 30,
+    //     alpha: 0,
+    //     callBack: (item) => {
+    //       item.setTexture('gate-active');
+    //       item.flipX = true;
+    //     },
+    //   },
+    // ]);
+    // milk1.collected = false;
+    // milk1.delivered = false;
+    // milk2.collected = false;
+    // milk2.delivered = false;
+    // milk3.collected = false;
+    // milk3.delivered = false;
+    // collectItemManager.initInventory();
+
+    // ! test new class for collect item
+    CND_Milks_Task = new CND_Task(this, [milkA, milkB, milkC], {
+      itemKey: milkA.textureKey,
+      qty: 3,
+      inventoryItemSize: milkA.inventoryItemSize,
+    });
+    CND_TaskManager.createInventoryItem(CND_Milks_Task);
   }
   //prop
   addComponents() {
@@ -626,7 +530,7 @@ class Delivery extends Phaser.Scene {
       .setSize(180, 200)
       .setDepth(PLAYER_DEPTH);
     player.setFrame(5);
-    
+
     this.physics.add.collider(player, platforms);
   }
   //animations
@@ -746,68 +650,79 @@ class Delivery extends Phaser.Scene {
   }
 
   update(delta, time) {
-    //dev skip the scene
-    this.scene.start('Delivery2');
+    // dev skip the scene
+    // this.scene.start('Delivery2'); // ! comment for working in event_handling branch
 
-    //testing movement
-    this.playerMoveTemple(player, 1000, false, false, null, null, null);
+    //player movement
+    if (isMobile || tablet) {
+      this.playerMoveTemple(
+        player,
+        500,
+        false,
+        true,
+        isLeftPressed,
+        isRightPressed,
+        isUpPressed
+      );
+    } else {
+      this.playerMoveTemple(player, 1000, false, false, null, null, null);
+    }
+
     //camera follow player
     camera.startFollow(player);
     //player drown
     playerDrown(this, player, shallow_water);
-    //player collect milk
-    if (overlapMilk1) {
-      overlapMilk1 = !collectItemManager.collect(
-        player,
-        0,
-        milkTargetSize,
-        milk1
-      );
-    }
-    if (overlapMilk2) {
-      overlapMilk2 = !collectItemManager.collect(
-        player,
-        1,
-        milkTargetSize,
-        milk2
-      );
-    }
-    if (overlapMilk3) {
-      overlapMilk3 = !collectItemManager.collect(
-        player,
-        2,
-        milkTargetSize,
-        milk3
-      );
-    }
+    // //player collect milk
+    // if (overlapMilk1) {
+    //   overlapMilk1 = !collectItemManager.collect(
+    //     player,
+    //     0,
+    //     milkTargetSize,
+    //     milk1
+    //   );
+    // }
+    // if (overlapMilk2) {
+    //   overlapMilk2 = !collectItemManager.collect(
+    //     player,
+    //     1,
+    //     milkTargetSize,
+    //     milk2
+    //   );
+    // }
+    // if (overlapMilk3) {
+    //   overlapMilk3 = !collectItemManager.collect(
+    //     player,
+    //     2,
+    //     milkTargetSize,
+    //     milk3
+    //   );
+    // }
     // //player deliver milk
-    if (deliverToSign) {
-      deliverToSign = !collectItemManager.deliver(player, 'milk', sign);
-    }
-    if (deliverToSakuraTree) {
-      deliverToSakuraTree = !collectItemManager.deliver(
-        player,
-        'milk',
-        sakuraTree
-      );
-    }
-    if (deliverToHouse) {
-      deliverToHouse = !collectItemManager.deliver(player, 'milk', house);
-    }
-    // checking for deliver success
-    if (
-      !deliverToSign &&
-      !deliverToSakuraTree &&
-      !deliverToHouse
-    ) {
-      gate.setTexture('gate-active');
-      const overlapping = this.physics.overlap(player, gate);
-      if (overlapping) {
-        this.scene.start('Delivery2');
-      } else {
-        this.updateItemOpacity(gate);
-      }
-    }
+    // if (deliverToSign) {
+    //   deliverToSign = !collectItemManager.deliver(player, 'milk', sign);
+    // }
+    // if (deliverToSakuraTree) {
+    //   deliverToSakuraTree = !collectItemManager.deliver(
+    //     player,
+    //     'milk',
+    //     sakuraTree
+    //   );
+    // }
+    // if (deliverToHouse) {
+    //   deliverToHouse = !collectItemManager.deliver(player, 'milk', house);
+    // }
+    // // checking for deliver success
+    // if (!deliverToSign && !deliverToSakuraTree && !deliverToHouse) {
+    //   gate.setTexture('gate-active');
+    //   const overlapping = this.physics.overlap(player, gate);
+    //   if (overlapping) {
+    //     this.scene.start('Delivery2');
+    //   } else {
+    //     this.updateItemOpacity(gate);
+    //   }
+    // }
+    CND_TaskManager.handleCollectItem(player, [CND_Milks_Task]);
+    CND_TaskManager.handleDeliverItem(player, sign, [CND_Milks_Task]);
   }
 }
 

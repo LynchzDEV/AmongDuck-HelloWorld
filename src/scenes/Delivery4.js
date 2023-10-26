@@ -7,6 +7,7 @@ import {
   MIDDLEGROUND_DEPTH,
   BACKGROUND_COMPONENT_DEPTH,
 } from '../utils/mapDepth';
+import { manageCollectItem } from '../utils/event/collectItem';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -34,6 +35,20 @@ let isUpPressed = false;
 class Delivery4 extends Phaser.Scene {
   constructor() {
     super('Delivery4');
+  }
+
+  init(data) {
+    manageCollectItem(this, data.manager.state).initInventory();
+    console.log(data.manager.inventory);
+    data.manager.inventory.forEach((item) => {
+      console.log(item.x, item.y);
+      this.physics.add
+        .image(item.x, item.y, item.texture.key)
+        .setOrigin(0, 0)
+        .setScale(item.scaleX, item.scaleY)
+        .setDepth(item.depth)
+        .setScrollFactor(0);
+    });
   }
 
   setDeviceSpecificControls(height, width, camera) {
@@ -248,6 +263,8 @@ class Delivery4 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
+
+    // init inventory
   }
   addPlayerAndCollider() {
     //player
@@ -310,9 +327,9 @@ class Delivery4 extends Phaser.Scene {
   }
 
   update(delta, time) {
+    // dev skip the scene
     // start temple scene
-    this.scene.start('Temple');
-
+    // this.scene.start('Temple'); // ! comment for working in event_handling branch
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);

@@ -261,7 +261,8 @@ class LoadScene extends Phaser.Scene {
   create() {
     this.add.text(20, 20, 'Loading game...');
     //if you need to add more text before dowloading, add here
-    this.scene.start('CutScene1');
+    // this.scene.start('CutScene1');
+    this.scene.start('Delivery'); // ! for event_handling branch
   }
 }
 export default LoadScene;

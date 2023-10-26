@@ -31,7 +31,7 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: false,
+      debug: true,
     },
   },
   scene: [
@@ -41,7 +41,7 @@ const config = {
     // _forest1, //!  forest1 template [dev mode]
     LoadScene, //* 0 load scene
     // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
-    CutScene1, //* 1 cutscene 1 of the story mode
+    // CutScene1, //* 1 cutscene 1 of the story mode
     Delivery, //* 4 delivery game
     Delivery2, //* 5 delivery game
     Delivery3, //* 6 delivery game
