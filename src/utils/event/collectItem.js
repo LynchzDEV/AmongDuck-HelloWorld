@@ -111,7 +111,7 @@ const manageCollectItem = (sceneObj, taskState) => {
     return false;
   };
 
-  return { state, collect, deliver, initInventory };
+  return { sceneObj, state, inventory, collect, deliver, initInventory };
 };
 
 export { manageCollectItem };

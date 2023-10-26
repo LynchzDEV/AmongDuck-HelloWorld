@@ -438,8 +438,6 @@ class Delivery2 extends Phaser.Scene {
         },
       },
     ]);
-    key.collected = false;
-    key.delivered = false;
     collectItemManager.initInventory();
   }
   //add props stone sakura tree logs
@@ -680,11 +678,24 @@ class Delivery2 extends Phaser.Scene {
   }
 
   update(delta, time) {
-    //dev skip the scene
-     this.scene.start('Delivery3'); //! dev mode
+    // dev skip the scene
+    // this.scene.start('Delivery3'); // ! comment for working in event_handling branch
 
-    //testing movement
-    this.playerMoveTemple(player, 1000, false, false, null, null, null);
+    //player movement
+    if (isMobile || tablet) {
+      this.playerMoveTemple(
+        player,
+        500,
+        false,
+        true,
+        isLeftPressed,
+        isRightPressed,
+        isUpPressed
+      );
+    } else {
+      this.playerMoveTemple(player, 1000, false, false, null, null, null);
+    }
+
     //camera follow player
     camera.startFollow(player);
 

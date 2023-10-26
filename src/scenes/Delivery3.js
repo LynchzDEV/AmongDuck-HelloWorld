@@ -9,7 +9,10 @@ import {
   PLAYER_DEPTH,
 } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
-import { updateTextOpacity } from '../utils/event/updateTextOpacity';
+import { shallowWater, playerDrown } from '../utils/event/drown';
+import { manageCollectItem } from '../utils/event/collectItem';
+import handleInteractiveBtn from '../utils/collisionUtils';
+import { updateTextOpacity } from '../utils/event/updateTextOpacity'; // ! new func
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -27,15 +30,17 @@ let noGravityPad;
 let gatePrevious;
 let gateNext;
 //interaction
-let milk1;
+let milkInChest;
+let milkOnBench;
+let milkOnCloud;
 let house;
 let house2;
 let chest;
 let key;
 let sign;
 let ladder;
-
-//npc
+let shallow_water;
+//npc // ! new component
 let npc4, npc5;
 //player
 let player;
@@ -44,9 +49,21 @@ let player;
 let left;
 let right;
 let up;
+const windowHeight = window.innerHeight > 720 ? 720 : window.innerHeight;
+let interactButton;
 let isLeftPressed = false;
 let isRightPressed = false;
 let isUpPressed = false;
+//manage collect item
+let collectItemManager;
+const milkTargetSize = 150,
+  keyTargetSize = 100,
+  gateTargetSize = 90;
+let overlapKey = true;
+let overlapChest = true;
+let overlapMilkInChest = false;
+let overlapMilkOnBench = true;
+let deliverToChest = true;
 
 //Overlap
 let deliverToNpc4 = true;
@@ -55,6 +72,7 @@ let deliverToNpc5 = true;
 class Delivery3 extends Phaser.Scene {
   constructor() {
     super('Delivery3');
+    this.interactKey = null;
   }
 
   setDeviceSpecificControls(height, width, camera) {
@@ -91,7 +109,7 @@ class Delivery3 extends Phaser.Scene {
       //device check
       if (isMobile) {
         //mobile
-        if (screenHeight > 720) screenHeight = 720;
+        screenHeight = windowHeight;
         console.log('Mobile view');
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
@@ -127,6 +145,19 @@ class Delivery3 extends Phaser.Scene {
           .setAlpha(0.7)
           .setScrollFactor(0);
 
+        interactButton = this.physics.add
+          .sprite(
+            screenWidth / 2 + screenWidth / 3.5,
+            screenHeight / 1.2,
+            'right'
+          )
+          .setScale(5)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
         //Implement mobile camera bounds and viewport
         camera.setViewport(
           width / 2 - screenWidth / 2,
@@ -137,7 +168,7 @@ class Delivery3 extends Phaser.Scene {
         camera.setZoom(1);
       } else if (tablet) {
         //tablet
-        if (screenHeight > 720) screenHeight = 720;
+        screenHeight = windowHeight;
         console.log('Tablet view');
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
@@ -170,6 +201,15 @@ class Delivery3 extends Phaser.Scene {
 
         up = this.physics.add
           .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, 'up')
+          .setScale(7)
+          .setSize(15, 15)
+          .setInteractive()
+          .setDepth(999)
+          .setAlpha(0.7)
+          .setScrollFactor(0);
+
+        interactButton = this.physics.add
+          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, 'right')
           .setScale(7)
           .setSize(15, 15)
           .setInteractive()
@@ -225,11 +265,22 @@ class Delivery3 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
+
+    shallow_water = shallowWater(
+      this,
+      0,
+      mapHeight + 30,
+      mapWidth * 2,
+      200,
+      BACKGROUND_COMPONENT_DEPTH
+    );
+
+    this.physics.add.existing(shallow_water);
   }
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
     let ground = this.add
-      .image(0, floorHeight, 'ground-main3')
+      .image(-150, floorHeight + 5, 'ground-main3') // ! set new x,y, maybe temporary
       .setOrigin(0, 0)
       .setDepth(MIDDLEGROUND_DEPTH);
     let platformHouse = this.add
@@ -307,7 +358,7 @@ class Delivery3 extends Phaser.Scene {
   addMainComponents() {
     //add gate
     gatePrevious = this.physics.add
-      .image(52, 1140, 'gate-active')
+      .image(52, 1145, 'gate-active')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -327,7 +378,7 @@ class Delivery3 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    chest = this.add
+    chest = this.physics.add
       .sprite(2010, 285, 'chest')
       .setOrigin(0, 0)
       .setScale(1)
@@ -335,7 +386,7 @@ class Delivery3 extends Phaser.Scene {
     //default chest frame
     chest.setFrame(21);
 
-    key = this.add
+    key = this.physics.add
       .image(2400, 1023, 'key')
       .setOrigin(0, 0)
       .setScale(1)
@@ -345,16 +396,48 @@ class Delivery3 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    milk1 = this.add
-      .image(555, 107, 'milk')
+    milkInChest = this.physics.add
+      .image(2010 + 40, 285 + 50, 'milk')
       .setOrigin(0, 0)
-      .setScale(1)
+      .setScale(0.8)
       .setDepth(MIDDLEGROUND_DEPTH);
-    ladder = this.add
+    milkInChest.setVisible(false);
+    milkOnBench = this.physics.add
+      .image(555, 120, 'milk')
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    milkOnCloud = this.physics.add
+      .image(0, 1500, 'milk') // out of screen
+      .setOrigin(0, 0)
+      .setScale(0.8)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    ladder = this.physics.add
       .image(3609, 0, 'ladder')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
+
+    // init inverntory
+    collectItemManager = manageCollectItem(this, [
+      {
+        success: false,
+        item: [key],
+        sizeOfInventory: 1,
+        targetSize: keyTargetSize,
+        initStartPosX: 30,
+        initStartPosY: 30,
+        alpha: 0.5,
+      },
+      {
+        success: false,
+        item: [milkInChest, milkOnBench, milkOnCloud],
+        sizeOfInventory: 3,
+        targetSize: milkTargetSize,
+        alpha: 0.5,
+      },
+    ]);
+    collectItemManager.initInventory();
   }
   //props
   addComponents() {
@@ -514,8 +597,14 @@ class Delivery3 extends Phaser.Scene {
   }
   addPlayerAndCollider(floorHeight) {
     //player
-    player = this.physics.add
-      .sprite(100, floorHeight - 40, 'player')
+    // player = this.physics.add
+    //   .sprite(100, floorHeight - 40, 'player')
+    //   .setCollideWorldBounds(true)
+    //   .setScale(0.3)
+    //   .setSize(180, 200)
+    //   .setDepth(PLAYER_DEPTH);
+    player = this.physics.add // ! comment for working in event_handling branch
+      .sprite(3609, 0, 'player')
       .setCollideWorldBounds(true)
       .setScale(0.3)
       .setSize(180, 200)
@@ -550,7 +639,8 @@ class Delivery3 extends Phaser.Scene {
     );
     camera = returnCamera;
     this.setDeviceSpecificControls(height, width, camera);
-
+    // ! add interaction key
+    this.interactKey = this.input.keyboard.addKey('e');
     //add animations
     this.addAnimations();
     //add background
@@ -575,14 +665,84 @@ class Delivery3 extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    this.scene.start('Delivery4'); //! dev mode
+    // this.scene.start('Delivery4'); // ! comment for working in event_handling branch
 
-    //testing movement
-    this.playerMoveTemple(player, 1000, false, false, null, null, null);
+    //player movement
+    if (isMobile || tablet) {
+      this.playerMoveTemple(
+        player,
+        500,
+        false,
+        true,
+        isLeftPressed,
+        isRightPressed,
+        isUpPressed
+      );
+    } else {
+      this.playerMoveTemple(player, 1000, false, false, null, null, null);
+    }
+
+    handleInteractiveBtn(
+      !isMobile && !tablet,
+      this.interactKey,
+      this,
+      up,
+      interactButton,
+      player,
+      ladder,
+      () => {
+        this.scene.start('Delivery4', {
+          scene: this,
+          manager: collectItemManager,
+        });
+      }
+    );
 
     //camera follow player
     camera.startFollow(player);
 
+    //player drown
+    playerDrown(this, player, shallow_water);
+
+    //player collect key
+    if (overlapKey) {
+      overlapKey = !collectItemManager.collect(player, 0, keyTargetSize, key);
+    }
+    //player unlock chest
+    if (deliverToChest) {
+      deliverToChest = !collectItemManager.deliver(player, 'key', chest);
+      if (!deliverToChest) {
+        this.anims.play('chest-rotate', chest);
+        this.time.delayedCall(2300, () => {
+          milkInChest.setVisible(true);
+          milkInChest.setVelocityY(-100);
+          this.time.delayedCall(450, () => {
+            milkInChest.setVelocityY(0);
+            // player can collect milk
+            this.time.delayedCall(300, () => {
+              overlapMilkInChest = true;
+            });
+          });
+        });
+      }
+    }
+    //player collect milk
+    if (overlapMilkInChest) {
+      overlapMilkInChest = !collectItemManager.collect(
+        player,
+        0,
+        milkTargetSize,
+        milkInChest
+      );
+    }
+    if (overlapMilkOnBench) {
+      overlapMilkOnBench = !collectItemManager.collect(
+        player,
+        1,
+        milkTargetSize,
+        milkOnBench
+      );
+    // ! new logic from Scope, I have to read this carefully
     //? npc1 message check When object collected this text will be disappear
     if (deliverToNpc4) {
       //updateTextOpacity(player, target, message)
