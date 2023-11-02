@@ -555,17 +555,6 @@ class Delivery extends Phaser.Scene {
   }
   //animations
   addAnimations() {
-    //animations for testing
-    this.anims.create({
-      key: 'walk',
-      frames: this.anims.generateFrameNumbers('player', {
-        start: 0,
-        end: 7,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
     // sprite sheet for npc1
     this.anims.create({
       key: 'idle_npc6',
@@ -696,7 +685,7 @@ class Delivery extends Phaser.Scene {
 
   update(delta, time) {
     // dev skip the scene
-    // this.scene.start('Delivery2'); // ! comment for working in event_handling branch
+    this.scene.start('Delivery2'); // ! comment for working in event_handling branch
 
     //player movement
     if (isMobile || tablet) {

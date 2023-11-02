@@ -292,17 +292,32 @@ class LoadScene extends Phaser.Scene {
       }
     );
   }
-  loadMessage(){
-    this.load.image('message-n1', path.join(TEXT_GAME_PATH, 'message-npc1.png'));
-    this.load.image('message-n2', path.join(TEXT_GAME_PATH, 'message-npc2.png'));
-    this.load.image('message-n3', path.join(TEXT_GAME_PATH, 'message-npc3.png'));
-    this.load.image('message-n4', path.join(TEXT_GAME_PATH, 'message-npc4.png'));
-    this.load.image('message-n5', path.join(TEXT_GAME_PATH, 'message-npc5.png'));
+  loadMessage() {
+    this.load.image(
+      'message-n1',
+      path.join(TEXT_GAME_PATH, 'message-npc1.png')
+    );
+    this.load.image(
+      'message-n2',
+      path.join(TEXT_GAME_PATH, 'message-npc2.png')
+    );
+    this.load.image(
+      'message-n3',
+      path.join(TEXT_GAME_PATH, 'message-npc3.png')
+    );
+    this.load.image(
+      'message-n4',
+      path.join(TEXT_GAME_PATH, 'message-npc4.png')
+    );
+    this.load.image(
+      'message-n5',
+      path.join(TEXT_GAME_PATH, 'message-npc5.png')
+    );
     this.load.image('thx', path.join(TEXT_GAME_PATH, 'thx.png'));
     this.load.image('require1', path.join(TEXT_GAME_PATH, 'require1.png'));
     this.load.image('require2', path.join(TEXT_GAME_PATH, 'require2.png'));
     this.load.image('rigroll', path.join(TEXT_GAME_PATH, 'rigroll.png'));
-    this.load.image('msg-box', path.join(TEXT_GAME_PATH, 'temple.png'))
+    this.load.image('msg-box', path.join(TEXT_GAME_PATH, 'temple.png'));
   }
   loadPlayer() {
     this.load.spritesheet(
@@ -333,10 +348,23 @@ class LoadScene extends Phaser.Scene {
     this.loadUI();
   }
 
+  addAnimation() {
+    //animations for testing
+    this.anims.create({
+      key: 'walk',
+      frames: this.anims.generateFrameNumbers('player', {
+        start: 0,
+        end: 7,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+  }
   create() {
-    this.add.text(20, 20, 'Loading game...');
+    this.add.text(20, 20, 'Loading game...'); //? Text for loading page but maybe useless.
+    this.addAnimation();
     //if you need to add more text before dowloading, add here
-    this.scene.start('Delivery');
+    this.scene.start('Temple');
   }
 }
 export default LoadScene;

@@ -665,7 +665,7 @@ class Delivery3 extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    // this.scene.start('Delivery4'); // ! comment for working in event_handling branch
+    this.scene.start('Delivery4'); // ! comment for working in event_handling branch
 
     //player movement
     if (isMobile || tablet) {
@@ -742,20 +742,21 @@ class Delivery3 extends Phaser.Scene {
         milkTargetSize,
         milkOnBench
       );
-    // ! new logic from Scope, I have to read this carefully
-    //? npc1 message check When object collected this text will be disappear
-    if (deliverToNpc4) {
-      //updateTextOpacity(player, target, message)
-      this.updateTextOpacity(player, this.requireNpc4, this.requireNpc4);
-    } else {
-      this.requireNpc4.setAlpha(0);
-    }
-    //? npc1 message check When object collected this text will be disappear
-    if (deliverToNpc5) {
-      //updateTextOpacity(player, target, message)
-      this.updateTextOpacity(player, this.requireNpc5, this.requireNpc5);
-    } else {
-      this.requireNpc5.setAlpha(0);
+      // ! new logic from Scope, I have to read this carefully
+      //? npc1 message check When object collected this text will be disappear
+      if (deliverToNpc4) {
+        //updateTextOpacity(player, target, message)
+        this.updateTextOpacity(player, npc4, this.requireNpc4);
+      } else {
+        this.requireNpc4.setAlpha(0);
+      }
+      //? npc1 message check When object collected this text will be disappear
+      if (deliverToNpc5) {
+        //updateTextOpacity(player, target, message)
+        this.updateTextOpacity(player, npc5, this.requireNpc5);
+      } else {
+        this.requireNpc5.setAlpha(0);
+      }
     }
   }
 }

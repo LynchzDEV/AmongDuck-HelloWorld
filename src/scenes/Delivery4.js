@@ -42,19 +42,20 @@ class Delivery4 extends Phaser.Scene {
     super('Delivery4');
   }
 
-  init(data) {
-    manageCollectItem(this, data.manager.state).initInventory();
-    console.log(data.manager.inventory);
-    data.manager.inventory.forEach((item) => {
-      console.log(item.x, item.y);
-      this.physics.add
-        .image(item.x, item.y, item.texture.key)
-        .setOrigin(0, 0)
-        .setScale(item.scaleX, item.scaleY)
-        .setDepth(item.depth)
-        .setScrollFactor(0);
-    });
-  }
+  //! It have some bug, waiting for event fix it.
+  // init(data) {
+  //   manageCollectItem(this, data.manager.state).initInventory();
+  //   console.log(data.manager.inventory);
+  //   data.manager.inventory.forEach((item) => {
+  //     console.log(item.x, item.y);
+  //     this.physics.add
+  //       .image(item.x, item.y, item.texture.key)
+  //       .setOrigin(0, 0)
+  //       .setScale(item.scaleX, item.scaleY)
+  //       .setDepth(item.depth)
+  //       .setScrollFactor(0);
+  //   });
+  // }
 
   setDeviceSpecificControls(height, width, camera) {
     //camera and control for each device
@@ -347,7 +348,7 @@ class Delivery4 extends Phaser.Scene {
   update(delta, time) {
     // dev skip the scene
     // start temple scene
-    this.scene.start('Temple'); //!dev mode
+    // this.scene.start('Temple'); //!dev mode
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);
