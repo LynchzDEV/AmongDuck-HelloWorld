@@ -302,6 +302,7 @@ class LoadScene extends Phaser.Scene {
     this.load.image('require1', path.join(TEXT_GAME_PATH, 'require1.png'));
     this.load.image('require2', path.join(TEXT_GAME_PATH, 'require2.png'));
     this.load.image('rigroll', path.join(TEXT_GAME_PATH, 'rigroll.png'));
+    this.load.image('msg-box', path.join(TEXT_GAME_PATH, 'temple.png'))
   }
   loadPlayer() {
     this.load.spritesheet(

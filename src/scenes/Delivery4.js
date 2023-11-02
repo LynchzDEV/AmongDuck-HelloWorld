@@ -347,7 +347,7 @@ class Delivery4 extends Phaser.Scene {
   update(delta, time) {
     // dev skip the scene
     // start temple scene
-    // this.scene.start('Temple'); // ! comment for working in event_handling branch
+    this.scene.start('Temple'); //!dev mode
 
     //testing movement
     this.playerMoveTemple(player, 1000, false, false, null, null, null);

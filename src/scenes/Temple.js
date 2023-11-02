@@ -18,6 +18,7 @@ import {
 import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
 import playerMoveTemple from '../utils/playerMoveTemple';
+import { updateTextOpacity } from '../utils/event/updateTextOpacity';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -32,6 +33,11 @@ let grounds;
 let sky;
 let sky2;
 let sky3;
+
+//npc
+let npcTemple;
+//message box is interacted yet?
+let messageBoxInteract = true;
 
 let left;
 let right;
@@ -270,7 +276,7 @@ class Temple extends Phaser.Scene {
     //components background
     components = this.add.group();
     let house = this.add
-      .image(mapWidth / 2 - 620, floorHeight - 220, 'HouseTemple')
+      .image(mapWidth / 2 - 620, floorHeight - 225, 'HouseTemple')
       .setOrigin(0, 0)
       .setScale(0.8)
       .setDepth(MIDDLEGROUND_DEPTH)
@@ -291,8 +297,8 @@ class Temple extends Phaser.Scene {
     player = this.physics.add
       .sprite(300, height - 300, 'player')
       .setCollideWorldBounds(true)
-      .setScale(0.3)
-      .setSize(180,200)
+      .setScale(0.2)
+      .setSize(180, 200)
       .setDepth(PLAYER_DEPTH);
 
     //ground physics
@@ -376,6 +382,16 @@ class Temple extends Phaser.Scene {
     foreground.add(tree);
     foreground.add(water);
   }
+  addNpc(mapWidth, floorHeight) {
+    npcTemple = this.physics.add
+      .sprite(2460, floorHeight + 20, 'npc1')
+      .setOrigin(0, 0)
+      .setScale(0.15)
+      .setDepth(MIDDLEGROUND_DEPTH);
+    npcTemple.flipX = true;
+
+    npcTemple.anims.play('atok-anim', true);
+  }
   addAnimations() {
     //water animation
     this.anims.create({
@@ -398,6 +414,24 @@ class Temple extends Phaser.Scene {
       frameRate: 8,
       repeat: -1,
     });
+
+    this.anims.create({
+      key: 'atok-anim',
+      frames: this.anims.generateFrameNames('npc1', {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
+  }
+  addMessage() {
+    this.npcTempleMessage = this.add
+      .image(2414, 375, 'msg-box')
+      .setOrigin(0, 0)
+      .setAlpha(0.8)
+      .setScale(1)
+      .setDepth(FOREGROUND_DEPTH);
   }
 
   create() {
@@ -407,6 +441,7 @@ class Temple extends Phaser.Scene {
     const floorHeight = height - 330;
     //binding functions
     this.playerMoveTemple = playerMoveTemple;
+    this.updateTextOpacity = updateTextOpacity;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
     //setting world and camera
     const returnCamera = this.setWorldBoundsAndCamera(height, mapWidth, camera);
@@ -424,6 +459,10 @@ class Temple extends Phaser.Scene {
     this.addMiddlegroundAndPlayer(width, height, mapWidth, floorHeight);
     //adding foreground
     this.addForegroundElements(width, height, mapWidth, floorHeight);
+    //add npc
+    this.addNpc(mapWidth, floorHeight);
+    //add npc message
+    this.addMessage();
   }
 
   update() {
@@ -449,6 +488,12 @@ class Temple extends Phaser.Scene {
     sky.tilePositionX += 0.015;
     sky2.tilePositionX += 0.035;
     sky3.tilePositionX += 0.055;
+
+    if (messageBoxInteract) {
+      this.updateTextOpacity(player, npcTemple, this.npcTempleMessage);
+    } else {
+      this.npcTempleMessage.alpha(0);
+    }
   }
 }
 export default Temple;
