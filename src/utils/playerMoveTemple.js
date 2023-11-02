@@ -1,4 +1,5 @@
-let gravity = 250;
+// let gravity = 500;
+let gravity = 100; // ! dev_mode
 let holdTime = 0;
 const debug = true;
 
