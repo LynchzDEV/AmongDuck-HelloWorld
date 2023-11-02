@@ -42,11 +42,11 @@ const config = {
     LoadScene, //* 0 load scene
     // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
     // CutScene1, //* 1 cutscene 1 of the story mode
+    Temple, //* 3 temple map that lead to first decision
     Delivery, //* 4 delivery game
     Delivery2, //* 5 delivery game
     Delivery3, //* 6 delivery game
     Delivery4, //* 7 delivery game
-    Temple, //* 3 temple map that lead to first decision
     PathSelection, //* 4 path selection scene
     CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
     DesignPath, //* 6 cutscene that lead to selection of front end or web design

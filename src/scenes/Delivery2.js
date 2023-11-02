@@ -448,7 +448,7 @@ class Delivery2 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(310, 880, 'tree')
+      .image(0, 800, 'tree')
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
@@ -679,7 +679,7 @@ class Delivery2 extends Phaser.Scene {
 
   update(delta, time) {
     // dev skip the scene
-    // this.scene.start('Delivery3'); // ! comment for working in event_handling branch
+    this.scene.start('Delivery3'); // ! comment for working in event_handling branch
 
     //player movement
     if (isMobile || tablet) {

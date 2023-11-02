@@ -466,6 +466,9 @@ class Temple extends Phaser.Scene {
   }
 
   update() {
+
+    this.scene.start('Delivery'); //! dev mode
+
     //player movement
     if (isMobile || tablet) {
       this.playerMoveTemple(
