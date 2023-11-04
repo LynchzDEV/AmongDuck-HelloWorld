@@ -162,7 +162,7 @@ class Delivery extends Phaser.Scene {
           'mobile',
           this.physics,
           [screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2],
-          'right'
+          'inBtn'
         );
 
         //Implement mobile camera bounds and viewport
@@ -223,7 +223,7 @@ class Delivery extends Phaser.Scene {
           'tablet',
           this.physics,
           [screenWidth - screenWidth / 8, screenHeight / 1.2],
-          'right'
+          'inBtn'
         );
         //Implement tablet camera bounds and viewport
         camera.setViewport(
@@ -713,7 +713,7 @@ class Delivery extends Phaser.Scene {
 
   update(delta, time) {
     // dev skip the scene
-    this.scene.start('Delivery2'); // ! comment for working in event_handling branch
+    // this.scene.start('Delivery2'); // ! comment for working in event_handling branch
 
     //player movement
     if (isMobile || tablet) {
