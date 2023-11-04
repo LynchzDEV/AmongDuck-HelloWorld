@@ -27,7 +27,7 @@
             justify-content: center;
             height: 100%;
             width: 100%;
-            position: absolute;
+            position: fixed;
         }
 
         .container img {
@@ -37,14 +37,104 @@
             top: 0;
             left: 0;
             z-index: -1;
-            filter: blur(5px);
+        }
+
+        .content {
+            box-shadow: 0px 0px 26px 0px rgba(0, 0, 0, 0.85);
+            -webkit-box-shadow: 0px 0px 26px 0px rgba(0, 0, 0, 0.85);
+            -moz-box-shadow: 0px 0px 26px 0px rgba(0, 0, 0, 0.85);
+            height: 719px;
+        }
+
+        #toggleMuteButton {
+            position: fixed;
+            padding: 10px;
+            
+            top: calc(100% - 70px);
+            right: 10px;
+            
+            opacity: 1;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            z-index: 99;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        #toggleMuteButton:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div id="content"></div>
-        <!-- <img src="assets/image/_dev/backGround.png" alt="background"> -->
+        <div id="content" class="content"></div>
+        <img id="toggleMuteButton" src="assets/ui/speaker.svg" alt="Toggle Sound">
+        <img src="assets/image/wallpaper/websiteBackground.png" alt="background">
     </div>
+    <!-- import music, loop and auto start -->
+    <audio id="music" loop autoplay>
+        <source src="./assets/music/song.mp3" type="audio/mpeg">
+    </audio>
+    <script>
+        var audioElement = document.getElementById('music');
+        var toggleButton = document.getElementById('toggleMuteButton');
+        var isMuted = false;
+        var count = 0;
+        var interval;
+
+        audioElement.volume = 0.35;
+
+        var decreaseVolume = function () {
+            clearInterval(interval);
+            interval = setInterval(function () {
+                if (audioElement.volume > 0.01) {
+                    audioElement.volume -= 0.01;
+                } else {
+                    audioElement.volume = 0;
+                    clearInterval(interval);
+                    isMuted = true;
+                    toggleButton.style.opacity = '0.33';
+                }
+            }, 10);
+        };
+
+        var increaseVolume = function () {
+            clearInterval(interval);
+            interval = setInterval(function () {
+                if (audioElement.volume < 0.35) {
+                    audioElement.volume += 0.01;
+                } else {
+                    audioElement.volume = 0.35;
+                    clearInterval(interval);
+                    isMuted = false;
+                    toggleButton.style.opacity = '1';
+                }
+            }, 10);
+        };
+
+        if (count === 0) {
+            increaseVolume();
+        }
+
+        var toggleVolume = function () {
+            if (!isMuted) {
+                decreaseVolume();
+            } else {
+                increaseVolume();
+            }
+        };
+
+        toggleButton.addEventListener('click', toggleVolume);
+
+        var startAudio = function () {
+            audioElement.play();
+            document.removeEventListener('click', startAudio);
+            document.removeEventListener('touchstart', startAudio);
+        };
+
+        document.addEventListener('click', startAudio);
+        document.addEventListener('touchstart', startAudio);
+    </script>
 </body>
