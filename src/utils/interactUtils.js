@@ -93,7 +93,7 @@ const handleInteraction = (target, player) => {
  */
 const createInteractInput = (keyboard, deviceKey, physics, pos, objectKey) => {
   if (deviceKey !== 'desktop') {
-    const scale = deviceKey === 'mobiile' ? 5 : 7;
+    const scale = deviceKey === 'mobile' ? 5 : 7;
     const [x, y] = pos;
     return physics.add
       .sprite(x, y, objectKey)

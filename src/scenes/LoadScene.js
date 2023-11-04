@@ -375,6 +375,7 @@ class LoadScene extends Phaser.Scene {
         this.load.image("left", path.join(UI_PATH, "left.png"));
         this.load.image("right", path.join(UI_PATH, "right.png"));
         this.load.image("up", path.join(UI_PATH, "up.png"));
+        this.load.image("inBtn", path.join(UI_PATH, "inBtn.png"));
     }
 
     preload() {
@@ -415,7 +416,7 @@ class LoadScene extends Phaser.Scene {
         this.add.text(20, 20, "Loading game..."); //? Text for loading page but maybe useless.
         this.addAnimation();
         //if you need to add more text before dowloading, add here
-        this.scene.start("Temple");
+        this.scene.start("Delivery");
     }
 }
 export default LoadScene;
