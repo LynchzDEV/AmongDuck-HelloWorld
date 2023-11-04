@@ -701,6 +701,7 @@ class Delivery2 extends Phaser.Scene {
 
   init() {
     this.playerMoveTemple = playerMoveTemple;
+    this.sound.stopByKey('drown');
     deliverToChest = true;
     readyToCollectMilk = false;
   }

@@ -784,6 +784,7 @@ class Delivery3 extends Phaser.Scene {
 
   init(prevContext) {
     this.playerMoveTemple = playerMoveTemple;
+    this.sound.stopByKey('drown');
     ableToPlayChestAnimation = true;
     deliverToChest = true;
     readyToCollectMilk = false;

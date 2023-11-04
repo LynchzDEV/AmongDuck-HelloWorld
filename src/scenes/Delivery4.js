@@ -497,6 +497,7 @@ class Delivery4 extends Phaser.Scene {
         .setPosition(posX, posY)
         .setScale(scale)
         .setScrollFactor(0);
+      this.sound.add('collected').play();
     }
 
     // ? ester egg

@@ -70,6 +70,7 @@ class CND_TaskManager {
         const posY = inventoryDetails.posY || 0;
         item.collected = true;
         item.gameObj.setPosition(posX, posY).setScale(scale).setScrollFactor(0);
+        currentTask.scene.sound.add('collected').play();
       }
     });
   }
@@ -103,6 +104,9 @@ class CND_TaskManager {
         const nextTask = tasks[0];
         this.createInventoryItem(nextTask);
       }
+      currentTask.scene.time.delayedCall(500, () => {
+        currentTask.scene.sound.add('completed').play();
+      });
     }
 
     if (target.satisfied && thxMsg) thxMsg.setTexture('thx');
@@ -133,6 +137,7 @@ class CND_TaskManager {
           item.tint = 0x000000;
           target.receivedItems.push(item);
           target.satisfied = target.receivedItems.length === reqItemQty;
+          currentTask.scene.sound.add('delivered').play();
         });
       }
     }
