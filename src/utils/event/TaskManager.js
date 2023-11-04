@@ -38,7 +38,7 @@ class CND_TaskManager {
   /**
    * @description scale of the item in the inventory
    * @example if the item is 100x100 and the inventory item size is 50x50, then the scale is 0.5
-   * @param {Phaser.Types.Physics.Arcade.ImageWithDynamicBody} itemPrototype
+   * @param {CollectableItem} itemPrototype
    * @param {number} inventoryItemSize
    */
   static getInventoryItemScale(itemPrototype, inventoryItemSize) {
@@ -56,26 +56,12 @@ class CND_TaskManager {
   }
 
   /**
-   * @param {Phaser.GameObjects.GameObject} player
+   * @param {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody} player
    * @param {CND_Task[]} tasks
    */
   static handleCollectItem(player, tasks) {
     const currentTask = tasks[0];
-    // * set visible to false for all items in another tasks except the current task
-    /**
-     * @type {CND_Task}
-     */
-    tasks.forEach((task) => {
-      if (task !== currentTask) {
-        task.items.forEach((item) => {
-          item.item.setVisible(false);
-        });
-      } else if (task.length > 1) {
-        task.items.forEach((item) => {
-          item.gameObj.setVisible(true);
-        });
-      }
-    });
+
     currentTask.items.forEach((item, i) => {
       if (item.isOverlapWithPlayer(player) && !item.collected) {
         const inventoryDetails = currentTask.inventoryDetails;
@@ -89,51 +75,59 @@ class CND_TaskManager {
   }
 
   /**
-   * @param {Phaser.GameObjects.GameObject} player
+   * @param {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody} player
    * @param {Target} target
    * @param {CND_Task[]} tasks
+   * @param {Phaser.Tweens.TweenManager?} tweens
+   * @param {Phaser.GameObjects.Image?} notEnoughMsg
+   * @param {Phaser.GameObjects.Image?} thxMsg
    */
-  static handleDeliverItem(player, target, tasks) {
-    const currentTask = tasks[0];
+  static handleDeliverItem(target, tasks, tweens, notEnoughMsg, thxMsg) {
+    // curren task is the first task which is not completed
+    const currentTask = tasks.find((task) => !task._completed);
 
     // if the number of item.delivered (true) in currentTask.items is equal to currentTask.inventoryDetails.qty return true
     currentTask.completed =
       currentTask.items.filter((item) => item.delivered).length ===
       currentTask.inventoryDetails.qty;
 
-    if (currentTask.completed) {
-      console.log('thank you'); // * show thank you message
-      currentTask.items.forEach((item) => {
-        item.destroy();
-      });
+    if (currentTask._completed) {
       currentTask.inventoryBox.forEach((box) => {
         box.destroy();
       });
-      tasks.shift();
+      currentTask.items.forEach((item) => {
+        item.gameObj.destroy();
+      });
       if (tasks.length > 0) {
+        tasks.shift();
         const nextTask = tasks[0];
         this.createInventoryItem(nextTask);
       }
     }
 
+    if (target.satisfied && thxMsg) thxMsg.setTexture('thx');
+
     const reqItemData = target.requiredItemDetails,
       curInvData = currentTask.inventoryDetails,
       items = currentTask.items;
-    if (
-      target.isOverlapWithPlayer(player) &&
-      !target.satisfied &&
-      curInvData.itemKey === reqItemData.itemKey
-    ) {
-      // ! don't forget to add press interact-btn condition
+    if (!target.satisfied && curInvData.itemKey === reqItemData.itemKey) {
       const reqItemQty = reqItemData.qty;
       const collectedItems = items.filter(
         (item) => item.collected && !item.delivered
       );
 
-      if (collectedItems.length < reqItemQty) {
-        console.log('not enough items'); // * show not enough items message
+      if (collectedItems.length < reqItemQty && notEnoughMsg) {
+        // * notEnoughMsg opacity is increased to 1 and fade out slowly
+        notEnoughMsg.setAlpha(1);
+        tweens.add({
+          targets: notEnoughMsg,
+          alpha: 0,
+          duration: 6000,
+          ease: 'Linear',
+          yoyo: false,
+        });
       } else {
-        // Limit the iteration to the first reqItemQty collected items
+        // * Limit the iteration to the first reqItemQty collected items
         collectedItems.slice(0, reqItemQty).forEach((item) => {
           item.delivered = true;
           item.tint = 0x000000;
@@ -222,43 +216,22 @@ class CND_Task {
     return this._inventoryDetails;
   }
 
-  completed() {
-    this._completed = true;
+  get completed() {
+    return this._completed;
+  }
+
+  /**
+   * @param {boolean} isCompleted
+   */
+  set completed(isCompleted) {
+    this._completed = isCompleted;
   }
 }
 
 class OverlapObject {
   /**
    * @param {Phaser.Physics.Arcade.ArcadePhysics} physics
-   * @param {Phaser.GameObjects.GameObject} object
-   */
-  constructor(physics, object) {
-    /**
-     * @type {Phaser.Physics.Arcade.ArcadePhysics}
-     */
-    this.physics = physics;
-    /**
-     * @type {Phaser.GameObjects.GameObject}
-     */
-    this.object = object;
-  }
-
-  /**
-   * @param {Phaser.GameObjects.GameObject} player
-   */
-  isOverlapWithPlayer(player) {
-    return this.physics.overlap(player, this.object);
-  }
-
-  get gameObj() {
-    return this.object;
-  }
-}
-
-class Target extends OverlapObject {
-  /**
-   * @param {{itemKey: string, qty: number}} reqiuredItemDetails
-   * @param {Phaser.Physics.Arcade.ArcadePhysics} physics
+   * @param {string} objType
    * @param {[number, number]} pos
    * @param {string} textureKey
    * @param {number} scale
@@ -266,8 +239,8 @@ class Target extends OverlapObject {
    * @param {boolean} toTopLeft
    */
   constructor(
-    reqiuredItemDetails,
     physics,
+    objType,
     pos,
     textureKey,
     scale,
@@ -276,39 +249,42 @@ class Target extends OverlapObject {
   ) {
     const [x, y] = pos;
     const [a, b] = toTopLeft ? [0, 0] : [0.5, 0.5]; // ? Is 0.5 is center of the image
-    const object = physics.add
-      .sprite(x, y, textureKey)
-      .setScale(scale)
-      .setDepth(depth)
-      .setOrigin(a, b);
-    super(physics, object);
     /**
-     * @type {{itemKey: string, qty: number}}
+     * @type {Phaser.Physics.Arcade.ArcadePhysics}
      */
-    this.requiredItemDetails = reqiuredItemDetails;
-    this.receivedItems = [];
-    this.satisfied = this.receivedItems.length === this.requiredItemDetails.qty;
+    this.physics = physics;
+    /**
+     * @type {Phaser.Types.Physics.Arcade.ImageWithDynamicBody}
+     */
+    this.object =
+      objType === 'sprite'
+        ? physics.add
+            .sprite(x, y, textureKey)
+            .setScale(scale)
+            .setDepth(depth)
+            .setOrigin(a, b)
+        : objType === 'image'
+        ? physics.add
+            .image(x, y, textureKey)
+            .setScale(scale)
+            .setDepth(depth)
+            .setOrigin(a, b)
+        : undefined;
   }
-}
 
-class Item extends OverlapObject {
   /**
-   * @param {Phaser.Physics.Arcade.ArcadePhysics} physics
-   * @param {[number, number]} pos
-   * @param {string} textureKey
-   * @param {number} scale
-   * @param {number} depth
-   * @param {boolean} toTopLeft
+   * @param {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody} player
    */
-  constructor(physics, pos, textureKey, scale, depth, toTopLeft = true) {
-    const [x, y] = pos;
-    const [a, b] = toTopLeft ? [0, 0] : [0.5, 0.5]; // ? Is 0.5 is center of the image
-    const object = physics.add
-      .image(x, y, textureKey)
-      .setScale(scale)
-      .setDepth(depth)
-      .setOrigin(a, b);
-    super(physics, object);
+  isOverlapWithPlayer(player) {
+    return this.physics.overlap(player, this.object);
+  }
+
+  get gameObj() {
+    return this.object;
+  }
+
+  set gameObj(gameObj) {
+    this.object = gameObj;
   }
 
   get position() {
@@ -332,9 +308,64 @@ class Item extends OverlapObject {
   }
 }
 
+class Target extends OverlapObject {
+  /**
+   * @param {{itemKey: string, qty: number}} reqiuredItemDetails
+   * @param {Phaser.Physics.Arcade.ArcadePhysics} physics
+   * @param {string} objType
+   * @param {[number, number]} pos
+   * @param {string} textureKey
+   * @param {number} scale
+   * @param {number} depth
+   * @param {boolean} toTopLeft
+   */
+  constructor(
+    reqiuredItemDetails,
+    physics,
+    objType,
+    pos,
+    textureKey,
+    scale,
+    depth,
+    toTopLeft = true
+  ) {
+    super(physics, objType, pos, textureKey, scale, depth, toTopLeft);
+    /**
+     * @type {{itemKey: string, qty: number}}
+     */
+    this.requiredItemDetails = reqiuredItemDetails;
+    this.receivedItems = [];
+    this.satisfied = this.receivedItems.length === this.requiredItemDetails.qty;
+  }
+}
+
+class Item extends OverlapObject {
+  /**
+   * @param {Phaser.Physics.Arcade.ArcadePhysics} physics
+   * @param {string} objType
+   * @param {[number, number]} pos
+   * @param {string} textureKey
+   * @param {number} scale
+   * @param {number} depth
+   * @param {boolean} toTopLeft
+   */
+  constructor(
+    physics,
+    objType,
+    pos,
+    textureKey,
+    scale,
+    depth,
+    toTopLeft = true
+  ) {
+    super(physics, objType, pos, textureKey, scale, depth, toTopLeft);
+  }
+}
+
 class CollectableItem extends Item {
   /**
    * @param {Phaser.Physics.Arcade.ArcadePhysics} physics
+   * @param {string} objType
    * @param {[number, number]} pos
    * @param {string} textureKey
    * @param {number} scale
@@ -344,6 +375,7 @@ class CollectableItem extends Item {
    */
   constructor(
     physics,
+    objType,
     pos,
     textureKey,
     scale,
@@ -351,7 +383,7 @@ class CollectableItem extends Item {
     inventoryItemSize,
     toTopLeft = true
   ) {
-    super(physics, pos, textureKey, scale, depth, toTopLeft);
+    super(physics, objType, pos, textureKey, scale, depth, toTopLeft);
     /**
      * @type {boolean}
      */
@@ -410,13 +442,46 @@ class MilkItem extends CollectableItem {
    * @param {number} inventoryItemSize
    */
   constructor(physics, pos, scale, depth, inventoryItemSize, toTopLeft = true) {
-    super(physics, pos, 'milk', scale, depth, inventoryItemSize, toTopLeft);
+    super(
+      physics,
+      'image',
+      pos,
+      'milk',
+      scale,
+      depth,
+      inventoryItemSize,
+      toTopLeft
+    );
+  }
+}
+
+class KeyItem extends CollectableItem {
+  /**
+   * @param {Phaser.Physics.Arcade.ArcadePhysics} physics
+   * @param {[number, number]} pos
+   * @param {number} scale
+   * @param {number} depth
+   * @param {boolean} toTopLeft
+   * @param {number} inventoryItemSize
+   */
+  constructor(physics, pos, scale, depth, inventoryItemSize, toTopLeft = true) {
+    super(
+      physics,
+      'image',
+      pos,
+      'key',
+      scale,
+      depth,
+      inventoryItemSize,
+      toTopLeft
+    );
   }
 }
 
 class ContainableObject extends OverlapObject {
   /**
    * @param {Phaser.Physics.Arcade.ArcadePhysics} physics
+   * @param {string} objType
    * @param {[number, number]} pos
    * @param {string} textureKey
    * @param {number} scale
@@ -426,6 +491,7 @@ class ContainableObject extends OverlapObject {
    */
   constructor(
     physics,
+    objType,
     pos,
     textureKey,
     scale,
@@ -435,13 +501,8 @@ class ContainableObject extends OverlapObject {
   ) {
     const [x, y] = pos;
     const [a, b] = toTopLeft ? [0, 0] : [0.5, 0.5]; // ? Is 0.5 is center of the image
-    const object = physics.add
-      .sprite(x, y, textureKey)
-      .setScale(scale)
-      .setDepth(depth)
-      .setOrigin(a, b)
-      .setFrame(initFrame);
-    super(physics, object);
+    super(physics, objType, pos, textureKey, scale, depth, toTopLeft);
+    this.object.setFrame(initFrame);
     /**
      * @type {CollectableItem}
      */
@@ -463,6 +524,7 @@ export {
   CND_TaskManager,
   CND_Task,
   MilkItem,
+  KeyItem,
   ContainableObject,
   CollectableItem,
   Item,

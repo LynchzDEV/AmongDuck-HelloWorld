@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import { changeSceneIf } from '../utils/changeScene';
-import enableInteractivityOnOverlap from '../utils/collisionUtils';
 
 let player;
 let up;

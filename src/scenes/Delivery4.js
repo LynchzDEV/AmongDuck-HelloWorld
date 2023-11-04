@@ -7,9 +7,17 @@ import {
   MIDDLEGROUND_DEPTH,
   BACKGROUND_COMPONENT_DEPTH,
 } from '../utils/mapDepth';
-
-import { manageCollectItem } from '../utils/event/collectItem';
 import { updateTextOpacity } from '../utils/event/updateTextOpacity'; // ! new func
+
+// ! test new class for collect item
+import {
+  CND_TaskManager,
+  CND_Task,
+  MilkItem,
+  CollectableItem,
+  Target,
+  OverlapObject,
+} from '../utils/event/TaskManager';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -22,7 +30,11 @@ let platforms;
 let jumppad1;
 let jumppad2;
 //interaciton
-let milk;
+/**
+ * @type {MilkItem}
+ */
+let milkOnCloud;
+let readyToCollectMilk = false;
 //player
 let player;
 
@@ -35,27 +47,129 @@ let isRightPressed = false;
 let isUpPressed = false;
 
 //message easter egg
-let playerEsterEgg = true; 
+let playerEsterEgg = true;
 
 class Delivery4 extends Phaser.Scene {
   constructor() {
     super('Delivery4');
+    // * new class for collect item
+    /**
+     * @type {CND_Task}
+     */
+    this.CND_Key_Task;
+    /**
+     * @type {CND_Task}
+     */
+    this.CND_Milks_Task;
+    /**
+     * @type {CND_Task}
+     */
+    this.ToGate_Task;
+    /**
+     * @type {Target}
+     */
+    this.npc4;
+    /**
+     * @type {Target}
+     */
+    this.npc5;
   }
 
-  //! It have some bug, waiting for event fix it.
-  // init(data) {
-  //   manageCollectItem(this, data.manager.state).initInventory();
-  //   console.log(data.manager.inventory);
-  //   data.manager.inventory.forEach((item) => {
-  //     console.log(item.x, item.y);
-  //     this.physics.add
-  //       .image(item.x, item.y, item.texture.key)
-  //       .setOrigin(0, 0)
-  //       .setScale(item.scaleX, item.scaleY)
-  //       .setDepth(item.depth)
-  //       .setScrollFactor(0);
-  //   });
-  // }
+  init(prevContext) {
+    const { tasks, items, inventoryDetails, npc } = prevContext;
+    /**
+     * @type {CND_Task}
+     */
+    const keyTask = tasks[0],
+      /**
+       * @type {CND_Task}
+       */
+      milkTask = tasks[1],
+      /**
+       * @type {CND_Task}
+       */
+      gateTask = tasks[2];
+    const keyTaskCompleted = keyTask._completed,
+      milkTaskCompleted = milkTask._completed,
+      gateTaskCompleted = gateTask._completed;
+    /**
+     * @type {CollectableItem[]}
+     */
+    const keyItems = items[0],
+      /**
+       * @type {CollectableItem[]}
+       */
+      milkItems = items[1],
+      /**
+       * @type {CollectableItem[]}
+       */
+      gateItems = items[2];
+    /**
+     * @type {{itemKey: string, qty: number, inventoryItemSize: number, fst_posX?: number, posY?: number, posX_list?: number[]}}
+     */
+    const keyInventoryDetails = inventoryDetails[0],
+      /**
+       * @type {{itemKey: string, qty: number, inventoryItemSize: number, fst_posX?: number, posY?: number, posX_list?: number[]}}
+       */
+      milkInventoryDetails = inventoryDetails[1],
+      /**
+       * @type {{itemKey: string, qty: number, inventoryItemSize: number, fst_posX?: number, posY?: number, posX_list?: number[]}}
+       */
+      gateInventoryDetails = inventoryDetails[2];
+
+    this.CND_Key_Task = new CND_Task(this, keyItems, keyInventoryDetails);
+    this.CND_Milks_Task = new CND_Task(this, milkItems, milkInventoryDetails);
+    this.ToGate_Task = new CND_Task(this, gateItems, gateInventoryDetails);
+    (this.npc4 = npc[0]), (this.npc5 = npc[1]);
+
+    if (!keyTaskCompleted && !keyItems[0].collected) {
+      CND_TaskManager.createInventoryItem(this.CND_Key_Task);
+    } else if (
+      !keyTaskCompleted &&
+      keyItems[0].collected &&
+      !keyItems[0].delivered
+    ) {
+      this.CND_Key_Task.items[0].collected = true;
+      CND_TaskManager.createInventoryItem(this.CND_Key_Task);
+      const { posX_list, scale } = keyInventoryDetails;
+      const posX = posX_list[0];
+      const posY = keyInventoryDetails.posY || 0;
+      this.physics.add
+        .image(posX, posY, 'key')
+        .setOrigin(0, 0)
+        .setDepth(MIDDLEGROUND_DEPTH)
+        .setAlpha(1)
+        .setScrollFactor(0)
+        .setScale(scale);
+    } else if (!milkTaskCompleted) {
+      this.CND_Key_Task._completed = true;
+      CND_TaskManager.createInventoryItem(this.CND_Milks_Task);
+      this.CND_Milks_Task._items.forEach((milk, i) => {
+        if (milkItems[i].collected) {
+          const { posX_list, scale } = milkInventoryDetails;
+          const posX = posX_list[i];
+          const posY = milkInventoryDetails.posY || 0;
+          const tint = milkItems[i].delivered ? 0x000000 : 0xffffff;
+          milk.collected = true;
+          milk.delivered = milkItems[i].delivered;
+          milk.gameObj = this.physics.add
+            .image(posX, posY, 'milk')
+            .setOrigin(0, 0)
+            .setDepth(MIDDLEGROUND_DEPTH)
+            .setAlpha(1)
+            .setScrollFactor(0)
+            .setScale(scale)
+            .setTint(tint);
+          readyToCollectMilk = i === 2 ? false : true;
+        }
+      });
+    } else if (milkTaskCompleted && !gateTaskCompleted) {
+      this.CND_Key_Task._completed = true;
+      this.CND_Milks_Task._completed = true;
+      readyToCollectMilk = false;
+      CND_TaskManager.createInventoryItem(this.ToGate_Task);
+    }
+  }
 
   setDeviceSpecificControls(height, width, camera) {
     //camera and control for each device
@@ -264,13 +378,16 @@ class Delivery4 extends Phaser.Scene {
     });
   }
   addMainComponents() {
-    milk = this.add
-      .image(2604, 405, 'milk')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH + 1);
-
-    // init inventory
+    milkOnCloud = new MilkItem(
+      this.physics,
+      [2604, 405],
+      0.8,
+      MIDDLEGROUND_DEPTH + 1,
+      150
+    );
+    if (!readyToCollectMilk) {
+      milkOnCloud.gameObj.setVisible(false);
+    }
   }
   addPlayerAndCollider() {
     //player
@@ -303,7 +420,7 @@ class Delivery4 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setAlpha(0)
-      .setDepth(MIDDLEGROUND_DEPTH)
+      .setDepth(MIDDLEGROUND_DEPTH);
   }
 
   create() {
@@ -350,17 +467,66 @@ class Delivery4 extends Phaser.Scene {
     // start temple scene
     // this.scene.start('Temple'); //!dev mode
 
-    //testing movement
-    this.playerMoveTemple(player, 1000, false, false, null, null, null);
+    //player movement
+    if (isMobile || tablet) {
+      this.playerMoveTemple(
+        player,
+        500,
+        false,
+        true,
+        isLeftPressed,
+        isRightPressed,
+        isUpPressed
+      );
+    } else {
+      this.playerMoveTemple(player, 1000, false, false, null, null, null);
+    }
 
     //camera follow player
     camera.startFollow(player);
 
-    //? ester egg
-    if(playerEsterEgg){
-      this.updateTextOpacity(player, {x:1000, y: 1200}, this.rigroll);
+    // handle all collect task
+    if (readyToCollectMilk && milkOnCloud.isOverlapWithPlayer(player)) {
+      const milkItem = this.CND_Milks_Task.items[2];
+      milkItem.collected = true;
+      const inventoryDetails = this.CND_Milks_Task.inventoryDetails;
+      const { posX_list, scale } = inventoryDetails;
+      const posX = posX_list[2];
+      const posY = inventoryDetails.posY || 0;
+      milkOnCloud.gameObj
+        .setPosition(posX, posY)
+        .setScale(scale)
+        .setScrollFactor(0);
+    }
+
+    // ? ester egg
+    if (playerEsterEgg) {
+      this.updateTextOpacity(player, { x: 1000, y: 1200 }, this.rigroll);
     } else {
       this.rigroll.setAlpha(0);
+    }
+
+    // fall down to Delivery3
+    if (
+      player.body.y + player.body.height >=
+      this.physics.world.bounds.height
+    ) {
+      const gameContext = {
+        playerX: player.body.x,
+        tasks: [this.CND_Key_Task, this.CND_Milks_Task, this.ToGate_Task],
+        items: [
+          this.CND_Key_Task._items,
+          this.CND_Milks_Task._items,
+          this.ToGate_Task._items,
+        ],
+        inventoryDetails: [
+          this.CND_Key_Task._inventoryDetails,
+          this.CND_Milks_Task._inventoryDetails,
+          this.ToGate_Task._inventoryDetails,
+        ],
+        npc: [this.npc4, this.npc5],
+      };
+      this.scene.start('Delivery3', gameContext);
     }
   }
 }
