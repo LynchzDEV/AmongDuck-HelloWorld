@@ -10,7 +10,9 @@
     <meta name="MobileOptimized" content="320">
     <meta http-equiv="cleartype" content="on">
     <meta name="format-detection" content="telephone=no">
-    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Goose_icon_05.svg/444px-Goose_icon_05.svg.png" type="image/x-icon">
+    <link rel="shortcut icon"
+        href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Goose_icon_05.svg/444px-Goose_icon_05.svg.png"
+        type="image/x-icon">
     <style>
         *,
         body {
@@ -35,7 +37,6 @@
             top: 0;
             left: 0;
             z-index: -1;
-            filter: blur(5px);
         }
     </style>
 </head>
@@ -43,6 +44,75 @@
 <body>
     <div class="container">
         <div id="content"></div>
-        <!-- <img src="assets/image/_dev/backGround.png" alt="background"> -->
+        <button id="toggleMuteButton">Toggle</button>
+        <img src="assets/image/wallpaper/websiteBackground.png" alt="background">
     </div>
-<script type="text/javascript" src="./dev/vendor.js"></script><script type="text/javascript" src="./dev/app.js"></script></body></html>
+    <!-- import music, loop and auto start -->
+    <iframe src="audio/source.mp3" title="gay" allow="autoplay" style="display:none" id="iframeAudio">
+    </iframe>
+    <audio id="music" loop autoplay>
+        <source src="./assets/music/song.mp3" type="audio/mpeg">
+    </audio>
+    <script>
+        var audioElement = document.getElementById('music');
+        var toggleButton = document.getElementById('toggleMuteButton');
+        var isMuted = false;
+        var count = 0;
+        var interval;
+
+        audioElement.volume = 0.35;
+
+        var decreaseVolume = function () {
+            clearInterval(interval);
+            interval = setInterval(function () {
+                if (audioElement.volume > 0.01) {
+                    audioElement.volume -= 0.01;
+                } else {
+                    audioElement.volume = 0;
+                    clearInterval(interval);
+                    isMuted = true;
+                }
+            }, 10);
+        };
+
+        var increaseVolume = function () {
+            clearInterval(interval);
+            interval = setInterval(function () {
+                if (audioElement.volume < 0.35) {
+                    audioElement.volume += 0.01;
+                } else {
+                    audioElement.volume = 0.35;
+                    clearInterval(interval);
+                    isMuted = false;
+                }
+            }, 10);
+        };
+
+        if (count === 0) {
+            increaseVolume();
+        }
+
+        var toggleVolume = function () {
+            if (!isMuted) {
+                decreaseVolume();
+            } else {
+                increaseVolume();
+            }
+        };
+
+        toggleButton.addEventListener('click', toggleVolume);
+
+        var startAudio = function () {
+            audioElement.play();
+            document.removeEventListener('click', startAudio);
+            document.removeEventListener('touchstart', startAudio);
+        };
+
+        document.addEventListener('click', startAudio);
+        document.addEventListener('touchstart', startAudio);
+    </script>
+    <script type="text/javascript" src="./dev/vendor.js"></script>
+    <script type="text/javascript" src="./dev/app.js"></script>
+</body>
+
+</html>
