@@ -9,10 +9,28 @@ import {
   PLAYER_DEPTH,
 } from '../utils/mapDepth';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
-import { shallowWater, playerDrown } from '../utils/event/drown';
-import { manageCollectItem } from '../utils/event/collectItem';
-import handleInteractiveBtn from '../utils/collisionUtils';
+import {
+  shallowWater,
+  handleShutdown,
+  playerDrown,
+} from '../utils/event/drown';
+import {
+  setInput,
+  createInteractInput,
+  handleInteractiveBtn,
+} from '../utils/interactUtils';
 import { updateTextOpacity } from '../utils/event/updateTextOpacity'; // ! new func
+
+// ! test new class for collect item
+import {
+  CND_TaskManager,
+  CND_Task,
+  MilkItem,
+  KeyItem,
+  CollectableItem,
+  Target,
+  OverlapObject,
+} from '../utils/event/TaskManager';
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -38,8 +56,11 @@ let house2;
 let chest;
 let key;
 let sign;
-let ladder;
+let ladder = {};
+ladder.fnCalled = 0;
 let shallow_water;
+let isPlayerFallDown = false;
+let haveBeenToDelivery4 = false;
 //npc // ! new component
 let npc4, npc5;
 //player
@@ -49,30 +70,33 @@ let player;
 let left;
 let right;
 let up;
-const windowHeight = window.innerHeight > 720 ? 720 : window.innerHeight;
-let interactButton;
+let interactKey; // ! add this for another scene too
+const windowHeight = window.innerHeight > 720 ? 720 : window.innerHeight; // ! add this for another scene too
+let interactButton; // ! add this for another scene too
 let isLeftPressed = false;
 let isRightPressed = false;
 let isUpPressed = false;
-//manage collect item
-let collectItemManager;
-const milkTargetSize = 150,
-  keyTargetSize = 100,
-  gateTargetSize = 90;
-let overlapKey = true;
-let overlapChest = true;
-let overlapMilkInChest = false;
-let overlapMilkOnBench = true;
-let deliverToChest = true;
 
-//Overlap
-let deliverToNpc4 = true;
-let deliverToNpc5 = true;
+let ableToPlayChestAnimation = true;
+let deliverToChest = true;
+let readyToCollectMilk = false;
 
 class Delivery3 extends Phaser.Scene {
   constructor() {
     super('Delivery3');
-    this.interactKey = null;
+    // * new class for collect item
+    /**
+     * @type {CND_Task}
+     */
+    this.CND_Key_Task;
+    /**
+     * @type {CND_Task}
+     */
+    this.CND_Milks_Task;
+    /**
+     * @type {CND_Task}
+     */
+    this.ToGate_Task;
   }
 
   setDeviceSpecificControls(height, width, camera) {
@@ -104,11 +128,12 @@ class Delivery3 extends Phaser.Scene {
 
       //get screen width and height
       let screenWidth = window.innerWidth;
-      let screenHeight = window.innerHeight;
+      let screenHeight;
 
       //device check
       if (isMobile) {
         //mobile
+        // ! set new pos for mobile
         screenHeight = windowHeight;
         console.log('Mobile view');
         console.log(`Screen Width: ${screenWidth}px`);
@@ -145,18 +170,14 @@ class Delivery3 extends Phaser.Scene {
           .setAlpha(0.7)
           .setScrollFactor(0);
 
-        interactButton = this.physics.add
-          .sprite(
-            screenWidth / 2 + screenWidth / 3.5,
-            screenHeight / 1.2,
-            'right'
-          )
-          .setScale(5)
-          .setSize(15, 15)
-          .setInteractive()
-          .setDepth(999)
-          .setAlpha(0.7)
-          .setScrollFactor(0);
+        // ! create interact btn for mobile
+        interactButton = createInteractInput(
+          this.input.keyboard,
+          'mobile',
+          this.physics,
+          [screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2],
+          'right'
+        );
 
         //Implement mobile camera bounds and viewport
         camera.setViewport(
@@ -168,6 +189,7 @@ class Delivery3 extends Phaser.Scene {
         camera.setZoom(1);
       } else if (tablet) {
         //tablet
+        // ! set new pos for tablet
         screenHeight = windowHeight;
         console.log('Tablet view');
         console.log(`Screen Width: ${screenWidth}px`);
@@ -208,14 +230,14 @@ class Delivery3 extends Phaser.Scene {
           .setAlpha(0.7)
           .setScrollFactor(0);
 
-        interactButton = this.physics.add
-          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, 'right')
-          .setScale(7)
-          .setSize(15, 15)
-          .setInteractive()
-          .setDepth(999)
-          .setAlpha(0.7)
-          .setScrollFactor(0);
+        // ! create interact btn for tablet
+        interactButton = createInteractInput(
+          this.input.keyboard,
+          'tablet',
+          this.physics,
+          [screenWidth - screenWidth / 8, screenHeight / 1.2],
+          'right'
+        );
 
         //Implement tablet camera bounds and viewport
         camera.setViewport(
@@ -229,6 +251,8 @@ class Delivery3 extends Phaser.Scene {
       //default (desktop)
       console.log('desktop');
       camera.setViewport(0, 0, width, height);
+      // ! add interaction key
+      interactKey = createInteractInput(this.input.keyboard, 'desktop');
     }
   }
   addBackgroundElements(mapWidth, mapHeight) {
@@ -355,6 +379,67 @@ class Delivery3 extends Phaser.Scene {
       child.body.setSize(child.width, 20).setOffset(0, 0);
     });
   }
+  initMainComponents() {
+    gateNext = new OverlapObject(
+      this.physics,
+      'image',
+      [3640, 1145],
+      'gate',
+      1,
+      MIDDLEGROUND_DEPTH,
+      90
+    );
+    gateNext.gameObj.flipX = true;
+
+    chest = new Target(
+      { itemKey: 'key', qty: 1 },
+      this.physics,
+      'sprite',
+      [2010, 285],
+      'chest',
+      1,
+      MIDDLEGROUND_DEPTH
+    );
+    chest.gameObj.setFrame(21);
+
+    key = new KeyItem(this.physics, [2400, 1023], 1, MIDDLEGROUND_DEPTH, 100);
+
+    milkInChest = new MilkItem(
+      this.physics,
+      [2050, 335],
+      0.8,
+      MIDDLEGROUND_DEPTH + 1,
+      150
+    );
+    milkInChest.gameObj.setVisible(false);
+
+    milkOnBench = new MilkItem(
+      this.physics,
+      [550, 120],
+      0.8,
+      MIDDLEGROUND_DEPTH,
+      150
+    );
+    milkOnBench.gameObj.setVisible(false);
+
+    milkOnCloud = new MilkItem(
+      this.physics,
+      [0, 1500], // * out of screen
+      0.8,
+      MIDDLEGROUND_DEPTH,
+      150
+    );
+    milkOnCloud.gameObj.setVisible(false);
+
+    ladder = new OverlapObject(
+      this.physics,
+      'image',
+      [3609, 0],
+      'ladder',
+      1,
+      MIDDLEGROUND_DEPTH
+    );
+  }
   addMainComponents() {
     //add gate
     gatePrevious = this.physics.add
@@ -362,12 +447,6 @@ class Delivery3 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    gateNext = this.physics.add
-      .image(3640, 1145, 'gate')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    gateNext.flipX = true;
     house = this.add
       .image(1311, 720, 'house4')
       .setOrigin(0, 0)
@@ -378,66 +457,47 @@ class Delivery3 extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    chest = this.physics.add
-      .sprite(2010, 285, 'chest')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    //default chest frame
-    chest.setFrame(21);
-
-    key = this.physics.add
-      .image(2400, 1023, 'key')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
     sign = this.add
       .image(3456, 1088, 'sign')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    milkInChest = this.physics.add
-      .image(2010 + 40, 285 + 50, 'milk')
-      .setOrigin(0, 0)
-      .setScale(0.8)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    milkInChest.setVisible(false);
-    milkOnBench = this.physics.add
-      .image(555, 120, 'milk')
-      .setOrigin(0, 0)
-      .setScale(0.8)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    milkOnCloud = this.physics.add
-      .image(0, 1500, 'milk') // out of screen
-      .setOrigin(0, 0)
-      .setScale(0.8)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    ladder = this.physics.add
-      .image(3609, 0, 'ladder')
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
 
-    // init inverntory
-    collectItemManager = manageCollectItem(this, [
-      {
-        success: false,
-        item: [key],
-        sizeOfInventory: 1,
-        targetSize: keyTargetSize,
-        initStartPosX: 30,
-        initStartPosY: 30,
-        alpha: 0.5,
-      },
-      {
-        success: false,
-        item: [milkInChest, milkOnBench, milkOnCloud],
-        sizeOfInventory: 3,
-        targetSize: milkTargetSize,
-        alpha: 0.5,
-      },
-    ]);
-    collectItemManager.initInventory();
+    if (!isPlayerFallDown) {
+      this.initMainComponents();
+
+      // ! new class for collect item
+      // * create key task
+      this.CND_Key_Task = new CND_Task(this, [key], {
+        itemKey: key.textureKey,
+        qty: 1,
+        inventoryItemSize: 100,
+        fst_posX: 30,
+        posY: 30,
+      });
+
+      // * create milk task
+      this.CND_Milks_Task = new CND_Task(
+        this,
+        [milkInChest, milkOnBench, milkOnCloud],
+        {
+          itemKey: milkInChest.textureKey,
+          qty: 3,
+          inventoryItemSize: milkInChest.inventoryItemSize,
+        }
+      );
+
+      // * create to-gate task
+      this.ToGate_Task = new CND_Task(this, [gateNext], {
+        itemKey: gateNext.textureKey,
+        qty: 1,
+        inventoryItemSize: 90,
+        fst_posX: 50,
+        posY: 30,
+      });
+
+      CND_TaskManager.createInventoryItem(this.CND_Key_Task);
+    }
   }
   //props
   addComponents() {
@@ -511,23 +571,50 @@ class Delivery3 extends Phaser.Scene {
   }
 
   //npc
+  initNpc() {
+    npc4 = new Target(
+      { itemKey: 'milk', qty: 1 },
+      this.physics,
+      'sprite',
+      [859, 1130],
+      'npc4',
+      0.2,
+      MIDDLEGROUND_DEPTH
+    );
+    npc4.gameObj.anims.play('idle_npc4', true);
+    npc5 = new Target(
+      { itemKey: 'milk', qty: 2 },
+      this.physics,
+      'sprite',
+      [1900, 1130],
+      'npc5',
+      0.2,
+      MIDDLEGROUND_DEPTH
+    );
+    npc5.gameObj.anims.play('idle_npc5', true);
+    npc5.gameObj.flipX = true;
+  }
   addNpc() {
-    npc4 = this.physics.add
-      .sprite(859, 1130, 'npc4')
-      .setOrigin(0, 0)
-      .setScale(0.2)
-      .setDepth(MIDDLEGROUND_DEPTH);
-    npc5 = this.physics.add
-      .sprite(1900, 1130, 'npc5')
-      .setOrigin(0, 0)
-      .setScale(0.2)
-      .setDepth(MIDDLEGROUND_DEPTH);
-
-    npc4.anims.play('idle_npc4', true);
-    npc5.anims.play('idle_npc5', true);
-    npc5.flipX = true;
+    if (!isPlayerFallDown) {
+      this.initNpc();
+    }
   }
   //message
+  initRequireMessage() {
+    //message require milk
+    this.requireNpc4 = this.add
+      .image(703, 1167, 'require1')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+    this.requireNpc5 = this.add
+      .image(1971, 1169, 'require2')
+      .setOrigin(0, 0)
+      .setAlpha(0)
+      .setScale(1)
+      .setDepth(PLAYER_DEPTH);
+  }
   addMessage() {
     //message for npc interaction
     this.messageNpc4 = this.add
@@ -543,19 +630,9 @@ class Delivery3 extends Phaser.Scene {
       .setScale(1)
       .setDepth(PLAYER_DEPTH);
 
-    //message require milk
-    this.requireNpc4 = this.add
-      .image(703, 1167, 'require1')
-      .setOrigin(0, 0)
-      .setAlpha(0)
-      .setScale(1)
-      .setDepth(PLAYER_DEPTH);
-    this.requireNpc5 = this.add
-      .image(1971, 1169, 'require2')
-      .setOrigin(0, 0)
-      .setAlpha(0)
-      .setScale(1)
-      .setDepth(PLAYER_DEPTH);
+    if (!isPlayerFallDown) {
+      this.initRequireMessage();
+    }
   }
 
   addAnimations() {
@@ -596,21 +673,251 @@ class Delivery3 extends Phaser.Scene {
       .setDepth(FOREGROUND_DEPTH);
   }
   addPlayerAndCollider(floorHeight) {
-    //player
-    // player = this.physics.add
-    //   .sprite(100, floorHeight - 40, 'player')
-    //   .setCollideWorldBounds(true)
-    //   .setScale(0.3)
-    //   .setSize(180, 200)
-    //   .setDepth(PLAYER_DEPTH);
-    player = this.physics.add // ! comment for working in event_handling branch
-      .sprite(3609, 0, 'player')
-      .setCollideWorldBounds(true)
-      .setScale(0.3)
-      .setSize(180, 200)
-      .setDepth(PLAYER_DEPTH);
+    if (!isPlayerFallDown) {
+      player
+      player = this.physics.add
+        .sprite(100, floorHeight - 40, 'player')
+        .setCollideWorldBounds(true)
+        .setScale(0.3)
+        .setSize(180, 200)
+        .setDepth(PLAYER_DEPTH);
+      // player = this.physics.add // ! comment for working in event_handling branch
+      //   .sprite(3609, 0, 'player') // ! spawn at ladder
+      //   .setCollideWorldBounds(true)
+      //   .setScale(0.3)
+      //   .setSize(180, 200)
+      //   .setDepth(PLAYER_DEPTH);
+    }
     player.setFrame(5);
     this.physics.add.collider(player, platforms);
+  }
+
+  // * update item opacity
+  updateItemOpacity(item, destination) {
+    const playerX = player.x;
+    const playerY = player.y;
+    const destinationX = destination.x;
+    const destinationY = destination.y;
+
+    const distance = Phaser.Math.Distance.Between(
+      playerX,
+      playerY,
+      destinationX,
+      destinationY
+    );
+
+    const minOpacity = 0;
+    const maxOpacity = 1;
+
+    const maxDistance = 2000;
+
+    const opacity = Phaser.Math.Linear(
+      minOpacity,
+      maxOpacity,
+      Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
+    );
+
+    item.setAlpha(opacity);
+  }
+
+  // * bind function to target
+  bindFnToTarget() {
+    ladder.gameObj.fn = () => {
+      haveBeenToDelivery4 = true;
+      const gameContext = {
+        tasks: [this.CND_Key_Task, this.CND_Milks_Task, this.ToGate_Task],
+        items: [
+          this.CND_Key_Task._items,
+          this.CND_Milks_Task._items,
+          this.ToGate_Task._items,
+        ],
+        inventoryDetails: [
+          this.CND_Key_Task._inventoryDetails,
+          this.CND_Milks_Task._inventoryDetails,
+          this.ToGate_Task._inventoryDetails,
+        ],
+        npc: [npc4, npc5],
+      };
+      this.scene.start('Delivery4', gameContext);
+    };
+
+    npc4.gameObj.fn = () => {
+      this.requireNpc4.x = 703;
+      this.tweens.add({
+        targets: this.requireNpc4,
+        x: this.requireNpc4.x - 10,
+        duration: 100,
+        ease: 'Linear',
+        repeat: 3,
+        yoyo: true,
+      });
+      CND_TaskManager.handleDeliverItem(
+        npc4,
+        [this.CND_Milks_Task, this.ToGate_Task],
+        this.tweens,
+        this.messageNpc4,
+        this.requireNpc4
+      );
+    };
+
+    npc5.gameObj.fn = () => {
+      this.requireNpc5.x = 1971;
+      this.tweens.add({
+        targets: this.requireNpc5,
+        x: this.requireNpc5.x - 10,
+        duration: 100,
+        ease: 'Linear',
+        repeat: 3,
+        yoyo: true,
+      });
+      CND_TaskManager.handleDeliverItem(
+        npc5,
+        [this.CND_Milks_Task, this.ToGate_Task],
+        this.tweens,
+        this.messageNpc5,
+        this.requireNpc5
+      );
+    };
+  }
+
+  init(prevContext) {
+    this.playerMoveTemple = playerMoveTemple;
+    ableToPlayChestAnimation = true;
+    deliverToChest = true;
+    readyToCollectMilk = false;
+
+    if (haveBeenToDelivery4) {
+      isPlayerFallDown = true;
+      const { playerX, tasks, items, inventoryDetails, npc } = prevContext;
+      // * fall dowm from Delivery4
+      player = this.physics.add
+        .sprite(playerX, 0, 'player')
+        .setCollideWorldBounds(true)
+        .setScale(0.3)
+        .setSize(180, 200)
+        .setDepth(PLAYER_DEPTH);
+
+      /**
+       * @type {CND_Task}
+       */
+      const keyTask = tasks[0],
+        /**
+         * @type {CND_Task}
+         */
+        milkTask = tasks[1],
+        /**
+         * @type {CND_Task}
+         */
+        gateTask = tasks[2];
+      const keyTaskCompleted = keyTask._completed,
+        milkTaskCompleted = milkTask._completed,
+        gateTaskCompleted = gateTask._completed;
+      /**
+       * @type {CollectableItem[]}
+       */
+      const keyItems = items[0],
+        /**
+         * @type {CollectableItem[]}
+         */
+        milkItems = items[1],
+        /**
+         * @type {CollectableItem[]}
+         */
+        gateItems = items[2];
+      /**
+       * @type {{itemKey: string, qty: number, inventoryItemSize: number, fst_posX?: number, posY?: number, posX_list?: number[]}}
+       */
+      const keyInventoryDetails = inventoryDetails[0],
+        /**
+         * @type {{itemKey: string, qty: number, inventoryItemSize: number, fst_posX?: number, posY?: number, posX_list?: number[]}}
+         */
+        milkInventoryDetails = inventoryDetails[1],
+        /**
+         * @type {{itemKey: string, qty: number, inventoryItemSize: number, fst_posX?: number, posY?: number, posX_list?: number[]}}
+         */
+        gateInventoryDetails = inventoryDetails[2];
+
+      this.initMainComponents();
+      this.initRequireMessage();
+      this.initNpc();
+
+      this.CND_Key_Task = new CND_Task(this, [key], keyInventoryDetails);
+      this.CND_Milks_Task = new CND_Task(
+        this,
+        [milkInChest, milkOnBench, milkOnCloud],
+        milkInventoryDetails
+      );
+      this.ToGate_Task = new CND_Task(this, [gateNext], gateInventoryDetails);
+
+      if (!keyTaskCompleted && !keyItems[0].collected) {
+        CND_TaskManager.createInventoryItem(this.CND_Key_Task);
+      } else if (
+        !keyTaskCompleted &&
+        keyItems[0].collected &&
+        !keyItems[0].delivered
+      ) {
+        CND_TaskManager.createInventoryItem(this.CND_Key_Task);
+        const { posX_list, scale } = keyInventoryDetails;
+        const posX = posX_list[0];
+        const posY = keyInventoryDetails.posY || 0;
+        key.collected = true;
+        key.gameObj.setPosition(posX, posY).setScale(scale).setScrollFactor(0);
+      } else if (!milkTaskCompleted && !gateTaskCompleted) {
+        ableToPlayChestAnimation = false;
+        key.gameObj.setVisible(false);
+        key.collected = true;
+        key.delivered = true;
+        chest.satisfied = true;
+        chest.gameObj.setFrame(27);
+        this.CND_Key_Task._completed = true;
+        (npc4.satisfied = npc[0].satisfied),
+          (npc5.satisfied = npc[1].satisfied);
+        if (npc4.satisfied) {
+          this.requireNpc4.setTexture('thx');
+        }
+        if (npc5.satisfied) {
+          this.requireNpc5.setTexture('thx');
+        }
+        CND_TaskManager.createInventoryItem(this.CND_Milks_Task);
+        this.CND_Milks_Task._items.forEach((milk, i) => {
+          const { posX_list, scale } = milkInventoryDetails;
+          const posX = posX_list[i];
+          const posY = milkInventoryDetails.posY || 0;
+          if (milkItems[i].collected) {
+            const tint = milkItems[i].delivered ? 0x000000 : 0xffffff;
+            milk.collected = true;
+            milk.delivered = milkItems[i].delivered;
+            milk.gameObj
+              .setPosition(posX, posY)
+              .setScale(scale)
+              .setTint(tint)
+              .setScrollFactor(0);
+          } else {
+            milk.gameObj.y = i === 0 ? 288 : milk.gameObj.y;
+          }
+          milk.gameObj.setVisible(true);
+          readyToCollectMilk = true;
+        });
+      } else if (milkTaskCompleted && !gateTaskCompleted) {
+        ableToPlayChestAnimation = false;
+        key.gameObj.setVisible(false);
+        key.collected = true;
+        key.delivered = true;
+        chest.satisfied = true;
+        chest.gameObj.setFrame(27);
+        this.CND_Key_Task._completed = true;
+        this.CND_Milks_Task._completed = true;
+        (npc4.satisfied = npc[0].satisfied),
+          (npc5.satisfied = npc[1].satisfied);
+        if (npc4.satisfied) {
+          this.requireNpc4.setTexture('thx');
+        }
+        if (npc5.satisfied) {
+          this.requireNpc5.setTexture('thx');
+        }
+        CND_TaskManager.createInventoryItem(this.ToGate_Task);
+      }
+    }
   }
 
   create() {
@@ -630,6 +937,7 @@ class Delivery3 extends Phaser.Scene {
     this.playerMoveTemple = playerMoveTemple;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
     this.updateTextOpacity = updateTextOpacity;
+    this.handleInteractiveBtn = handleInteractiveBtn; // ! new func
 
     //setting world and camera
     const returnCamera = this.setWorldBoundsAndCamera(
@@ -639,8 +947,6 @@ class Delivery3 extends Phaser.Scene {
     );
     camera = returnCamera;
     this.setDeviceSpecificControls(height, width, camera);
-    // ! add interaction key
-    this.interactKey = this.input.keyboard.addKey('e');
     //add animations
     this.addAnimations();
     //add background
@@ -661,6 +967,13 @@ class Delivery3 extends Phaser.Scene {
     this.addJumppad();
     //add message
     this.addMessage();
+
+    // * init the input
+    setInput(this.input);
+    // * bind target to interact btn
+    this.bindFnToTarget();
+    // * handle shutdown
+    handleShutdown(this);
   }
 
   update(delta, time) {
@@ -682,80 +995,122 @@ class Delivery3 extends Phaser.Scene {
       this.playerMoveTemple(player, 1000, false, false, null, null, null);
     }
 
-    handleInteractiveBtn(
-      !isMobile && !tablet,
-      this.interactKey,
-      this,
-      up,
-      interactButton,
-      player,
-      ladder,
-      () => {
-        this.scene.start('Delivery4', {
-          scene: this,
-          manager: collectItemManager,
-        });
-      }
-    );
-
     //camera follow player
     camera.startFollow(player);
 
     //player drown
     playerDrown(this, player, shallow_water);
-
-    //player collect key
-    if (overlapKey) {
-      overlapKey = !collectItemManager.collect(player, 0, keyTargetSize, key);
+    if (this.physics.overlap(player, shallow_water)) {
+      haveBeenToDelivery4 = false;
+      isPlayerFallDown = false;
     }
-    //player unlock chest
-    if (deliverToChest) {
-      deliverToChest = !collectItemManager.deliver(player, 'key', chest);
+
+    // handle all collect task
+    CND_TaskManager.handleCollectItem(player, [this.CND_Key_Task]);
+    if (readyToCollectMilk) {
+      CND_TaskManager.handleCollectItem(player, [
+        this.CND_Milks_Task,
+        this.ToGate_Task,
+      ]);
+    }
+
+    // handle key deliver task
+    if (
+      chest.isOverlapWithPlayer(player) &&
+      !(npc4.satisfied && npc5.satisfied)
+    ) {
+      CND_TaskManager.handleDeliverItem(chest, [
+        this.CND_Key_Task,
+        this.CND_Milks_Task,
+      ]);
+    }
+    if (deliverToChest && !isPlayerFallDown) {
+      deliverToChest = !chest.satisfied;
       if (!deliverToChest) {
-        this.anims.play('chest-rotate', chest);
+        // * play animation 'opening chest'
+        this.anims.play('chest-rotate', chest.gameObj);
+        // * spawn milk after 2.3s (duration of animation)
         this.time.delayedCall(2300, () => {
-          milkInChest.setVisible(true);
-          milkInChest.setVelocityY(-100);
+          milkInChest.gameObj.setVisible(true);
+          milkOnBench.gameObj.setVisible(true);
+          milkOnCloud.gameObj.setVisible(true);
+          // * milk float up until 0.45s
+          milkInChest.gameObj.setVelocityY(-100);
           this.time.delayedCall(450, () => {
-            milkInChest.setVelocityY(0);
-            // player can collect milk
-            this.time.delayedCall(300, () => {
-              overlapMilkInChest = true;
-            });
+            milkInChest.gameObj.setVelocityY(0);
+            readyToCollectMilk = true;
           });
         });
       }
+    } else if (
+      isPlayerFallDown &&
+      ableToPlayChestAnimation &&
+      chest.satisfied
+    ) {
+      // * play animation 'opening chest'
+      this.anims.play('chest-rotate', chest.gameObj);
+      // * spawn milk after 2.3s (duration of animation)
+      this.time.delayedCall(2300, () => {
+        milkInChest.gameObj.setVisible(true);
+        milkOnBench.gameObj.setVisible(true);
+        milkOnCloud.gameObj.setVisible(true);
+        // * milk float up until 0.45s
+        milkInChest.gameObj.setVelocityY(-100);
+        this.time.delayedCall(450, () => {
+          milkInChest.gameObj.setVelocityY(0);
+          readyToCollectMilk = true;
+        });
+      });
+      ableToPlayChestAnimation = false;
     }
-    //player collect milk
-    if (overlapMilkInChest) {
-      overlapMilkInChest = !collectItemManager.collect(
-        player,
-        0,
-        milkTargetSize,
-        milkInChest
-      );
-    }
-    if (overlapMilkOnBench) {
-      overlapMilkOnBench = !collectItemManager.collect(
-        player,
-        1,
-        milkTargetSize,
-        milkOnBench
-      );
-    // ! new logic from Scope, I have to read this carefully
-    //? npc1 message check When object collected this text will be disappear
-    if (deliverToNpc4) {
-      //updateTextOpacity(player, target, message)
-      this.updateTextOpacity(player, this.requireNpc4, this.requireNpc4);
-    } else {
-      this.requireNpc4.setAlpha(0);
-    }
-    //? npc1 message check When object collected this text will be disappear
-    if (deliverToNpc5) {
-      //updateTextOpacity(player, target, message)
-      this.updateTextOpacity(player, this.requireNpc5, this.requireNpc5);
-    } else {
-      this.requireNpc5.setAlpha(0);
+
+    // handle interact btn for // ! npc4
+    this.handleInteractiveBtn(
+      !isMobile && !tablet,
+      interactKey,
+      up,
+      interactButton,
+      player,
+      npc4,
+      [ladder, npc5]
+    );
+
+    // handle interact btn for // ! npc5
+    this.handleInteractiveBtn(
+      !isMobile && !tablet,
+      interactKey,
+      up,
+      interactButton,
+      player,
+      npc5,
+      [ladder, npc4]
+    );
+
+    // handle interact btn for // ! ladder
+    this.handleInteractiveBtn(
+      !isMobile && !tablet,
+      interactKey,
+      up,
+      interactButton,
+      player,
+      ladder,
+      [npc4, npc5]
+    );
+
+    // * updateTextOpacity(player, target, message)
+    this.updateTextOpacity(player, this.requireNpc4, this.requireNpc4);
+    this.updateTextOpacity(player, this.requireNpc5, this.requireNpc5);
+
+    // * all c&d task were done, ready to go to next scene
+    if (this.CND_Milks_Task._completed && !this.ToGate_Task._completed) {
+      let gateBox = this.ToGate_Task._inventoryBox[0];
+      let gate = this.ToGate_Task._items[0];
+      gate.gameObj.setTexture('gate-active');
+      if (gate.isOverlapWithPlayer(player)) {
+        this.scene.start('Temple');
+      } else {
+        this.updateItemOpacity(gateBox, gate.gameObj);
+      }
     }
   }
 }

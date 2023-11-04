@@ -10,17 +10,23 @@ import {
 import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
 import playerMoveTemple from '../utils/playerMoveTemple';
 import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
-import { shallowWater, playerDrown } from '../utils/event/drown';
-import { manageCollectItem } from '../utils/event/collectItem';
-import { updateTextOpacity } from '../utils/event/updateTextOpacity';
+import {
+  shallowWater,
+  handleShutdown,
+  playerDrown,
+} from '../utils/event/drown';
+import {
+  setInput,
+  createInteractInput,
+  handleInteractiveBtn,
+} from '../utils/interactUtils';
+import { updateTextOpacity } from '../utils/event/updateTextOpacity'; // ! new func
 
 // ! test new class for collect item
 import {
   CND_TaskManager,
   CND_Task,
   MilkItem,
-  CollectableItem,
-  Item,
   Target,
   OverlapObject,
 } from '../utils/event/TaskManager';
@@ -41,34 +47,35 @@ let camera;
 //interactive
 let milkShop;
 let house;
+let sign;
 let gate;
-let milkA; // ! set new pos [event_handling]
-let milkB; // ! set new pos [event_handling]
-let milkC; // ! set new pos [event_handling]
-let sign; // ! temp for testing [event_handling]
-let sakuraTree; // ! temp for testing [event_handling]
-let shallow_water; // ! new logic for drown [event_handling]
-let milk1; // ! must modify to new structure
+let milk;
+let sakuraTree;
+let shallow_water;
+
 //npc // ! must modify to new structure
 let npc1;
 let npc2;
-//manage text // ! must modify to new structure
-let overlabNPC1 = true;
-//control flow // ! must modify for interact-btn
+//control flow
 let left;
 let right;
 let up;
+let interactKey; // ! add this for another scene too
+const windowHeight = window.innerHeight > 720 ? 720 : window.innerHeight; // ! add this for another scene too
+let interactButton; // ! add this for another scene too
 let isLeftPressed = false;
 let isRightPressed = false;
 let isUpPressed = false;
-//manage collect item
-let collectItemManager;
-const milkTargetSize = 150,
-  gateTargetSize = 90;
-let overlapMilk1 = true;
-let deliverToNPC2 = true;
 
-let CND_Milks_Task;
+// * new class for collect item
+/**
+ * @type {CND_Task}
+ */
+let CND_Milk_Task;
+/**
+ * @type {CND_Task}
+ */
+let ToGate_Task;
 
 class Delivery extends Phaser.Scene {
   constructor() {
@@ -106,11 +113,13 @@ class Delivery extends Phaser.Scene {
 
       //get screen width and height
       let screenWidth = window.innerWidth;
-      let screenHeight = window.innerHeight;
+      let screenHeight;
 
       //device check
       if (isMobile) {
         //mobile
+        // ! set new pos for mobile
+        screenHeight = windowHeight;
         if (screenHeight > 720) screenHeight = 720;
         console.log('Mobile view');
         console.log(`Screen Width: ${screenWidth}px`);
@@ -147,6 +156,15 @@ class Delivery extends Phaser.Scene {
           .setAlpha(0.7)
           .setScrollFactor(0);
 
+        // ! create interact btn for mobile
+        interactButton = createInteractInput(
+          this.input.keyboard,
+          'mobile',
+          this.physics,
+          [screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2],
+          'right'
+        );
+
         //Implement mobile camera bounds and viewport
         camera.setViewport(
           width / 2 - screenWidth / 2,
@@ -157,6 +175,8 @@ class Delivery extends Phaser.Scene {
         camera.setZoom(1);
       } else if (tablet) {
         //tablet
+        // ! set new pos for tablet
+        screenHeight = windowHeight;
         if (screenHeight > 720) screenHeight = 720;
         console.log('Tablet view');
         console.log(`Screen Width: ${screenWidth}px`);
@@ -197,6 +217,14 @@ class Delivery extends Phaser.Scene {
           .setAlpha(0.7)
           .setScrollFactor(0);
 
+        // ! create interact btn for tablet
+        interactButton = createInteractInput(
+          this.input.keyboard,
+          'tablet',
+          this.physics,
+          [screenWidth - screenWidth / 8, screenHeight / 1.2],
+          'right'
+        );
         //Implement tablet camera bounds and viewport
         camera.setViewport(
           width / 2 - screenWidth / 2,
@@ -209,6 +237,8 @@ class Delivery extends Phaser.Scene {
       //default (desktop)
       console.log('desktop');
       camera.setViewport(0, 0, width, height);
+      // ! add interaction key
+      interactKey = createInteractInput(this.input.keyboard, 'desktop');
     }
   }
   addBackgroundElements(mapWidth, mapHeight) {
@@ -238,7 +268,7 @@ class Delivery extends Phaser.Scene {
     backgrounds.add(cloundLayer2);
     backgrounds.add(cloundLayer1);
   }
-  //water and shadows
+  // water and shadows
   addForeground(mapWidth, mapHeight) {
     shallow_water = shallowWater(
       this,
@@ -284,7 +314,7 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
   }
-  //platforms
+  // platforms
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
     let ground = this.add
@@ -348,7 +378,7 @@ class Delivery extends Phaser.Scene {
       child.body.setSize(child.width, 20).setOffset(0, 0);
     });
   }
-  //house, milk shop, milk, gate, sign
+  // house, milk shop, milk, gate, sign
   addMainComponents() {
     components = this.add.group();
     milkShop = this.add
@@ -361,110 +391,53 @@ class Delivery extends Phaser.Scene {
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    // milk1 = this.physics.add
-    //   .image(1102 - 65, 595 + 55, 'milk') // modified platform position for testing
-    //   .setOrigin(0, 0)
-    //   .setScale(0.8)
-    //   .setDepth(MIDDLEGROUND_DEPTH);
-    milkA = new MilkItem(
-      this.physics,
-      [1102 - 65, 595 + 55],
-      0.8,
-      MIDDLEGROUND_DEPTH,
-      150
-    );
-    // milk2 = this.physics.add
-    //   .image(100, this.scale.height * 2 - 215 - 150, 'milk')
-    //   .setOrigin(0, 0)
-    //   .setScale(0.8)
-    //   .setDepth(MIDDLEGROUND_DEPTH);
-    milkB = new MilkItem(
-      this.physics,
-      [100, this.scale.height * 2 - 215 - 150],
-      0.8,
-      MIDDLEGROUND_DEPTH,
-      150
-    );
-    // milk3 = this.physics.add
-    //   .image(1950, 925, 'milk')
-    //   .setOrigin(0, 0)
-    //   .setScale(0.8)
-    //   .setDepth(MIDDLEGROUND_DEPTH);
-    milkC = new MilkItem(
-      this.physics,
-      [1950, 925],
-      0.8,
-      MIDDLEGROUND_DEPTH,
-      150
-    );
-    gate = this.physics.add
-      .image(3650, 787, 'gate')
+    sign = this.add
+      .image(2447, 701, 'sign')
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
-    gate.flipX = true;
-    // sign is not physics object by default, this is for testing
-    // sign = this.physics.add
-    //   .image(2447, 701, 'sign')
-    //   .setOrigin(0, 0)
-    //   .setScale(1)
-    //   .setDepth(MIDDLEGROUND_DEPTH);
-    sign = new Target(
-      { itemKey: milkA.textureKey, qty: 1 },
+
+    milk = new MilkItem(
       this.physics,
-      [2447, 701],
-      'sign',
+      [1102, 595],
+      0.8,
+      MIDDLEGROUND_DEPTH,
+      150
+    );
+
+    gate = new OverlapObject(
+      this.physics,
+      'image',
+      [3650, 787],
+      'gate',
       1,
-      MIDDLEGROUND_DEPTH
+      MIDDLEGROUND_DEPTH,
+      90
     );
 
     components.add(milkShop);
     components.add(house);
-    // ! components.add(milk1);
-    components.add(gate);
-    // ! components.add(sign);
 
-    // init inventory
-    
-    // collectItemManager = manageCollectItem(this, [
-    //   {
-    //     success: false,
-    //     item: [milk1, milk2, milk3],
-    //     sizeOfInventory: 3,
-    //     targetSize: milkTargetSize,
-    //     alpha: 0.5,
-    //   },
-    //   {
-    //     success: false,
-    //     item: [gate],
-    //     sizeOfInventory: 1,
-    //     targetSize: gateTargetSize,
-    //     initStartPosX: 50,
-    //     initStartPosY: 30,
-    //     alpha: 0,
-    //     callBack: (item) => {
-    //       item.setTexture('gate-active');
-    //       item.flipX = true;
-    //     },
-    //   },
-    // ]);
-    // milk1.collected = false;
-    // milk1.delivered = false;
-    // milk2.collected = false;
-    // milk2.delivered = false;
-    // milk3.collected = false;
-    // milk3.delivered = false;
-    // collectItemManager.initInventory();
-
-    // ! test new class for collect item
-    CND_Milks_Task = new CND_Task(this, [milkA, milkB, milkC], {
-      itemKey: milkA.textureKey,
-      qty: 3,
-      inventoryItemSize: milkA.inventoryItemSize,
+    // ! new class for collect item
+    // * create milk task
+    CND_Milk_Task = new CND_Task(this, [milk], {
+      itemKey: milk.textureKey,
+      qty: 1,
+      inventoryItemSize: milk.inventoryItemSize,
     });
-    CND_TaskManager.createInventoryItem(CND_Milks_Task);
+
+    // * create to-gate task
+    ToGate_Task = new CND_Task(this, [gate], {
+      itemKey: gate.textureKey,
+      qty: 1,
+      inventoryItemSize: 90,
+      fst_posX: 50,
+      posY: 30,
+    });
+
+    CND_TaskManager.createInventoryItem(CND_Milk_Task);
   }
-  //prop
+  // prop
   addComponents() {
     //sakura milk shop
     sakuraTree = this.add
@@ -521,7 +494,7 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
   }
-  //player and colider
+  // player and colider
   addPlayerAndColider(floorHeight) {
     // player
     player = this.physics.add
@@ -534,26 +507,35 @@ class Delivery extends Phaser.Scene {
 
     this.physics.add.collider(player, platforms);
   }
+  // npc
   addNpc() {
-    npc1 = this.physics.add
-      .sprite(890, 1120, 'npc2')
-      .setOrigin(0, 0)
-      .setScale(0.2)
-      // .setSize(400, 200) // testing opacity
-      .setDepth(MIDDLEGROUND_DEPTH);
-    npc2 = this.physics.add
-      .sprite(2770, 758- 15, 'npc6')
-      .setOrigin(0, 0)
-      .setScale(0.2)
-      .setDepth(MIDDLEGROUND_DEPTH);
+    npc1 = new Target(
+      { itemKey: milk.textureKey, qty: 0 },
+      this.physics,
+      'sprite',
+      [890, 1120],
+      'npc2',
+      0.2,
+      MIDDLEGROUND_DEPTH
+    );
+    npc2 = new Target(
+      { itemKey: milk.textureKey, qty: 1 },
+      this.physics,
+      'sprite',
+      [2770, 758 - 15],
+      'npc6',
+      0.2,
+      MIDDLEGROUND_DEPTH
+    );
 
-    npc1.anims.play('idle_npc2', true);
-    npc2.anims.play('idle_npc6', true);
+    npc1.gameObj.anims.play('idle_npc2', true);
+    npc2.gameObj.anims.play('idle_npc6', true);
 
-    npc1.flipX = true;
-    npc2.flipX = true;
+    npc1.gameObj.flipX = true;
+    npc2.gameObj.flipX = true;
   }
-  //animations
+
+  // animations
   addAnimations() {
     //animations for testing
     this.anims.create({
@@ -588,9 +570,10 @@ class Delivery extends Phaser.Scene {
       repeat: -1,
     });
   }
-  //message
+
+  // message
   addMessage() {
-    //message for npc interaction
+    // * message for npc interaction
     this.messageNpc1 = this.add
       .image(1131, 993, 'message-n1')
       .setOrigin(0, 0)
@@ -604,7 +587,7 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(PLAYER_DEPTH);
 
-    //message require milk
+    // * message require milk
     this.requireNpc2 = this.add
       .image(2628, 784, 'require1')
       .setOrigin(0, 0)
@@ -612,8 +595,9 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(PLAYER_DEPTH);
   }
-  // update item opacity
-  updateItemOpacity(destination) {
+
+  // * update item opacity
+  updateItemOpacity(item, destination) {
     const playerX = player.x;
     const playerY = player.y;
     const destinationX = destination.x;
@@ -626,7 +610,7 @@ class Delivery extends Phaser.Scene {
       destinationY
     );
 
-    const minOpacity = collectItemManager.state[0].alpha;
+    const minOpacity = 0;
     const maxOpacity = 1;
 
     const maxDistance = 2000;
@@ -637,13 +621,49 @@ class Delivery extends Phaser.Scene {
       Phaser.Math.Clamp(1 - distance / maxDistance, 0, 1)
     );
 
-    collectItemManager.state[0].item[0].setAlpha(opacity);
+    item.setAlpha(opacity);
+  }
+
+  // * bind function to target
+  bindFnToTarget() {
+    npc1.gameObj.fn = () => {
+      // * blip the message (alpha 0 to 1 and 1 to 0) for 3 times
+      this.messageNpc1.setAlpha(1);
+      this.messageNpc1.y = 993;
+      this.tweens.add({
+        targets: this.messageNpc1,
+        y: this.messageNpc1.y - 10,
+        duration: 100,
+        ease: 'Linear',
+        repeat: 3,
+        yoyo: true,
+      });
+    };
+    npc2.gameObj.fn = () => {
+      this.requireNpc2.x = 2628;
+      this.tweens.add({
+        targets: this.requireNpc2,
+        x: this.requireNpc2.x - 10,
+        duration: 100,
+        ease: 'Linear',
+        repeat: 3,
+        yoyo: true,
+      });
+      CND_TaskManager.handleDeliverItem(
+        npc2,
+        [CND_Milk_Task, ToGate_Task],
+        this.tweens,
+        this.messageNpc2,
+        this.requireNpc2
+      );
+      if (CND_Milk_Task._completed) {
+        npc1.gameObj.destroy();
+        this.messageNpc1.destroy();
+      }
+    };
   }
 
   init() {
-    overlapMilk1 = true;
-    collectItemManager = manageCollectItem(this);
-    deliverToNPC2 = true; // deliver to npc2 ( the guy on the left of the home)
     this.playerMoveTemple = playerMoveTemple;
   }
 
@@ -664,6 +684,7 @@ class Delivery extends Phaser.Scene {
     this.playerMoveTemple = playerMoveTemple;
     this.setWorldBoundsAndCamera = setWorldBoundsAndCamera;
     this.updateTextOpacity = updateTextOpacity;
+    this.handleInteractiveBtn = handleInteractiveBtn; // ! new func
 
     //setting world and camera
     const returnCamera = this.setWorldBoundsAndCamera(
@@ -692,6 +713,13 @@ class Delivery extends Phaser.Scene {
     this.addNpc();
     //message
     this.addMessage();
+
+    // * init the input
+    setInput(this.input);
+    // * bind target to interact btn
+    this.bindFnToTarget();
+    // * handle shutdown
+    handleShutdown(this);
   }
 
   update(delta, time) {
@@ -713,71 +741,49 @@ class Delivery extends Phaser.Scene {
       this.playerMoveTemple(player, 1000, false, false, null, null, null);
     }
 
-    //camera follow player
+    // camera follow player
     camera.startFollow(player);
-    //player drown
+
+    // player drown
     playerDrown(this, player, shallow_water);
 
-    // //player collect milk
-    // if (overlapMilk1) {
-    //   overlapMilk1 = !collectItemManager.collect(
-    //     player,
-    //     0,
-    //     milkTargetSize,
-    //     milk1
-    //   );
-    // }
-    // if (overlapMilk2) {
-    //   overlapMilk2 = !collectItemManager.collect(
-    //     player,
-    //     1,
-    //     milkTargetSize,
-    //     milk2
-    //   );
-    // }
-    // if (overlapMilk3) {
-    //   overlapMilk3 = !collectItemManager.collect(
-    //     player,
-    //     2,
-    //     milkTargetSize,
-    //     milk3
-    //   );
-    // }
-    // //player deliver milk
-    // if (deliverToSign) {
-    //   deliverToSign = !collectItemManager.deliver(player, 'milk', sign);
-    // }
-    // if (deliverToSakuraTree) {
-    //   deliverToSakuraTree = !collectItemManager.deliver(
-    //     player,
-    //     'milk',
-    //     sakuraTree
-    //   );
-    // }
-    // if (deliverToHouse) {
-    //   deliverToHouse = !collectItemManager.deliver(player, 'milk', house);
-    // }
-    // // checking for deliver success
-    // if (!deliverToSign && !deliverToSakuraTree && !deliverToHouse) {
-    //   gate.setTexture('gate-active');
-    //   const overlapping = this.physics.overlap(player, gate);
-    //   if (overlapping) {
-    //     this.scene.start('Delivery2');
-    //   } else {
-    //     this.updateItemOpacity(gate);
-    //   }
-    // }
-    CND_TaskManager.handleCollectItem(player, [CND_Milks_Task]);
-    CND_TaskManager.handleDeliverItem(player, sign, [CND_Milks_Task]);
+    // handle all collect task
+    CND_TaskManager.handleCollectItem(player, [CND_Milk_Task]);
 
-    // ? npc1 message check When milk1 collected this text will be disappear
-    // ! must modify by [event_handling]
-    if (overlapMilk1) {
-      //updateTextOpacity(player, target, message)
-      this.updateTextOpacity(player, this.requireNpc2, this.requireNpc2);
-    } else {
-      this.requireNpc2.setAlpha(0);
+    // handle interact btn for // ! npc1
+    this.handleInteractiveBtn(
+      !isMobile && !tablet,
+      interactKey,
+      up,
+      interactButton,
+      player,
+      npc1,
+      [npc2]
+    );
+    // handle interact btn for // ! npc2
+    this.handleInteractiveBtn(
+      !isMobile && !tablet,
+      interactKey,
+      up,
+      interactButton,
+      player,
+      npc2,
+      [npc1]
+    );
+
+    // * all c&d task were done, ready to go to next scene
+    if (CND_Milk_Task._completed && !ToGate_Task._completed) {
+      let gateBox = ToGate_Task._inventoryBox[0];
+      let gate = ToGate_Task._items[0];
+      gate.gameObj.setTexture('gate-active');
+      if (gate.isOverlapWithPlayer(player)) {
+        this.scene.start('Delivery2');
+      } else {
+        this.updateItemOpacity(gateBox, gate.gameObj);
+      }
     }
+    // * updateTextOpacity(player, target, message)
+    this.updateTextOpacity(player, this.requireNpc2, this.requireNpc2);
   }
 }
 
