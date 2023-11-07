@@ -73,6 +73,7 @@ const handleInteraction = (target, player) => {
     npc4: () => target.gameObj.fn(),
     npc5: () => target.gameObj.fn(),
     npc6: () => target.gameObj.fn(),
+    npcTemple: () => target.gameObj.fn(),
   };
 
   if (target.isOverlapWithPlayer(player)) {

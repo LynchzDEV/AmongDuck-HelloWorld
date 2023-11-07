@@ -12,6 +12,7 @@ import Delivery2 from "./scenes/Delivery2";
 import Delivery3 from "./scenes/Delivery3";
 import Delivery4 from "./scenes/Delivery4";
 import Temple from "./scenes/Temple";
+import Temple2 from "./scenes/Temple2";
 import PathSelection from "./scenes/PathSelection";
 import CodingPath from "./scenes/CodingPath";
 import DesignPath from "./scenes/DesignPath";
@@ -47,6 +48,7 @@ const config = {
         Delivery2, //* 5 delivery game
         Delivery3, //* 6 delivery game
         Delivery4, //* 7 delivery game
+        Temple2,
         PathSelection, //* 4 path selection scene
         CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
         DesignPath, //* 6 cutscene that lead to selection of front end or web design

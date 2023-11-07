@@ -1110,7 +1110,7 @@ class Delivery3 extends Phaser.Scene {
       let gate = this.ToGate_Task._items[0];
       gate.gameObj.setTexture('gate-active');
       if (gate.isOverlapWithPlayer(player)) {
-        this.scene.start('Temple');
+        this.scene.start('Temple2');
       } else {
         this.updateItemOpacity(gateBox, gate.gameObj);
       }

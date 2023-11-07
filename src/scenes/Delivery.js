@@ -158,7 +158,7 @@ class Delivery extends Phaser.Scene {
 
         // ! create interact btn for mobile
         interactButton = createInteractInput(
-          this.input.keyboard,-
+          this.input.keyboard,
           'mobile',
           this.physics,
           [screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2],
