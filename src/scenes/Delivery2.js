@@ -766,7 +766,7 @@ class Delivery2 extends Phaser.Scene {
     if (isMobile || tablet) {
       this.playerMoveTemple(
         player,
-        500,
+        350,
         false,
         true,
         isLeftPressed,
@@ -774,7 +774,7 @@ class Delivery2 extends Phaser.Scene {
         isUpPressed
       );
     } else {
-      this.playerMoveTemple(player, 1000, false, false, null, null, null);
+      this.playerMoveTemple(player, 350, false, false, null, null, null);
     }
 
     //camera follow player

@@ -21,6 +21,7 @@ import LoadScene from "./scenes/LoadScene";
 
 const Text = "f";
 const debug = Text === "t";
+c9988cf6a72d0b277e41a5dfd7932ca5eb7d927
 
 const config = {
   type: Phaser.AUTO,
@@ -56,6 +57,7 @@ const config = {
   ],
   scale: {
     mode: Phaser.Scale.NONE, // Disable Phaser's scaling
+
   },
 };
 

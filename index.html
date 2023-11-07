@@ -47,10 +47,10 @@
         #toggleMuteButton {
             position: fixed;
             padding: 10px;
-            
+
             top: calc(100% - 70px);
             right: 10px;
-            
+
             opacity: 1;
             width: 50px;
             height: 50px;
@@ -82,7 +82,7 @@
         var count = 0;
         var interval;
 
-        audioElement.volume = 0.35;
+        audioElement.volume = 0.2;
 
         var decreaseVolume = function () {
             clearInterval(interval);
@@ -104,7 +104,7 @@
                 if (audioElement.volume < 0.35) {
                     audioElement.volume += 0.01;
                 } else {
-                    audioElement.volume = 0.35;
+                    audioElement.volume = 0.2;
                     clearInterval(interval);
                     isMuted = false;
                     toggleButton.style.opacity = '1';

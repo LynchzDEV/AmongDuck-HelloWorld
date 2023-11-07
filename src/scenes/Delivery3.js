@@ -38,11 +38,13 @@ const tablet = window.innerWidth < 1280;
 let camera;
 let water;
 let backgrounds;
+let bg;
 let cloundLayer1;
 let cloundLayer2;
 let platforms;
 let components;
 let jumppad1;
+let jumppad2;
 let noGravityPad;
 //gate
 let gatePrevious;
@@ -259,24 +261,24 @@ class Delivery3 extends Phaser.Scene {
   }
   addBackgroundElements(mapWidth, mapHeight) {
     backgrounds = this.add.group();
-    let bg = this.add
+    bg = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, "background")
       .setOrigin(0, 0)
-      .setScale(1.4)
+      .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD - 0.1);
     //mid clound
     cloundLayer1 = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, "clound-layer2")
+      .tileSprite(0, 50, mapWidth, mapHeight, "clound-layer2")
       .setOrigin(0, 0)
-      .setScale(1.4)
+      .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD);
     // front
     cloundLayer2 = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, "clound-layer1")
+      .tileSprite(0, 60, mapWidth, mapHeight, "clound-layer1")
       .setOrigin(0, 0)
-      .setScale(1.4)
+      .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD2);
 
@@ -287,10 +289,22 @@ class Delivery3 extends Phaser.Scene {
   //water
   addForegroundElements(mapWidth, mapHeight) {
     water = this.add
-      .tileSprite(0, mapHeight - 150, mapWidth, 200, "water")
+      .sprite(0, mapHeight - 160, "water-sprite")
       .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+      .setScale(1.1)
+      .setDepth(PLAYER_DEPTH + 1)
+      .setScrollFactor(OBJECT_SCROLL.PLAYER);
+
+    water.anims.play("waterAnim", true);
+
+    water = this.add
+      .sprite(1840, mapHeight - 160, "water-sprite")
+      .setOrigin(0, 0)
+      .setScale(1.1)
+      .setDepth(PLAYER_DEPTH)
+      .setScrollFactor(OBJECT_SCROLL.PLAYER);
+
+    water.anims.play("waterAnim", true);
 
     shallow_water = shallowWater(
       this,
@@ -308,7 +322,7 @@ class Delivery3 extends Phaser.Scene {
     let ground = this.add
       .image(-150, floorHeight + 5, "ground-main3") // ! set new x,y, maybe temporary
       .setOrigin(0, 0)
-      .setDepth(MIDDLEGROUND_DEPTH);
+      .setDepth(PLAYER_DEPTH + 2);
     let platformHouse = this.add
       .image(647, 1230, "platform-long4")
       .setOrigin(0, 0)
@@ -521,11 +535,31 @@ class Delivery3 extends Phaser.Scene {
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
 
     //sakura
-    this.add
-      .image(800, 612, "sakura-tree")
+    let sakuraAnim = this.add
+      .sprite(760, 612, "sakuraAnim")
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(FOREGROUND_DEPTH);
+      .setDepth(BACKGROUND_COMPONENT_DEPTH + 1);
+
+    sakuraAnim.flipX = true;
+    sakuraAnim.anims.play("sakuraAnim", true);
+
+    let xPositions = [800, 1200];
+    let yPositions = [800, 850];
+
+    for (let i = 0; i < xPositions.length; i++) {
+      let x = xPositions[i];
+      let y = yPositions[i];
+
+      let sakura = this.add
+        .sprite(x, y, "sakura-sprite")
+        .setOrigin(0, 0)
+        .setScale(1.1)
+        .setDepth(FOREGROUND_DEPTH - 1);
+
+      sakura.anims.play("sakura", true);
+      sakura.flipX = true;
+    }
 
     //key brush
     this.add
@@ -661,18 +695,42 @@ class Delivery3 extends Phaser.Scene {
   }
   //adding jumppad
   addJumppad() {
-    jumppad1 = this.add
+    jumppad1 = this.physics.add
       .image(2914, 861, "jumppad2")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(FOREGROUND_DEPTH);
 
-    //no gravity pad on nextGate platform
-    noGravityPad = this.add
-      .image(3445, 1225, "jumppad2")
+    jumppad2 = this.add
+      .sprite(2914, 610, "jumppad")
       .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(FOREGROUND_DEPTH);
+      .setScale(0.38)
+      .setAlpha(0.7)
+      .setDepth(MIDDLEGROUND_DEPTH);
+
+    this.anims.create({
+      key: "jumppad",
+      frames: this.anims.generateFrameNumbers("jumppad", {
+        start: 0,
+        end: 7,
+      }),
+      frameRate: 12,
+      repeat: -1,
+      repeatDelay: 500,
+    });
+
+    this.tweens.add({
+      targets: jumppad2,
+      alpha: 0.3,
+      duration: 700,
+      yoyo: true,
+      repeat: -1,
+      repeatDelay: 500,
+    });
+
+    jumppad1.body.setAllowGravity(false);
+    jumppad1.body.setImmovable(true);
+    jumppad2.anims.play("jumppad", true);
   }
   addPlayerAndCollider(floorHeight) {
     if (!isPlayerFallDown) {
@@ -981,21 +1039,31 @@ class Delivery3 extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    // this.scene.start('Delivery4'); // ! comment for working in event_handling branch
+    // this.scene.start("Delivery4"); // ! comment for working in event_handling branch
+
+    bg.tilePositionX += 0.03;
+    cloundLayer1.tilePositionX += 0.07;
+    cloundLayer2.tilePositionX += 0.1;
+
+    this.physics.add.collider(player, jumppad1, function (player, jumppad) {
+      player.setVelocityY(-1100);
+      null, this;
+    });
 
     //player movement
     if (isMobile || tablet) {
       this.playerMoveTemple(
         player,
-        500,
+        350,
         false,
         true,
         isLeftPressed,
         isRightPressed,
-        isUpPressed
+        isUpPressed,
+        750
       );
     } else {
-      this.playerMoveTemple(player, 1000, false, false, null, null, null);
+      this.playerMoveTemple(player, 350, false, false, null, null, null, 750);
     }
 
     //camera follow player
@@ -1110,7 +1178,7 @@ class Delivery3 extends Phaser.Scene {
       let gate = this.ToGate_Task._items[0];
       gate.gameObj.setTexture("gate-active");
       if (gate.isOverlapWithPlayer(player)) {
-        this.scene.start("Temple2");
+        this.scene.start("Temple");
       } else {
         this.updateItemOpacity(gateBox, gate.gameObj);
       }
