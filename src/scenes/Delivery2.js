@@ -812,7 +812,7 @@ class Delivery2 extends Phaser.Scene {
 
   update(delta, time) {
     // dev skip the scene
-    this.scene.start('Delivery3'); // ! comment for working in event_handling branch
+    // this.scene.start('Delivery3'); // ! comment for working in event_handling branch
 
     bg.tilePositionX += 0.03;
     cloundLayer1.tilePositionX += 0.07;

@@ -540,7 +540,7 @@ class Temple extends Phaser.Scene {
       this.tweens.add({
         targets: this.npcTempleMessage,
         alpha: 0,
-        duration: 6000,
+        duration: 300,
         ease: "Linear",
         yoyo: false,
       });
@@ -553,6 +553,7 @@ class Temple extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(500);
     //config
     const { width, height } = this.scale;
     const mapWidth = width * 4;
@@ -590,7 +591,7 @@ class Temple extends Phaser.Scene {
   }
 
   update() {
-    // this.scene.start("Delivery"); //! dev mode
+    this.scene.start("Delivery"); //! dev mode
 
     //player movement
     if (isMobile || tablet) {
@@ -601,10 +602,11 @@ class Temple extends Phaser.Scene {
         true,
         isLeftPressed,
         isRightPressed,
-        isUpPressed
+        isUpPressed,
+        750
       );
     } else {
-      this.playerMoveTemple(player, 350, false, false, null, null, null);
+      this.playerMoveTemple(player, 350, false, false, null, null, null, 750);
     }
 
     //camera follow player
@@ -627,6 +629,7 @@ class Temple extends Phaser.Scene {
     );
     // * This works with the function binded to target at bindFnToTarget()
     if (readyToChangeScene) {
+      console.log("change scene");
       this.scene.start("Delivery");
     }
 

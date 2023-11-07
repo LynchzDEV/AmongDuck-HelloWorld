@@ -416,6 +416,27 @@ class LoadScene extends Phaser.Scene {
       frameRate: 5.5,
       repeat: -1,
     });
+    // sprite sheet for npc1
+    this.anims.create({
+      key: "idle_npc6",
+      frames: this.anims.generateFrameNumbers("npc6", {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
+
+    // sprite sheet for npc2
+    this.anims.create({
+      key: "idle_npc2",
+      frames: this.anims.generateFrameNumbers("npc2", {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 1,
+      repeat: -1,
+    });
   }
 
   create() {

@@ -582,27 +582,6 @@ class Delivery extends Phaser.Scene {
 
   // animations
   addAnimations() {
-    // sprite sheet for npc1
-    this.anims.create({
-      key: "idle_npc6",
-      frames: this.anims.generateFrameNumbers("npc6", {
-        start: 0,
-        end: 1,
-      }),
-      frameRate: 1,
-      repeat: -1,
-    });
-
-    // sprite sheet for npc2
-    this.anims.create({
-      key: "idle_npc2",
-      frames: this.anims.generateFrameNumbers("npc2", {
-        start: 0,
-        end: 1,
-      }),
-      frameRate: 1,
-      repeat: -1,
-    });
   }
 
   // message
@@ -706,12 +685,12 @@ class Delivery extends Phaser.Scene {
     //config
     const { width, height } = this.scale;
     // main scale
-    const mapWidth = width * 3;
-    const mapHeight = height * 2;
+    // const mapWidth = width * 3;
+    // const mapHeight = height * 2;
 
     //!Dev scale 3840 * 1440
-    // const mapWidth = width;
-    // const mapHeight = height;
+    const mapWidth = width;
+    const mapHeight = height;
 
     const floorHeight = mapHeight - 215;
 
@@ -759,7 +738,7 @@ class Delivery extends Phaser.Scene {
 
   update(delta, time) {
     // dev skip the scene
-    this.scene.start("Delivery2"); // ! comment for working in event_handling branch
+    // this.scene.start("Delivery2"); // ! comment for working in event_handling branch
 
     bg.tilePositionX += 0.03;
     cloundLayer1.tilePositionX += 0.07;

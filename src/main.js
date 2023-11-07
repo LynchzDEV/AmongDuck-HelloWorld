@@ -20,7 +20,7 @@ import Ending from "./scenes/CUTSCENE/Ending";
 import Summarize from "./scenes/CUTSCENE/Summarize";
 import LoadScene from "./scenes/LoadScene";
 
-const Text = "f";
+const Text = "t";
 const debug = Text === "t";
 
 const config = {
