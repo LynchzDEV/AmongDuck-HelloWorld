@@ -38,6 +38,7 @@ const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
 
 let backgrounds;
+let bg;
 let water;
 let cloundLayer1;
 let cloundLayer2;
@@ -254,24 +255,24 @@ class Delivery2 extends Phaser.Scene {
   }
   addBackgroundElements(mapWidth, mapHeight) {
     backgrounds = this.add.group();
-    let bg = this.add
+    bg = this.add
       .tileSprite(0, 0, mapWidth, mapHeight, "background")
       .setOrigin(0, 0)
-      .setScale(1.4)
+      .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD - 0.1);
     //mid clound
     cloundLayer1 = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, "clound-layer2")
+      .tileSprite(0, 50, mapWidth, mapHeight, "clound-layer2")
       .setOrigin(0, 0)
-      .setScale(1.4)
+      .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD);
     // front
     cloundLayer2 = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, "clound-layer1")
+      .tileSprite(0, 60, mapWidth, mapHeight, "clound-layer1")
       .setOrigin(0, 0)
-      .setScale(1.4)
+      .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD2);
 
@@ -282,10 +283,22 @@ class Delivery2 extends Phaser.Scene {
   //water
   addForegroundElements(mapWidth, mapHeight) {
     water = this.add
-      .tileSprite(0, mapHeight - 150, mapWidth, 200, "water")
+      .sprite(0, mapHeight - 160, "water-sprite")
       .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+      .setScale(1.1)
+      .setDepth(PLAYER_DEPTH + 1)
+      .setScrollFactor(OBJECT_SCROLL.PLAYER);
+
+    water.anims.play("waterAnim", true);
+
+    water = this.add
+      .sprite(1840, mapHeight - 160, "water-sprite")
+      .setOrigin(0, 0)
+      .setScale(1.1)
+      .setDepth(PLAYER_DEPTH)
+      .setScrollFactor(OBJECT_SCROLL.PLAYER);
+
+    water.anims.play("waterAnim", true);
 
     shallow_water = shallowWater(
       this,
@@ -302,10 +315,10 @@ class Delivery2 extends Phaser.Scene {
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(-810, floorHeight, 1383, 218, "ground-main")
+      .tileSprite(-810, floorHeight + 3, 1383, 218, "ground-main")
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
+      .setDepth(PLAYER_DEPTH + 2);
     platformSlide1 = this.physics.add
       .image(573, 1235, "platform")
       .setOrigin(0, 0)
@@ -395,17 +408,19 @@ class Delivery2 extends Phaser.Scene {
       targets: platformSlide1,
       x: 1075,
       ease: "Expo.easeInOut",
-      duration: 3000,
+      duration: 4000,
       repeat: -1,
       yoyo: true,
     });
     this.tweens.add({
       targets: platformSlide2,
       y: 443,
-      ease: "LINEAR",
-      duration: 4000,
+      ease: "linear",
+      duration: 2500,
       repeat: -1,
       yoyo: true,
+      hold: 1000,
+      repeatDelay: 1000,
     });
 
     platformSlide1.body.setAllowGravity(false);
@@ -494,21 +509,65 @@ class Delivery2 extends Phaser.Scene {
   }
   //add props stone sakura tree logs
   addComponents() {
+    //add logs
     this.add
       .image(280, 1120, "logs")
       .setScale(1)
       .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-    this.add
-      .image(0, 800, "tree")
-      .setScale(1)
-      .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+      .setDepth(BACKGROUND_COMPONENT_DEPTH + 2);
     this.add
       .image(1179, 990, "log")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
+
+    let xPositionsTree = [160, 1460];
+    let yPositionsTree = [850, 720];
+    let scalesTree = [0.62, 0.85];
+    let count = 2;
+
+    for (let i = 0; i < xPositionsTree.length; i++) {
+      let x = xPositionsTree[i];
+      let y = yPositionsTree[i];
+
+      // Create a sakura sprite at position (x, y)
+      let sakuraAnim = this.add
+        .sprite(x, y, "sakuraAnim")
+        .setOrigin(0, 0)
+        .setScale(scalesTree[i])
+        .setDepth(BACKGROUND_COMPONENT_DEPTH + 1);
+
+      sakuraAnim.anims.play("sakuraAnim", true);
+      if (count % 3 === 0) {
+        sakuraAnim.flipX = true;
+        sakuraAnim.setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+        count++;
+      } else if (count % 2 == 0) {
+        sakuraAnim.flipX = true;
+        count = 0;
+      } else {
+        sakuraAnim.flipX = false;
+        count++;
+      }
+    }
+
+    let xPositions = [200, 360, 1850];
+    let yPositions = [950, 950, 900];
+    let scaleSakura = [0.8, 0.8, 0.8];
+
+    for (let i = 0; i < xPositions.length; i++) {
+      let x = xPositions[i];
+      let y = yPositions[i];
+
+      let sakura = this.add
+        .sprite(x, y, "sakura-sprite")
+        .setOrigin(0, 0)
+        .setScale(scaleSakura[i])
+        .setDepth(FOREGROUND_DEPTH - 1);
+
+      sakura.anims.play("sakura", true);
+      sakura.flipX = true;
+    }
 
     // chest platform
     this.add
@@ -539,13 +598,6 @@ class Delivery2 extends Phaser.Scene {
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
       .image(680, 750, "lantern")
-      .setScale(1)
-      .setOrigin(0, 0)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
-
-    //house platforms
-    this.add
-      .image(1420, 621, "sakura-tree")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
@@ -713,7 +765,7 @@ class Delivery2 extends Phaser.Scene {
     const mapWidth = width * 3;
     const mapHeight = height * 2;
 
-    //Dev scale 3840 * 1440
+    //! Dev scale 3840 * 1440
     // const mapWidth = width;
     // const mapHeight = height;
 
@@ -762,9 +814,27 @@ class Delivery2 extends Phaser.Scene {
 
   update(delta, time) {
     // dev skip the scene
-    // this.scene.start('Delivery3'); // ! comment for working in event_handling branch
+    this.scene.start('Delivery3'); // ! comment for working in event_handling branch
 
-    //player movement
+    bg.tilePositionX += 0.03;
+    cloundLayer1.tilePositionX += 0.07;
+    cloundLayer2.tilePositionX += 0.1;
+
+    const platform1VelocityX = platformSlide1.x - platformSlide1.lastX;
+    const platform2VelocityY = platformSlide2.y - platformSlide2.lastY;
+
+    if (player.body.touching.down && platformSlide1.body.touching.up) {
+      player.x += platform1VelocityX;
+    }
+
+    if (player.body.touching.down && platformSlide2.body.touching.up) {
+      player.y += platform2VelocityY;
+    }
+
+    platformSlide2.lastY = platformSlide2.y;
+    platformSlide1.lastX = platformSlide1.x;
+
+    //player movementd
     if (isMobile || tablet) {
       this.playerMoveTemple(
         player,
@@ -773,10 +843,11 @@ class Delivery2 extends Phaser.Scene {
         true,
         isLeftPressed,
         isRightPressed,
-        isUpPressed
+        isUpPressed,
+        250
       );
     } else {
-      this.playerMoveTemple(player, 350, false, false, null, null, null);
+      this.playerMoveTemple(player, 350, false, false, null, null, null, 250);
     }
 
     //camera follow player

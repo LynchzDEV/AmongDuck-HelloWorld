@@ -1,12 +1,14 @@
-let gravity = 750;
-// let gravity = 100; // ! dev_mode
-let holdTime = 0;
 const debug = false;
+let holdTime = 0;
 
 function logdebug(message) {
   if (debug) {
     console.log(message);
   }
+}
+
+function getMultiplier(gravity) {
+  return (gravity = 250 ? 2 : 2.5);
 }
 
 function setHorizontalMovement(player, isLeft, isRight, normalSpeed, flipLeft) {
@@ -23,7 +25,8 @@ function setHorizontalMovement(player, isLeft, isRight, normalSpeed, flipLeft) {
   return velocityX;
 }
 
-function handleJump(player, isUp) {
+function handleJump(player, isUp, gravity) {
+  let multiplier = getMultiplier(gravity);
   let velocityY = player.body.velocity.y;
   if (isUp && player.body.touching.down) {
     holdTime++;
@@ -34,7 +37,7 @@ function handleJump(player, isUp) {
       logdebug("short jump");
     } else if (holdTime >= 10) {
       if (holdTime > 100) holdTime = 100;
-      velocityY = -300 - holdTime * 2.5;
+      velocityY = -300 - holdTime * multiplier;
       logdebug("long jump");
     }
     holdTime = 0;
@@ -51,7 +54,8 @@ function playerMoveTemple(
   touchPad,
   isLeftPressed,
   isRightPressed,
-  isUpPressed
+  isUpPressed,
+  gravity
 ) {
   let velocityX, velocityY;
 
@@ -64,7 +68,7 @@ function playerMoveTemple(
       normalSpeed,
       flipLeft
     );
-    velocityY = handleJump(player, isUpPressed);
+    velocityY = handleJump(player, isUpPressed, gravity);
   } else {
     // Use keyboard controls
     const cursors = this.input.keyboard.createCursorKeys();

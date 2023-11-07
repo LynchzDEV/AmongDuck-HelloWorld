@@ -190,6 +190,14 @@ class LoadScene extends Phaser.Scene {
     //jumppad
     this.load.image("jumppad1", path.join(COMPONENT_GAME_PATH, "jumppad1.png"));
     this.load.image("jumppad2", path.join(COMPONENT_GAME_PATH, "jumppad2.png"));
+    this.load.spritesheet(
+      "jumppad",
+      path.join(SPRITESHEET_GAME_PATH, "jumppad.png"),
+      {
+        frameWidth: 753,
+        frameHeight: 753,
+      }
+    );
 
     //load components temple
     this.load.image("City", path.join(BACKGROUND_TEMPLE_PATH, "City.png"));
