@@ -13,6 +13,7 @@ import {
   TEXT_GAME_PATH,
   AUDIO_GAME_PATH,
 } from "../utils/mapPath";
+import { CUTSCENE_PATH } from "../utils/cutScenePath";
 
 class LoadScene extends Phaser.Scene {
   constructor() {
@@ -200,6 +201,20 @@ class LoadScene extends Phaser.Scene {
     );
 
     //load components temple
+
+    this.load.image(
+      "templeText01",
+      path.join(CUTSCENE_PATH, "text1_temple.png")
+    );
+    this.load.image(
+      "templeText02",
+      path.join(CUTSCENE_PATH, "text2_temple.png")
+    );
+    this.load.image(
+      "templeText03",
+      path.join(CUTSCENE_PATH, "text3_temple.png")
+    );
+
     this.load.image("City", path.join(BACKGROUND_TEMPLE_PATH, "City.png"));
     this.load.image(
       "fuji",
@@ -443,7 +458,7 @@ class LoadScene extends Phaser.Scene {
     this.add.text(20, 20, "Loading game..."); //? Text for loading page but maybe useless.
     this.addAnimation();
     //if you need to add more text before dowloading, add here
-    this.scene.start("Temple");
+    this.scene.start("Delivery");
   }
 }
 export default LoadScene;

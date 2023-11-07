@@ -44,6 +44,7 @@ class CutScene1 extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(500);
     const width = this.sys.game.canvas.width;
     const self = this;
     currentFrame = this.add
@@ -105,7 +106,7 @@ class CutScene1 extends Phaser.Scene {
       }
     }
 
-   //  showNextFrame();
+    //  showNextFrame();
 
     this.input.on("pointerdown", function () {
       if (currentFrameIndex < scenes.length - 1) {

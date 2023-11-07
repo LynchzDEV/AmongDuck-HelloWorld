@@ -581,8 +581,7 @@ class Delivery extends Phaser.Scene {
   }
 
   // animations
-  addAnimations() {
-  }
+  addAnimations() {}
 
   // message
   addMessage() {
@@ -682,15 +681,16 @@ class Delivery extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(500);
     //config
     const { width, height } = this.scale;
     // main scale
-    // const mapWidth = width * 3;
-    // const mapHeight = height * 2;
+    const mapWidth = width * 3;
+    const mapHeight = height * 2;
 
     //!Dev scale 3840 * 1440
-    const mapWidth = width;
-    const mapHeight = height;
+    // const mapWidth = width;
+    // const mapHeight = height;
 
     const floorHeight = mapHeight - 215;
 
@@ -796,7 +796,13 @@ class Delivery extends Phaser.Scene {
       let gate = ToGate_Task._items[0];
       gate.gameObj.setTexture("gate-active");
       if (gate.isOverlapWithPlayer(player)) {
-        this.scene.start("Delivery2");
+        this.cameras.main.fadeOut(500, 0, 0, 0);
+        this.cameras.main.once(
+          Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+          () => {
+            this.scene.start("Delivery2");
+          }
+        );
       } else {
         this.updateItemOpacity(gateBox, gate.gameObj);
       }

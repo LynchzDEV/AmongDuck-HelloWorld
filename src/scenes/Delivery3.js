@@ -734,7 +734,7 @@ class Delivery3 extends Phaser.Scene {
   }
   addPlayerAndCollider(floorHeight) {
     if (!isPlayerFallDown) {
-      player;
+      // player;
       player = this.physics.add
         .sprite(100, floorHeight - 40, "player")
         .setCollideWorldBounds(true)
@@ -798,7 +798,13 @@ class Delivery3 extends Phaser.Scene {
         ],
         npc: [npc4, npc5],
       };
-      this.scene.start("Delivery4", gameContext);
+      this.cameras.main.fadeOut(500, 0, 0, 0);
+      this.cameras.main.once(
+        Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+        () => {
+          this.scene.start("Delivery4", gameContext);
+        }
+      );
     };
 
     npc4.gameObj.fn = () => {
@@ -982,6 +988,7 @@ class Delivery3 extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(500);
     //config
     const { width, height } = this.scale;
     // main scale
