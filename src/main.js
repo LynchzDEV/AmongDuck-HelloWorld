@@ -20,19 +20,19 @@ import Ending from "./scenes/CUTSCENE/Ending";
 import Summarize from "./scenes/CUTSCENE/Summarize";
 import LoadScene from "./scenes/LoadScene";
 
+const debug = false;
+
 const config = {
-    type: Phaser.AUTO,
-    pixelArt: true,
-    roundPixels: true,
-    parent: "content",
-    width: 1280,
-    height: 720,
-    // width: 3840,
-    // height: 1440,
-    physics: {
-        default: "arcade",
-        arcade: {
-            debug: false,
+  type: Phaser.AUTO,
+  pixelArt: true,
+  roundPixels: true,
+  parent: "content",
+  width: debug ? 3840 : 1280,
+  height: debug ? 1440 : 720,
+  physics: {
+    default: "arcade",
+    arcade: {
+      debug: debug,
         },
     },
     scene: [
@@ -57,7 +57,7 @@ const config = {
     ],
     scale: {
         mode: Phaser.Scale.NONE, // Disable Phaser's scaling
-    },
+  },
 };
 
 const game = new Phaser.Game(config);
