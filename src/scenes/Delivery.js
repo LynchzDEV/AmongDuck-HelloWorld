@@ -36,6 +36,7 @@ const tablet = window.innerWidth < 1280;
 
 //bg component
 let backgrounds;
+let bg;
 let water;
 let cloundLayer1;
 let cloundLayer2;
@@ -243,22 +244,22 @@ class Delivery extends Phaser.Scene {
   }
   addBackgroundElements(mapWidth, mapHeight) {
     backgrounds = this.add.group();
-    let bg = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, "background")
+    bg = this.add
+      .tileSprite(0, -300, mapWidth, mapHeight, "background")
       .setOrigin(0, 0)
       .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD - 0.1);
-    //front clound
+    //mid clound
     cloundLayer1 = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, "clound-layer2")
+      .tileSprite(0, -200, mapWidth, mapHeight, "clound-layer2")
       .setOrigin(0, 0)
       .setScale(1.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD);
-    // mid clound
+    //front clound
     cloundLayer2 = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, "clound-layer1")
+      .tileSprite(0, -120, mapWidth, mapHeight, "clound-layer1")
       .setOrigin(0, 0)
       .setScale(1.6)
       .setDepth(SKY_DEPTH)
@@ -282,10 +283,22 @@ class Delivery extends Phaser.Scene {
     this.physics.add.existing(shallow_water);
 
     water = this.add
-      .tileSprite(0, mapHeight - 200, mapWidth, 200, "water")
+      .sprite(0, mapHeight - 220, "water-sprite")
       .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH);
+      .setScale(1.1)
+      .setDepth(PLAYER_DEPTH + 1)
+      .setScrollFactor(OBJECT_SCROLL.PLAYER);
+
+    water.anims.play("waterAnim", true);
+
+    water = this.add
+      .sprite(1840, mapHeight - 220, "water-sprite")
+      .setOrigin(0, 0)
+      .setScale(1.1)
+      .setDepth(PLAYER_DEPTH)
+      .setScrollFactor(OBJECT_SCROLL.PLAYER);
+
+    water.anims.play("waterAnim", true);
 
     //add shadows
     this.add
@@ -318,10 +331,10 @@ class Delivery extends Phaser.Scene {
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(0, floorHeight, 1383, 218, "ground-main")
+      .tileSprite(0, floorHeight+3, 1383, 218, "ground-main")
       .setOrigin(0, 0)
       .setScale(1)
-      .setDepth(MIDDLEGROUND_DEPTH);
+      .setDepth(PLAYER_DEPTH + 2);
 
     let platformSmall = this.add
       .image(1405, 1100, "platform")
@@ -440,17 +453,6 @@ class Delivery extends Phaser.Scene {
   // prop
   addComponents() {
     //sakura milk shop
-    sakuraTree = this.add
-      .image(141, 612, "sakura-tree")
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
-    sakuraTree.flipX = true;
-    this.add
-      .image(700, 266, "sakura-tree")
-      .setOrigin(0, 0)
-      .setScale(0.7)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     this.add
       .image(1704, 907, "stone-wall")
       .setOrigin(0, 0)
@@ -488,11 +490,54 @@ class Delivery extends Phaser.Scene {
       .setScale(1)
       .setDepth(PLAYER_DEPTH + 1);
     //sakura house
-    this.add
-      .image(2400, 238, "sakura-tree")
-      .setOrigin(0, 0)
-      .setScale(1)
-      .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+
+    let xPositionsTree = [158, 720, 2430];
+    let yPositionsTree = [678, 322, 320];
+    let scales = [0.88, 0.6, 0.88];
+    let count = 1;
+
+    for (let i = 0; i < xPositionsTree.length; i++) {
+      let x = xPositionsTree[i];
+      let y = yPositionsTree[i];
+
+      // Create a sakura sprite at position (x, y)
+      let sakuraAnim = this.add
+        .sprite(x, y, "sakuraAnim")
+        .setOrigin(0, 0)
+        .setScale(scales[i])
+        .setDepth(BACKGROUND_COMPONENT_DEPTH + 1);
+
+      sakuraAnim.anims.play("sakuraAnim", true);
+      if (count % 3 === 0) {
+        sakuraAnim.flipX = true;
+        sakuraAnim.setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
+        count++;
+      } else if (count % 2 == 0) {
+        sakuraAnim.flipX = true;
+        count = 0;
+      } else {
+        sakuraAnim.flipX = false;
+        count++;
+      }
+    }
+
+    let xPositions = [280, 500, 762, 900, 2500];
+    let yPositions = [900, 900, 447, 447, 500];
+    let scaleSakura = [1, 1, 0.8, 0.8, 1];
+
+    for (let i = 0; i < xPositions.length; i++) {
+      let x = xPositions[i];
+      let y = yPositions[i];
+
+      let sakura = this.add
+        .sprite(x, y, "sakura-sprite")
+        .setOrigin(0, 0)
+        .setScale(scaleSakura[i])
+        .setDepth(FOREGROUND_DEPTH);
+
+      sakura.anims.play("sakura", true);
+      sakura.flipX = true;
+    }
   }
   // player and colider
   addPlayerAndColider(floorHeight) {
@@ -715,6 +760,10 @@ class Delivery extends Phaser.Scene {
   update(delta, time) {
     // dev skip the scene
     // this.scene.start('Delivery2'); // ! comment for working in event_handling branch
+
+    bg.tilePositionX += 0.03;
+    cloundLayer1.tilePositionX += 0.07;
+    cloundLayer2.tilePositionX += 0.1;
 
     //player movement
     if (isMobile || tablet) {

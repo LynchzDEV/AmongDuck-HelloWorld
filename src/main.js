@@ -19,43 +19,43 @@ import Ending from "./scenes/CUTSCENE/Ending";
 import Summarize from "./scenes/CUTSCENE/Summarize";
 import LoadScene from "./scenes/LoadScene";
 
+const debug = false;
+
 const config = {
-    type: Phaser.AUTO,
-    pixelArt: true,
-    roundPixels: true,
-    parent: "content",
-    width: 1280,
-    height: 720,
-    // width: 3840,
-    // height: 1440,
-    physics: {
-        default: "arcade",
-        arcade: {
-            debug: false,
-        },
+  type: Phaser.AUTO,
+  pixelArt: true,
+  roundPixels: true,
+  parent: "content",
+  width: debug ? 3840 : 1280,
+  height: debug ? 1440 : 720,
+  physics: {
+    default: "arcade",
+    arcade: {
+      debug: debug,
     },
-    scene: [
-        // _dev, //! dev mode
-        // _mobilesite, //! dev mode
-        // _movementTemplate, //! movement template
-        // _forest1, //!  forest1 template [dev mode]
-        LoadScene, //* 0 load scene
-        // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
-        CutScene1, //* 1 cutscene 1 of the story mode
-        Temple, //* 3 temple map that lead to first decision
-        Delivery, //* 4 delivery game
-        Delivery2, //* 5 delivery game
-        Delivery3, //* 6 delivery game
-        Delivery4, //* 7 delivery game
-        PathSelection, //* 4 path selection scene
-        CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
-        DesignPath, //* 6 cutscene that lead to selection of front end or web design
-        Ending, //* 11 show text1
-        Summarize, //* 12 show text2
-    ],
-    scale: {
-        mode: Phaser.Scale.NONE, // Disable Phaser's scaling
-    },
+  },
+  scene: [
+    // _dev, //! dev mode
+    // _mobilesite, //! dev mode
+    // _movementTemplate, //! movement template
+    // _forest1, //!  forest1 template [dev mode]
+    LoadScene, //* 0 load scene
+    // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
+    CutScene1, //* 1 cutscene 1 of the story mode
+    Temple, //* 3 temple map that lead to first decision
+    Delivery, //* 4 delivery game
+    Delivery2, //* 5 delivery game
+    Delivery3, //* 6 delivery game
+    Delivery4, //* 7 delivery game
+    PathSelection, //* 4 path selection scene
+    CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
+    DesignPath, //* 6 cutscene that lead to selection of front end or web design
+    Ending, //* 11 show text1
+    Summarize, //* 12 show text2
+  ],
+  scale: {
+    mode: Phaser.Scale.NONE, // Disable Phaser's scaling
+  },
 };
 
 const game = new Phaser.Game(config);

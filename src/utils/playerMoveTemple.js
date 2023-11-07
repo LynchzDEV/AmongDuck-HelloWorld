@@ -1,5 +1,5 @@
-// let gravity = 800;
-let gravity = 100; // ! dev_mode
+let gravity = 750;
+// let gravity = 100; // ! dev_mode
 let holdTime = 0;
 const debug = false;
 
@@ -34,7 +34,7 @@ function handleJump(player, isUp) {
       logdebug("short jump");
     } else if (holdTime >= 10) {
       if (holdTime > 100) holdTime = 100;
-      velocityY = -300 - holdTime * 2.2;
+      velocityY = -300 - holdTime * 2.5;
       logdebug("long jump");
     }
     holdTime = 0;
