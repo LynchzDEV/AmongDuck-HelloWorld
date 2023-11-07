@@ -522,6 +522,7 @@ class Temple extends Phaser.Scene {
       repeat: -1,
     });
   }
+
   addMessage() {
     this.npcTempleMessage = this.add
       .image(2414, 375, "msg-box")
@@ -529,6 +530,27 @@ class Temple extends Phaser.Scene {
       .setAlpha(0.8)
       .setScale(1)
       .setDepth(FOREGROUND_DEPTH);
+
+    this.text01 = this.add
+      .image(2500, 380, "templeText01")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setAlpha(0)
+      .setDepth(FOREGROUND_DEPTH + 1);
+
+    this.text02 = this.add
+      .image(2500, 380, "templeText02")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setAlpha(0)
+      .setDepth(FOREGROUND_DEPTH + 1);
+
+    this.text03 = this.add
+      .image(2500, 380, "templeText03")
+      .setOrigin(0, 0)
+      .setScale(1)
+      .setAlpha(0)
+      .setDepth(FOREGROUND_DEPTH + 1);
   }
 
   // * bind function to target
@@ -536,23 +558,61 @@ class Temple extends Phaser.Scene {
   // TODO replace this.npcTempleMessage with another message obj
   bindFnToTarget() {
     npcTemple.gameObj.fn = () => {
-      this.npcTempleMessage.setAlpha(1);
       this.tweens.add({
-        targets: this.npcTempleMessage,
-        alpha: 0,
-        duration: 6000,
-        ease: "Linear",
-        yoyo: false,
-      });
-      // ! you can modify the delay func before change scene here
-      // ? may be add some sfx for let player know the scene is changing
-      this.time.delayedCall(6500, () => {
-        readyToChangeScene = true;
+        targets: this.text01,
+        alpha: 1,
+        duration: 1000,
+        onComplete: () => {
+          this.tweens.add({
+            targets: this.text01,
+            alpha: 0,
+            duration: 1000,
+            delay: 2000,
+            onComplete: () => {
+              this.tweens.add({
+                targets: this.text02,
+                alpha: 1,
+                duration: 1000,
+                onComplete: () => {
+                  this.tweens.add({
+                    targets: this.text02,
+                    alpha: 0,
+                    duration: 1000,
+                    delay: 2000,
+                    onComplete: () => {
+                      this.tweens.add({
+                        targets: this.text03,
+                        alpha: 1,
+                        duration: 1000,
+                        onComplete: () => {
+                          this.tweens.add({
+                            targets: this.text03,
+                            alpha: 0,
+                            duration: 1000,
+                            onComplete: () => {
+                              this.time.addEvent({
+                                delay: 2000,
+                                callback: () => {
+                                  readyToChangeScene = true;
+                                },
+                              });
+                            },
+                          });
+                        },
+                      });
+                    },
+                  });
+                },
+              });
+            },
+          });
+        },
       });
     };
   }
 
   create() {
+    this.cameras.main.fadeIn(500);
     //config
     const { width, height } = this.scale;
     const mapWidth = width * 4;
@@ -601,10 +661,11 @@ class Temple extends Phaser.Scene {
         true,
         isLeftPressed,
         isRightPressed,
-        isUpPressed
+        isUpPressed,
+        750
       );
     } else {
-      this.playerMoveTemple(player, 350, false, false, null, null, null);
+      this.playerMoveTemple(player, 350, false, false, null, null, null, 750);
     }
 
     //camera follow player
@@ -627,6 +688,7 @@ class Temple extends Phaser.Scene {
     );
     // * This works with the function binded to target at bindFnToTarget()
     if (readyToChangeScene) {
+      console.log("change scene");
       this.scene.start("Delivery");
     }
 
