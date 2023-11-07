@@ -1,4 +1,4 @@
-import { OverlapObject } from './event/TaskManager';
+import { OverlapObject } from "./event/TaskManager";
 
 /**
  * @type {Phaser.Input.InputPlugin} input
@@ -42,7 +42,7 @@ const handleInteractiveBtn = (
     } else {
       altBtn.setVisible(false);
       interactBtn.setVisible(true).setDepth(1000);
-      input.on('gameobjectdown', (pointer, gameObject) => {
+      input.on("gameobjectdown", (pointer, gameObject) => {
         if (gameObject === interactBtn && !target.gameObj.fnCalled) {
           handleInteraction(target, player);
         }
@@ -52,7 +52,7 @@ const handleInteractiveBtn = (
     if (!isDesktop) {
       altBtn.setVisible(true);
       interactBtn.setVisible(false).setDepth(998);
-      input.on('gameobjectdown', (pointer, gameObject) => {
+      input.on("gameobjectdown", (pointer, gameObject) => {
         if (gameObject === interactBtn && !target.gameObj.fnCalled) {
           handleInteraction(target, player);
         }
@@ -93,8 +93,8 @@ const handleInteraction = (target, player) => {
  * @param {string} deviceKey
  */
 const createInteractInput = (keyboard, deviceKey, physics, pos, objectKey) => {
-  if (deviceKey !== 'desktop') {
-    const scale = deviceKey === 'mobile' ? 5 : 7;
+  if (deviceKey !== "desktop") {
+    const scale = deviceKey === "mobile" ? 5 : 7;
     const [x, y] = pos;
     return physics.add
       .sprite(x, y, objectKey)
@@ -105,7 +105,7 @@ const createInteractInput = (keyboard, deviceKey, physics, pos, objectKey) => {
       .setAlpha(0.7)
       .setScrollFactor(0);
   } else {
-    return keyboard.addKey('E');
+    return keyboard.addKey("E");
   }
 };
 
