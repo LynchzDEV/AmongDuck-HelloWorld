@@ -1,12 +1,12 @@
-import Phaser from 'phaser';
-import path from 'path';
+import Phaser from "phaser";
+import path from "path";
 import {
   BACKGROUND_TEMPLE_PATH,
   FOREGROUND_TEMPLE_PATH,
   COMPONENT_TEMPLE_PATH,
   UI_PATH,
   PLAYER_SPRITESHEET_PATH,
-} from '../utils/mapPath';
+} from "../utils/mapPath";
 import {
   SKY_DEPTH,
   BACKGROUND_DEPTH,
@@ -14,19 +14,19 @@ import {
   MIDDLEGROUND_DEPTH,
   PLAYER_DEPTH,
   FOREGROUND_DEPTH,
-} from '../utils/mapDepth';
-import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
-import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
-import playerMoveTemple from '../utils/playerMoveTemple';
+} from "../utils/mapDepth";
+import { setWorldBoundsAndCamera } from "../utils/setWorldAndCameraBound";
+import { OBJECT_SCROLL } from "../utils/mapObjectScroll";
+import playerMoveTemple from "../utils/playerMoveTemple";
 import {
   setInput,
   createInteractInput,
   handleInteractiveBtn,
-} from '../utils/interactUtils';
-import { updateTextOpacity } from '../utils/event/updateTextOpacity';
+} from "../utils/interactUtils";
+import { updateTextOpacity } from "../utils/event/updateTextOpacity";
 
 // ! test new class for collect item
-import { Target } from '../utils/event/TaskManager';
+import { Target } from "../utils/event/TaskManager";
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -62,13 +62,13 @@ let readyToChangeScene = false;
 
 class Temple extends Phaser.Scene {
   constructor() {
-    super('Temple');
+    super("Temple");
   }
 
   setDeviceSpecificControls(height, width, camera) {
     //camera and control for each device
     if (isMobile || tablet) {
-      this.input.on('gameobjectdown', (pointer, gameObject) => {
+      this.input.on("gameobjectdown", (pointer, gameObject) => {
         if (gameObject === left) {
           isLeftPressed = true;
         }
@@ -80,7 +80,7 @@ class Temple extends Phaser.Scene {
         }
       });
 
-      this.input.on('gameobjectup', (pointer, gameObject) => {
+      this.input.on("gameobjectup", (pointer, gameObject) => {
         if (gameObject === left) {
           isLeftPressed = false;
         }
@@ -102,12 +102,12 @@ class Temple extends Phaser.Scene {
         // ! set new pos for mobile
         screenHeight = windowHeight;
         if (screenHeight > 720) screenHeight = 720;
-        console.log('Mobile view');
+        console.log("Mobile view");
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
 
         left = this.physics.add
-          .sprite(screenWidth / 2 - screenWidth / 3, screenHeight / 1.2, 'left')
+          .sprite(screenWidth / 2 - screenWidth / 3, screenHeight / 1.2, "left")
           .setScale(5)
           .setSize(15, 15)
           .setInteractive()
@@ -119,7 +119,7 @@ class Temple extends Phaser.Scene {
           .sprite(
             screenWidth / 2 - screenWidth / 8,
             screenHeight / 1.2,
-            'right'
+            "right"
           )
           .setScale(5)
           .setSize(15, 15)
@@ -129,7 +129,7 @@ class Temple extends Phaser.Scene {
           .setScrollFactor(0);
 
         up = this.physics.add
-          .sprite(screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2, 'up')
+          .sprite(screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2, "up")
           .setScale(5)
           .setSize(15, 15)
           .setInteractive()
@@ -140,10 +140,10 @@ class Temple extends Phaser.Scene {
         // ! create interact btn for mobile
         interactButton = createInteractInput(
           this.input.keyboard,
-          'mobile',
+          "mobile",
           this.physics,
           [screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2],
-          'inBtn'
+          "inBtn"
         );
 
         //Implement mobile camera bounds and viewport
@@ -159,7 +159,7 @@ class Temple extends Phaser.Scene {
         // ! set new pos for tablet
         screenHeight = windowHeight;
         if (screenHeight > 720) screenHeight = 720;
-        console.log('Tablet view');
+        console.log("Tablet view");
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
 
@@ -167,7 +167,7 @@ class Temple extends Phaser.Scene {
           .sprite(
             screenWidth / 2 - screenWidth / 2.5,
             screenHeight / 1.2,
-            'left'
+            "left"
           )
           .setScale(7)
           .setSize(15, 15)
@@ -180,7 +180,7 @@ class Temple extends Phaser.Scene {
           .sprite(
             screenWidth / 2 - screenWidth / 3.5,
             screenHeight / 1.2,
-            'right'
+            "right"
           )
           .setScale(7)
           .setSize(15, 15)
@@ -190,7 +190,7 @@ class Temple extends Phaser.Scene {
           .setScrollFactor(0);
 
         up = this.physics.add
-          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, 'up')
+          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, "up")
           .setScale(7)
           .setSize(15, 15)
           .setInteractive()
@@ -201,10 +201,10 @@ class Temple extends Phaser.Scene {
         // ! create interact btn for tablet
         interactButton = createInteractInput(
           this.input.keyboard,
-          'tablet',
+          "tablet",
           this.physics,
           [screenWidth - screenWidth / 8, screenHeight / 1.2],
-          'inBtn'
+          "inBtn"
         );
 
         //Implement tablet camera bounds and viewport
@@ -217,23 +217,23 @@ class Temple extends Phaser.Scene {
       }
     } else {
       //default (desktop)
-      console.log('desktop');
+      console.log("desktop");
       camera.setViewport(0, 0, width, height);
       // ! add interaction key
-      interactKey = createInteractInput(this.input.keyboard, 'desktop');
+      interactKey = createInteractInput(this.input.keyboard, "desktop");
     }
   }
   addBackgroundElements(width, height, mapWidth, floorHeight) {
     //clouds
     sky = this.add
-      .tileSprite(0, 0, mapWidth, height, 'sky')
+      .tileSprite(0, 0, mapWidth, height, "sky")
       .setOrigin(0, 0)
       .setScale(2.6)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(0);
 
     sky2 = this.add
-      .tileSprite(0, 10, mapWidth, height, 'sky2')
+      .tileSprite(0, 10, mapWidth, height, "sky2")
       .setOrigin(0, 0)
       .setScale(2.6)
       .setAlpha(0.6)
@@ -241,7 +241,7 @@ class Temple extends Phaser.Scene {
       .setScrollFactor(0);
 
     sky3 = this.add
-      .tileSprite(0, 20, mapWidth, height, 'sky3')
+      .tileSprite(0, 20, mapWidth, height, "sky3")
       .setOrigin(0, 0)
       .setScale(2.6)
       .setAlpha(0.4)
@@ -252,35 +252,35 @@ class Temple extends Phaser.Scene {
     background = this.add.group();
 
     let city = this.add
-      .tileSprite(0, floorHeight - 200, 550, 200, 'City')
+      .tileSprite(0, floorHeight - 200, 550, 200, "City")
       .setOrigin(0, 0)
       .setScale(1.5)
       .setDepth(BACKGROUND_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.BG);
 
     let fuji = this.add
-      .image(mapWidth - 2200, floorHeight - 250, 'fuji')
+      .image(mapWidth - 2200, floorHeight - 250, "fuji")
       .setOrigin(0, 0)
       .setScale(1.5)
       .setDepth(BACKGROUND_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.BG);
 
     let bgTree = this.add
-      .tileSprite(0, floorHeight + 20, mapWidth * 2, 180, 'bgTree')
+      .tileSprite(0, floorHeight + 20, mapWidth * 2, 180, "bgTree")
       .setOrigin(0, 0)
       .setScale(0.7)
       .setDepth(BACKGROUND_COMPONENT_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.BG);
 
     let brush1 = this.add
-      .image(500, floorHeight - 50, 'bushes')
+      .image(500, floorHeight - 50, "bushes")
       .setOrigin(0, 0)
       .setScale(2)
       .setDepth(BACKGROUND_COMPONENT_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.BG);
 
     let brush2 = this.add
-      .image(mapWidth / 2 - 800, floorHeight - 50, 'bushes')
+      .image(mapWidth / 2 - 800, floorHeight - 50, "bushes")
       .setOrigin(0, 0)
       .setScale(2)
       .setDepth(BACKGROUND_COMPONENT_DEPTH)
@@ -288,14 +288,14 @@ class Temple extends Phaser.Scene {
     brush2.flipX = true;
 
     let brush3 = this.add
-      .image(mapWidth / 2, floorHeight - 50, 'bushes')
+      .image(mapWidth / 2, floorHeight - 50, "bushes")
       .setOrigin(0, 0)
       .setScale(2)
       .setDepth(BACKGROUND_COMPONENT_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.BG);
 
     let peddlerCar = this.add
-      .image(700, floorHeight - 40, 'peddlerCar')
+      .image(700, floorHeight - 40, "peddlerCar")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH)
@@ -314,14 +314,14 @@ class Temple extends Phaser.Scene {
     //components background
     components = this.add.group();
     let house = this.add
-      .image(mapWidth / 2 - 620, floorHeight - 225, 'HouseTemple')
+      .image(mapWidth / 2 - 620, floorHeight - 225, "HouseTemple")
       .setOrigin(0, 0)
       .setScale(0.8)
       .setDepth(MIDDLEGROUND_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
     let torii = this.add
-      .image(mapWidth / 2 + 900, floorHeight - 100, 'torii')
+      .image(mapWidth / 2 + 900, floorHeight - 100, "torii")
       .setOrigin(0, 0)
       .setScale(0.7)
       .setDepth(MIDDLEGROUND_DEPTH)
@@ -333,7 +333,7 @@ class Temple extends Phaser.Scene {
   addMiddlegroundAndPlayer(width, height, mapWidth, floorHeight) {
     //player
     player = this.physics.add
-      .sprite(300, height - 300, 'player')
+      .sprite(300, height - 300, "player")
       .setCollideWorldBounds(true)
       .setScale(0.26)
       .setSize(180, 200)
@@ -342,14 +342,14 @@ class Temple extends Phaser.Scene {
     //ground physics
     grounds = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(0, floorHeight + 98, mapWidth * 5, 250, 'ground-temple')
+      .tileSprite(0, floorHeight + 98, mapWidth * 5, 250, "ground-temple")
       .setOrigin(0, 0)
       .setScale(0.2)
       .setDepth(PLAYER_DEPTH + 2)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
     let groundShadow = this.add
-      .tileSprite(0, floorHeight + 120, mapWidth * 25, 250, 'groundShadow')
+      .tileSprite(0, floorHeight + 120, mapWidth * 25, 250, "groundShadow")
       .setOrigin(0, 0)
       .setScale(0.15)
       .setDepth(PLAYER_DEPTH + 1)
@@ -362,31 +362,31 @@ class Temple extends Phaser.Scene {
   addForegroundElements(width, height, mapWidth, floorHeight) {
     //adding water
     water = this.add
-      .sprite(0, 450, 'water-sprite')
+      .sprite(0, 450, "water-sprite")
       .setOrigin(0, 0)
       .setScale(1.1)
       .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
-    water.anims.play('waterAnim', true);
+    water.anims.play("waterAnim", true);
 
     water = this.add
-      .sprite(1840, 450, 'water-sprite')
+      .sprite(1840, 450, "water-sprite")
       .setOrigin(0, 0)
       .setScale(1.1)
       .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
-    water.anims.play('waterAnim', true);
+    water.anims.play("waterAnim", true);
 
     water = this.add
-      .sprite(3680, 450, 'water-sprite')
+      .sprite(3680, 450, "water-sprite")
       .setOrigin(0, 0)
       .setScale(1.1)
       .setDepth(PLAYER_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.PLAYER);
 
-    water.anims.play('waterAnim', true);
+    water.anims.play("waterAnim", true);
 
     //foreground
     foreground = this.add.group();
@@ -412,13 +412,13 @@ class Temple extends Phaser.Scene {
       let y = yPositions[i];
 
       let sakura = this.add
-        .sprite(x, y, 'sakura-sprite')
+        .sprite(x, y, "sakura-sprite")
         .setOrigin(0, 0)
         .setScale(0.8)
         .setDepth(FOREGROUND_DEPTH)
         .setScrollFactor(OBJECT_SCROLL.FG);
 
-      sakura.anims.play('sakura', true);
+      sakura.anims.play("sakura", true);
       sakura.flipX = true;
     }
 
@@ -439,13 +439,13 @@ class Temple extends Phaser.Scene {
 
       // Create a sakura sprite at position (x, y)
       let sakuraAnim = this.add
-        .sprite(x, y, 'sakuraAnim')
+        .sprite(x, y, "sakuraAnim")
         .setOrigin(0, 0)
         .setScale(scales[i])
         .setDepth(FOREGROUND_DEPTH - 1)
         .setScrollFactor(OBJECT_SCROLL.FG);
 
-      sakuraAnim.anims.play('sakuraAnim', true);
+      sakuraAnim.anims.play("sakuraAnim", true);
       if (count % 2 == 0) {
         sakuraAnim.flipX = false;
         count = 0;
@@ -468,43 +468,32 @@ class Temple extends Phaser.Scene {
     npcTemple = new Target(
       { itemKey: player.texture.key, qty: 0 },
       this.physics,
-      'sprite',
+      "sprite",
       [2460, floorHeight + 20],
-      'npc1',
+      "npc1",
       0.15,
       MIDDLEGROUND_DEPTH
     );
 
     npcTemple.gameObj.flipX = true;
 
-    npcTemple.gameObj.anims.play('atok-anim', true);
+    npcTemple.gameObj.anims.play("atok-anim", true);
 
     npcDummyForHandleInteract = new Target(
       { itemKey: player.texture.key, qty: 0 },
       this.physics,
-      'sprite',
+      "sprite",
       [0, 1500], // * out of screen
-      'npc1',
+      "npc1",
       0.15,
       MIDDLEGROUND_DEPTH
     );
   }
   addAnimations() {
-    //water animation
-    this.anims.create({
-      key: 'waterAnim',
-      frames: this.anims.generateFrameNumbers('water-sprite', {
-        start: 0,
-        end: 5,
-      }),
-      frameRate: 5.5,
-      repeat: -1,
-    });
-
     //sakura animation
     this.anims.create({
-      key: 'sakura',
-      frames: this.anims.generateFrameNumbers('sakura-sprite', {
+      key: "sakura",
+      frames: this.anims.generateFrameNumbers("sakura-sprite", {
         start: 0,
         end: 19,
       }),
@@ -514,8 +503,8 @@ class Temple extends Phaser.Scene {
 
     //sakuraTree animation
     this.anims.create({
-      key: 'sakuraAnim',
-      frames: this.anims.generateFrameNames('sakuraAnim', {
+      key: "sakuraAnim",
+      frames: this.anims.generateFrameNames("sakuraAnim", {
         start: 0,
         end: 5,
       }),
@@ -524,8 +513,8 @@ class Temple extends Phaser.Scene {
     });
 
     this.anims.create({
-      key: 'atok-anim',
-      frames: this.anims.generateFrameNames('npc1', {
+      key: "atok-anim",
+      frames: this.anims.generateFrameNames("npc1", {
         start: 0,
         end: 1,
       }),
@@ -535,7 +524,7 @@ class Temple extends Phaser.Scene {
   }
   addMessage() {
     this.npcTempleMessage = this.add
-      .image(2414, 375, 'msg-box')
+      .image(2414, 375, "msg-box")
       .setOrigin(0, 0)
       .setAlpha(0.8)
       .setScale(1)
@@ -552,7 +541,7 @@ class Temple extends Phaser.Scene {
         targets: this.npcTempleMessage,
         alpha: 0,
         duration: 6000,
-        ease: 'Linear',
+        ease: "Linear",
         yoyo: false,
       });
       // ! you can modify the delay func before change scene here
@@ -638,7 +627,7 @@ class Temple extends Phaser.Scene {
     );
     // * This works with the function binded to target at bindFnToTarget()
     if (readyToChangeScene) {
-      this.scene.start('Delivery');
+      this.scene.start("Delivery");
     }
 
     if (messageBoxInteract) {

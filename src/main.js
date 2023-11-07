@@ -12,6 +12,7 @@ import Delivery2 from "./scenes/Delivery2";
 import Delivery3 from "./scenes/Delivery3";
 import Delivery4 from "./scenes/Delivery4";
 import Temple from "./scenes/Temple";
+import Temple2 from "./scenes/Temple2";
 import PathSelection from "./scenes/PathSelection";
 import CodingPath from "./scenes/CodingPath";
 import DesignPath from "./scenes/DesignPath";
@@ -24,7 +25,7 @@ const debug = Text === "t";
 
 const config = {
   type: Phaser.AUTO,
-  pixelArt: true,
+  pixelArt: true,   
   roundPixels: true,
   parent: "content",
   width: debug ? 3840 : 1280,
@@ -48,10 +49,11 @@ const config = {
     Delivery2, //* 5 delivery game
     Delivery3, //* 6 delivery game
     Delivery4, //* 7 delivery game
-    PathSelection, //* 4 path selection scene
-    CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
-    DesignPath, //* 6 cutscene that lead to selection of front end or web design
-    Ending, //* 11 show text1
+    Temple2, //* 8 temple map that lead to second decision
+    // PathSelection, //* 4 path selection scene
+    // CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
+    // DesignPath, //* 6 cutscene that lead to selection of front end or web design
+    // Ending, //* 11 show text1
     Summarize, //* 12 show text2
   ],
   scale: {

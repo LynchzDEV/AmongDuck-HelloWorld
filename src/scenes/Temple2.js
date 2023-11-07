@@ -490,17 +490,6 @@ class Temple2 extends Phaser.Scene {
     );
   }
   addAnimations() {
-    //water animation
-    this.anims.create({
-      key: 'waterAnim',
-      frames: this.anims.generateFrameNumbers('water-sprite', {
-        start: 0,
-        end: 5,
-      }),
-      frameRate: 5.5,
-      repeat: -1,
-    });
-
     //sakura animation
     this.anims.create({
       key: 'sakura',

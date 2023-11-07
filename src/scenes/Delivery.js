@@ -331,7 +331,7 @@ class Delivery extends Phaser.Scene {
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(0, floorHeight+3, 1383, 218, "ground-main")
+      .tileSprite(0, floorHeight + 3, 1383, 218, "ground-main")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(PLAYER_DEPTH + 2);
@@ -759,7 +759,7 @@ class Delivery extends Phaser.Scene {
 
   update(delta, time) {
     // dev skip the scene
-    // this.scene.start('Delivery2'); // ! comment for working in event_handling branch
+    this.scene.start("Delivery2"); // ! comment for working in event_handling branch
 
     bg.tilePositionX += 0.03;
     cloundLayer1.tilePositionX += 0.07;
@@ -774,10 +774,11 @@ class Delivery extends Phaser.Scene {
         true,
         isLeftPressed,
         isRightPressed,
-        isUpPressed
+        isUpPressed,
+        250
       );
     } else {
-      this.playerMoveTemple(player, 350, false, false, null, null, null);
+      this.playerMoveTemple(player, 350, false, false, null, null, null, 250);
     }
 
     // camera follow player
