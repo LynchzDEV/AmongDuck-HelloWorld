@@ -50,7 +50,7 @@ const config = {
     Delivery3, //* 6 delivery game
     Delivery4, //* 7 delivery game
     Temple2, //* 8 temple map that lead to second decision
-    // PathSelection, //* 4 path selection scene
+    PathSelection, //* 4 path selection scene
     // CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
     // DesignPath, //* 6 cutscene that lead to selection of front end or web design
     // Ending, //* 11 show text1

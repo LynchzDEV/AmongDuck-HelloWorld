@@ -431,6 +431,24 @@ class LoadScene extends Phaser.Scene {
       frameRate: 5.5,
       repeat: -1,
     });
+    this.anims.create({
+      key: "sakuraAnim",
+      frames: this.anims.generateFrameNumbers("sakuraAnim", {
+        start: 0,
+        end: 5,
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "sakura",
+      frames: this.anims.generateFrameNumbers("sakura-sprite", {
+        start: 0,
+        end: 19,
+      }),
+      frameRate: 8,
+      repeat: -1,
+    });
     // sprite sheet for npc1
     this.anims.create({
       key: "idle_npc6",
@@ -458,7 +476,7 @@ class LoadScene extends Phaser.Scene {
     this.add.text(20, 20, "Loading game..."); //? Text for loading page but maybe useless.
     this.addAnimation();
     //if you need to add more text before dowloading, add here
-    this.scene.start("Delivery");
+    this.scene.start("PathSelection");
   }
 }
 export default LoadScene;
