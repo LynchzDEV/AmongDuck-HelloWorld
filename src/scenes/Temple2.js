@@ -60,9 +60,9 @@ let isUpPressed = false;
 
 let readyToChangeScene = false;
 
-class Temple extends Phaser.Scene {
+class Temple2 extends Phaser.Scene {
   constructor() {
-    super('Temple');
+    super('Temple2');
   }
 
   setDeviceSpecificControls(height, width, camera) {
@@ -638,7 +638,7 @@ class Temple extends Phaser.Scene {
     );
     // * This works with the function binded to target at bindFnToTarget()
     if (readyToChangeScene) {
-      this.scene.start('Delivery');
+      this.scene.start('PathSelection'); // ! This may not the right scene
     }
 
     if (messageBoxInteract) {
@@ -648,4 +648,4 @@ class Temple extends Phaser.Scene {
     }
   }
 }
-export default Temple;
+export default Temple2;

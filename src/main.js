@@ -12,6 +12,7 @@ import Delivery2 from "./scenes/Delivery2";
 import Delivery3 from "./scenes/Delivery3";
 import Delivery4 from "./scenes/Delivery4";
 import Temple from "./scenes/Temple";
+import Temple2 from "./scenes/Temple2";
 import PathSelection from "./scenes/PathSelection";
 import CodingPath from "./scenes/CodingPath";
 import DesignPath from "./scenes/DesignPath";
@@ -32,29 +33,30 @@ const config = {
     default: "arcade",
     arcade: {
       debug: debug,
+        },
     },
-  },
-  scene: [
-    // _dev, //! dev mode
-    // _mobilesite, //! dev mode
-    // _movementTemplate, //! movement template
-    // _forest1, //!  forest1 template [dev mode]
-    LoadScene, //* 0 load scene
-    // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
-    CutScene1, //* 1 cutscene 1 of the story mode
-    Temple, //* 3 temple map that lead to first decision
-    Delivery, //* 4 delivery game
-    Delivery2, //* 5 delivery game
-    Delivery3, //* 6 delivery game
-    Delivery4, //* 7 delivery game
-    PathSelection, //* 4 path selection scene
-    CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
-    DesignPath, //* 6 cutscene that lead to selection of front end or web design
-    Ending, //* 11 show text1
-    Summarize, //* 12 show text2
-  ],
-  scale: {
-    mode: Phaser.Scale.NONE, // Disable Phaser's scaling
+    scene: [
+        // _dev, //! dev mode
+        // _mobilesite, //! dev mode
+        // _movementTemplate, //! movement template
+        // _forest1, //!  forest1 template [dev mode]
+        LoadScene, //* 0 load scene
+        // MainMenu, //* 0 main menu/landing page that have logo and story mode button and endless mode button
+        // CutScene1, //* 1 cutscene 1 of the story mode
+        Temple, //* 3 temple map that lead to first decision
+        Delivery, //* 4 delivery game
+        Delivery2, //* 5 delivery game
+        Delivery3, //* 6 delivery game
+        Delivery4, //* 7 delivery game
+        Temple2,
+        PathSelection, //* 4 path selection scene
+        CodingPath, //* 5 cutscene that lead to selection of game dev or dev ops
+        DesignPath, //* 6 cutscene that lead to selection of front end or web design
+        Ending, //* 11 show text1
+        Summarize, //* 12 show text2
+    ],
+    scale: {
+        mode: Phaser.Scale.NONE, // Disable Phaser's scaling
   },
 };
 

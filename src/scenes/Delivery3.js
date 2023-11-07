@@ -1100,52 +1100,52 @@ class Delivery3 extends Phaser.Scene {
         }
 
         // handle interact btn for // ! npc4
-        this.handleInteractiveBtn(
-            !isMobile && !tablet,
-            interactKey,
-            up,
-            interactButton,
-            player,
-            npc4,
-            [ladder, npc5]
-        );
+    this.handleInteractiveBtn(
+      !isMobile && !tablet,
+      interactKey,
+      up,
+      interactButton,
+      player,
+      npc4,
+      [ladder, npc5]
+    );
 
-        // handle interact btn for // ! npc5
-        this.handleInteractiveBtn(
-            !isMobile && !tablet,
-            interactKey,
-            up,
-            interactButton,
-            player,
-            npc5,
-            [ladder, npc4]
-        );
+    // handle interact btn for // ! npc5
+    this.handleInteractiveBtn(
+      !isMobile && !tablet,
+      interactKey,
+      up,
+      interactButton,
+      player,
+      npc5,
+      [ladder, npc4]
+    );
 
-        // handle interact btn for // ! ladder
-        this.handleInteractiveBtn(
-            !isMobile && !tablet,
-            interactKey,
-            up,
-            interactButton,
-            player,
-            ladder,
-            [npc4, npc5]
-        );
+    // handle interact btn for // ! ladder
+    this.handleInteractiveBtn(
+      !isMobile && !tablet,
+      interactKey,
+      up,
+      interactButton,
+      player,
+      ladder,
+      [npc4, npc5]
+    );
 
-        // * updateTextOpacity(player, target, message)
-        this.updateTextOpacity(player, this.requireNpc4, this.requireNpc4);
-        this.updateTextOpacity(player, this.requireNpc5, this.requireNpc5);
+    // * updateTextOpacity(player, target, message)
+    this.updateTextOpacity(player, this.requireNpc4, this.requireNpc4);
+    this.updateTextOpacity(player, this.requireNpc5, this.requireNpc5);
 
-        // * all c&d task were done, ready to go to next scene
-        if (this.CND_Milks_Task._completed && !this.ToGate_Task._completed) {
-            let gateBox = this.ToGate_Task._inventoryBox[0];
-            let gate = this.ToGate_Task._items[0];
-            gate.gameObj.setTexture("gate-active");
-            if (gate.isOverlapWithPlayer(player)) {
-                this.scene.start("Temple");
-            } else {
-                this.updateItemOpacity(gateBox, gate.gameObj);
-            }
+    // * all c&d task were done, ready to go to next scene
+    if (this.CND_Milks_Task._completed && !this.ToGate_Task._completed) {
+      let gateBox = this.ToGate_Task._inventoryBox[0];
+      let gate = this.ToGate_Task._items[0];
+      gate.gameObj.setTexture('gate-active');
+      if (gate.isOverlapWithPlayer(player)) {
+        this.scene.start('Temple2');
+      } else {
+        this.updateItemOpacity(gateBox, gate.gameObj);
+      }
         }
     }
 }
