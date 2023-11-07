@@ -14,12 +14,18 @@ import {
   AUDIO_GAME_PATH,
 } from "../../utils/mapPath";
 import { CUTSCENE_PATH } from "../../utils/cutScenePath";
-let words = ["word1", "word2", "word3", "word4", "word5", "word6"];
+let words = [
+  "word1",
+  "word2",
+  "word3",
+  "word4",
+  "word5",
+  "word6",
+  "word7",
+  "word8A",
+];
 let currentFrameIndex = 0;
-let delayText = 5000;
-let delayTransition = 2000;
-// let delayText = 1;
-// let delayTransition = 1;
+let delayText = 1;
 let frame;
 
 let bg;
@@ -43,6 +49,9 @@ class Summarize extends Phaser.Scene {
     this.load.image("word4", path.join(CUTSCENE_PATH, "2-4.png"));
     this.load.image("word5", path.join(CUTSCENE_PATH, "2-5.png"));
     this.load.image("word6", path.join(CUTSCENE_PATH, "2-6.png"));
+    this.load.image("word7", path.join(CUTSCENE_PATH, "2-1.png"));
+    this.load.image("button1", path.join(CUTSCENE_PATH, "T_2-7.png"));
+    this.load.image("button2", path.join(CUTSCENE_PATH, "B_2-7.png"));
   }
 
   create() {
@@ -120,19 +129,19 @@ class Summarize extends Phaser.Scene {
   }
 
   startTextSequence() {
-    currentFrameIndex = 0;
+    currentFrameIndex = 6;
     this.showNextFrame();
     this.input.on("pointerdown", this.skipFrame, this);
   }
 
   showNextFrame() {
+    console.log(currentFrameIndex);
     if (currentFrameIndex < this.textObjects.length) {
       // Hide the previous text if it exists
       if (currentFrameIndex > 0) {
         let previousText = this.textObjects[currentFrameIndex - 1];
         previousText.setAlpha(0);
       }
-
       let currentText = this.textObjects[currentFrameIndex];
       this.currentTween = this.tweens.add({
         targets: currentText,
@@ -146,10 +155,12 @@ class Summarize extends Phaser.Scene {
               duration: 1000,
               onComplete: () => {
                 currentFrameIndex++;
-                if (currentFrameIndex < this.textObjects.length) {
+                if (currentFrameIndex === 7) {
+                  this.displayButtons();
+                } else if (currentFrameIndex < this.textObjects.length) {
                   this.showNextFrame();
                 } else {
-                  this.scene.start("Temple"); // Replace "Temple" with the key of your next scene
+                  // this.scene.start("Temple"); // Replace "Temple" with the key of your next scene
                 }
               },
             });
@@ -160,21 +171,50 @@ class Summarize extends Phaser.Scene {
   }
 
   skipFrame() {
-    if (this.currentTween) {
-      this.currentTween.stop();
+    if (currentFrameIndex !== 7) {
+      console.log("skip");
+      console.log(currentFrameIndex);
+      if (this.currentTween) {
+        this.currentTween.stop();
+      }
+      this.tweens.add({
+        targets: this.textObjects,
+        alpha: 0,
+        duration: 1000,
+        onComplete: () => {
+          currentFrameIndex++;
+          if (currentFrameIndex === 7) {
+            this.displayButtons();
+          } else if (currentFrameIndex < this.textObjects.length) {
+            this.showNextFrame();
+          } else {
+            // this.scene.start("Temple");
+          }
+        },
+      });
     }
-    this.tweens.add({
-      targets: this.textObjects,
-      alpha: 0,
-      duration: 1000,
-      onComplete: () => {
-        currentFrameIndex++;
-        if (currentFrameIndex < this.textObjects.length) {
-          this.showNextFrame();
-        } else {
-          this.scene.start("Temple");
-        }
-      },
+  }
+
+  displayButtons() {
+    const width = this.sys.game.canvas.width;
+    const height = this.sys.game.canvas.height;
+    let button1 = this.add
+      .image(width / 2, height / 2, "button1")
+      .setScale(0.5)
+      .setInteractive()
+      .setDepth(1000);
+    let button2 = this.add
+      .image(width / 2, height / 2 + 150, "button2")
+      .setScale(0.5)
+      .setInteractive()
+      .setDepth(1000);
+
+    button1.on("pointerdown", () => {
+      console.log("Button 1 clicked");
+    });
+
+    button2.on("pointerdown", () => {
+      console.log("Button 2 clicked");
     });
   }
 }

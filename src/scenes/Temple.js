@@ -490,28 +490,6 @@ class Temple extends Phaser.Scene {
     );
   }
   addAnimations() {
-    //sakura animation
-    this.anims.create({
-      key: "sakura",
-      frames: this.anims.generateFrameNumbers("sakura-sprite", {
-        start: 0,
-        end: 19,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    });
-
-    //sakuraTree animation
-    this.anims.create({
-      key: "sakuraAnim",
-      frames: this.anims.generateFrameNames("sakuraAnim", {
-        start: 0,
-        end: 5,
-      }),
-      frameRate: 3,
-      repeat: -1,
-    });
-
     this.anims.create({
       key: "atok-anim",
       frames: this.anims.generateFrameNames("npc1", {
