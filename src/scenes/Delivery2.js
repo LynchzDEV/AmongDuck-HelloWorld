@@ -1,6 +1,6 @@
-import Phaser from 'phaser';
-import playerMoveTemple from '../utils/playerMoveTemple';
-import { setWorldBoundsAndCamera } from '../utils/setWorldAndCameraBound';
+import Phaser from "phaser";
+import playerMoveTemple from "../utils/playerMoveTemple";
+import { setWorldBoundsAndCamera } from "../utils/setWorldAndCameraBound";
 import {
   SKY_DEPTH,
   BACKGROUND_DEPTH,
@@ -8,19 +8,19 @@ import {
   MIDDLEGROUND_DEPTH,
   PLAYER_DEPTH,
   FOREGROUND_DEPTH,
-} from '../utils/mapDepth';
-import { OBJECT_SCROLL } from '../utils/mapObjectScroll';
+} from "../utils/mapDepth";
+import { OBJECT_SCROLL } from "../utils/mapObjectScroll";
 import {
   shallowWater,
   handleShutdown,
   playerDrown,
-} from '../utils/event/drown';
+} from "../utils/event/drown";
 import {
   setInput,
   createInteractInput,
   handleInteractiveBtn,
-} from '../utils/interactUtils';
-import { updateTextOpacity } from '../utils/event/updateTextOpacity';
+} from "../utils/interactUtils";
+import { updateTextOpacity } from "../utils/event/updateTextOpacity";
 
 // ! test new class for collect item
 import {
@@ -32,7 +32,7 @@ import {
   Item,
   Target,
   OverlapObject,
-} from '../utils/event/TaskManager';
+} from "../utils/event/TaskManager";
 
 const isMobile = /mobile/i.test(navigator.userAgent);
 const tablet = window.innerWidth < 1280;
@@ -90,14 +90,14 @@ let ToGate_Task;
 class Delivery2 extends Phaser.Scene {
   constructor() {
     super({
-      key: 'Delivery2',
+      key: "Delivery2",
     });
   }
 
   setDeviceSpecificControls(height, width, camera) {
     //camera and control for each device
     if (isMobile || tablet) {
-      this.input.on('gameobjectdown', (pointer, gameObject) => {
+      this.input.on("gameobjectdown", (pointer, gameObject) => {
         if (gameObject === left) {
           isLeftPressed = true;
         }
@@ -109,7 +109,7 @@ class Delivery2 extends Phaser.Scene {
         }
       });
 
-      this.input.on('gameobjectup', (pointer, gameObject) => {
+      this.input.on("gameobjectup", (pointer, gameObject) => {
         if (gameObject === left) {
           isLeftPressed = false;
         }
@@ -131,12 +131,12 @@ class Delivery2 extends Phaser.Scene {
         // ! set new pos for mobile
         screenHeight = windowHeight;
         if (screenHeight > 720) screenHeight = 720;
-        console.log('Mobile view');
+        console.log("Mobile view");
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
 
         left = this.physics.add
-          .sprite(screenWidth / 2 - screenWidth / 3, screenHeight / 1.2, 'left')
+          .sprite(screenWidth / 2 - screenWidth / 3, screenHeight / 1.2, "left")
           .setScale(5)
           .setSize(15, 15)
           .setInteractive()
@@ -148,7 +148,7 @@ class Delivery2 extends Phaser.Scene {
           .sprite(
             screenWidth / 2 - screenWidth / 8,
             screenHeight / 1.2,
-            'right'
+            "right"
           )
           .setScale(5)
           .setSize(15, 15)
@@ -158,7 +158,7 @@ class Delivery2 extends Phaser.Scene {
           .setScrollFactor(0);
 
         up = this.physics.add
-          .sprite(screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2, 'up')
+          .sprite(screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2, "up")
           .setScale(5)
           .setSize(15, 15)
           .setInteractive()
@@ -169,10 +169,10 @@ class Delivery2 extends Phaser.Scene {
         // ! create interact btn for mobile
         interactButton = createInteractInput(
           this.input.keyboard,
-          'mobile',
+          "mobile",
           this.physics,
           [screenWidth / 2 + screenWidth / 3.5, screenHeight / 1.2],
-          'inBtn'
+          "inBtn"
         );
 
         //Implement mobile camera bounds and viewport
@@ -188,7 +188,7 @@ class Delivery2 extends Phaser.Scene {
         // ! set new pos for tablet
         screenHeight = windowHeight;
         if (screenHeight > 720) screenHeight = 720;
-        console.log('Tablet view');
+        console.log("Tablet view");
         console.log(`Screen Width: ${screenWidth}px`);
         console.log(`Screen Height: ${screenHeight}px`);
 
@@ -196,7 +196,7 @@ class Delivery2 extends Phaser.Scene {
           .sprite(
             screenWidth / 2 - screenWidth / 2.5,
             screenHeight / 1.2,
-            'left'
+            "left"
           )
           .setScale(7)
           .setSize(15, 15)
@@ -209,7 +209,7 @@ class Delivery2 extends Phaser.Scene {
           .sprite(
             screenWidth / 2 - screenWidth / 3.5,
             screenHeight / 1.2,
-            'right'
+            "right"
           )
           .setScale(7)
           .setSize(15, 15)
@@ -219,7 +219,7 @@ class Delivery2 extends Phaser.Scene {
           .setScrollFactor(0);
 
         up = this.physics.add
-          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, 'up')
+          .sprite(screenWidth - screenWidth / 8, screenHeight / 1.2, "up")
           .setScale(7)
           .setSize(15, 15)
           .setInteractive()
@@ -230,10 +230,10 @@ class Delivery2 extends Phaser.Scene {
         // ! create interact btn for tablet
         interactButton = createInteractInput(
           this.input.keyboard,
-          'tablet',
+          "tablet",
           this.physics,
           [screenWidth - screenWidth / 8, screenHeight / 1.2],
-          'inBtn'
+          "inBtn"
         );
 
         //Implement tablet camera bounds and viewport
@@ -246,30 +246,30 @@ class Delivery2 extends Phaser.Scene {
       }
     } else {
       //default (desktop)
-      console.log('desktop');
+      console.log("desktop");
       camera.setViewport(0, 0, width, height);
       // ! add interaction key
-      interactKey = createInteractInput(this.input.keyboard, 'desktop');
+      interactKey = createInteractInput(this.input.keyboard, "desktop");
     }
   }
   addBackgroundElements(mapWidth, mapHeight) {
     backgrounds = this.add.group();
     let bg = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, 'background')
+      .tileSprite(0, 0, mapWidth, mapHeight, "background")
       .setOrigin(0, 0)
       .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD - 0.1);
     //mid clound
     cloundLayer1 = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer2')
+      .tileSprite(0, 0, mapWidth, mapHeight, "clound-layer2")
       .setOrigin(0, 0)
       .setScale(1.4)
       .setDepth(SKY_DEPTH)
       .setScrollFactor(OBJECT_SCROLL.CLOUD);
     // front
     cloundLayer2 = this.add
-      .tileSprite(0, 0, mapWidth, mapHeight, 'clound-layer1')
+      .tileSprite(0, 0, mapWidth, mapHeight, "clound-layer1")
       .setOrigin(0, 0)
       .setScale(1.4)
       .setDepth(SKY_DEPTH)
@@ -282,7 +282,7 @@ class Delivery2 extends Phaser.Scene {
   //water
   addForegroundElements(mapWidth, mapHeight) {
     water = this.add
-      .tileSprite(0, mapHeight - 150, mapWidth, 200, 'water')
+      .tileSprite(0, mapHeight - 150, mapWidth, 200, "water")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
@@ -302,74 +302,74 @@ class Delivery2 extends Phaser.Scene {
   addPlatforms(floorHeight) {
     platforms = this.physics.add.staticGroup();
     let ground = this.add
-      .tileSprite(-810, floorHeight, 1383, 218, 'ground-main')
+      .tileSprite(-810, floorHeight, 1383, 218, "ground-main")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     platformSlide1 = this.physics.add
-      .image(573, 1235, 'platform')
+      .image(573, 1235, "platform")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     let platformHouse = this.add
-      .image(1294, 1236, 'platform-long3')
+      .image(1294, 1236, "platform-long3")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
     //path to key
     let platformToKey1 = this.add
-      .image(2268, 1142, 'platform')
+      .image(2268, 1142, "platform")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     let platformToKey2 = this.add
-      .image(2600, 1032, 'platform-long1')
+      .image(2600, 1032, "platform-long1")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     platformSlide2 = this.physics.add
-      .image(3066, 893, 'platform')
+      .image(3066, 893, "platform")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     let platformToKey3 = this.add
-      .image(2804, 582, 'platform')
+      .image(2804, 582, "platform")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     //key on this platform
     let platformToKey4 = this.add
-      .image(2270, 458, 'platform-long1')
+      .image(2270, 458, "platform-long1")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
     //path to chest
     let platformToChest1 = this.add
-      .image(1069, 1068, 'platform')
+      .image(1069, 1068, "platform")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     let platformToChest2 = this.add
-      .image(625, 940, 'platform-long1')
+      .image(625, 940, "platform-long1")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     let platformToChest3 = this.add
-      .image(353, 810, 'platform')
+      .image(353, 810, "platform")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     let platformToChest4 = this.add
-      .image(84, 717, 'platform')
+      .image(84, 717, "platform")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
 
     //gate on this platform
     let platformGate = this.add
-      .image(3418, 360, 'platform-long1')
+      .image(3418, 360, "platform-long1")
       .setOrigin(0, 0)
       .setScale(0.8, 1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -394,7 +394,7 @@ class Delivery2 extends Phaser.Scene {
     this.slide = this.tweens.add({
       targets: platformSlide1,
       x: 1075,
-      ease: 'Expo.easeInOut',
+      ease: "Expo.easeInOut",
       duration: 3000,
       repeat: -1,
       yoyo: true,
@@ -402,7 +402,7 @@ class Delivery2 extends Phaser.Scene {
     this.tweens.add({
       targets: platformSlide2,
       y: 443,
-      ease: 'LINEAR',
+      ease: "LINEAR",
       duration: 4000,
       repeat: -1,
       yoyo: true,
@@ -418,12 +418,12 @@ class Delivery2 extends Phaser.Scene {
   addMainComponents() {
     components = this.add.group();
     house = this.add
-      .image(1439, 834, 'house2')
+      .image(1439, 834, "house2")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
     gatePrevious = this.add
-      .image(52, 1140, 'gate-active')
+      .image(52, 1140, "gate-active")
       .setOrigin(0, 0)
       .setScale(1)
       .setDepth(MIDDLEGROUND_DEPTH);
@@ -440,11 +440,11 @@ class Delivery2 extends Phaser.Scene {
     key = new KeyItem(this.physics, [2400, 370], 1, MIDDLEGROUND_DEPTH, 100);
 
     chest = new Target(
-      { itemKey: 'key', qty: 1 },
+      { itemKey: "key", qty: 1 },
       this.physics,
-      'sprite',
+      "sprite",
       [150, 615],
-      'chest',
+      "chest",
       1,
       MIDDLEGROUND_DEPTH
     );
@@ -452,9 +452,9 @@ class Delivery2 extends Phaser.Scene {
 
     gateNext = new OverlapObject(
       this.physics,
-      'image',
+      "image",
       [3600, 270],
-      'gate',
+      "gate",
       1,
       MIDDLEGROUND_DEPTH,
       90
@@ -495,84 +495,84 @@ class Delivery2 extends Phaser.Scene {
   //add props stone sakura tree logs
   addComponents() {
     this.add
-      .image(280, 1120, 'logs')
+      .image(280, 1120, "logs")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(0, 800, 'tree')
+      .image(0, 800, "tree")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH - 1);
     this.add
-      .image(1179, 990, 'log')
+      .image(1179, 990, "log")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
 
     // chest platform
     this.add
-      .image(93, 644, 'brush')
+      .image(93, 644, "brush")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(130, 712, 'vine')
+      .image(130, 712, "vine")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(MIDDLEGROUND_DEPTH + 1).flipX = true;
 
     this.add
-      .image(504, 774, 'grass2')
+      .image(504, 774, "grass2")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(676, 834, 'stone-wall')
+      .image(676, 834, "stone-wall")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(662, 870, 'box')
+      .image(662, 870, "box")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(680, 750, 'lantern')
+      .image(680, 750, "lantern")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
 
     //house platforms
     this.add
-      .image(1420, 621, 'sakura-tree')
+      .image(1420, 621, "sakura-tree")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
 
     //path to key
     this.add
-      .image(2372, 1090, 'stone')
+      .image(2372, 1090, "stone")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(2637, 930, 'tou')
+      .image(2637, 930, "tou")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(2872, 576, 'vine')
+      .image(2872, 576, "vine")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(MIDDLEGROUND_DEPTH + 1);
     this.add
-      .image(2804, 558, 'grass')
+      .image(2804, 558, "grass")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
     this.add
-      .image(2322, 352, 'bench')
+      .image(2322, 352, "bench")
       .setScale(1)
       .setOrigin(0, 0)
       .setDepth(BACKGROUND_COMPONENT_DEPTH);
@@ -581,7 +581,7 @@ class Delivery2 extends Phaser.Scene {
   addPlayerAndColider(floorHeight) {
     //player
     player = this.physics.add
-      .sprite(100, floorHeight - 150, 'player')
+      .sprite(100, floorHeight - 150, "player")
       .setCollideWorldBounds(true)
       .setScale(0.3)
       .setSize(180, 200)
@@ -595,15 +595,15 @@ class Delivery2 extends Phaser.Scene {
   //npc
   addNpc() {
     npc3 = new Target(
-      { itemKey: 'milk', qty: 1 },
+      { itemKey: "milk", qty: 1 },
       this.physics,
-      'sprite',
+      "sprite",
       [1900, 1148],
-      'npc3',
+      "npc3",
       0.2,
       MIDDLEGROUND_DEPTH
     );
-    npc3.gameObj.anims.play('idle_npc3', true);
+    npc3.gameObj.anims.play("idle_npc3", true);
     npc3.gameObj.flipX = true;
   }
 
@@ -611,7 +611,7 @@ class Delivery2 extends Phaser.Scene {
   addMessage() {
     //message for npc interaction
     this.messageNpc3 = this.add
-      .image(1911, 1040, 'message-n3')
+      .image(1911, 1040, "message-n3")
       .setOrigin(0, 0)
       .setAlpha(0)
       .setScale(1)
@@ -619,7 +619,7 @@ class Delivery2 extends Phaser.Scene {
 
     //message require milk
     this.requireNpc3 = this.add
-      .image(1983, 1181, 'require1')
+      .image(1983, 1181, "require1")
       .setOrigin(0, 0)
       .setAlpha(0)
       .setScale(1)
@@ -629,8 +629,8 @@ class Delivery2 extends Phaser.Scene {
   //animation chest npc
   addAnimations() {
     this.anims.create({
-      key: 'chest-rotate',
-      frames: this.anims.generateFrameNumbers('chest', {
+      key: "chest-rotate",
+      frames: this.anims.generateFrameNumbers("chest", {
         start: 21,
         end: 27,
       }),
@@ -640,8 +640,8 @@ class Delivery2 extends Phaser.Scene {
 
     // sprite sheet for npc1
     this.anims.create({
-      key: 'idle_npc3',
-      frames: this.anims.generateFrameNumbers('npc3', {
+      key: "idle_npc3",
+      frames: this.anims.generateFrameNumbers("npc3", {
         start: 0,
         end: 1,
       }),
@@ -685,7 +685,7 @@ class Delivery2 extends Phaser.Scene {
         targets: this.requireNpc3,
         x: this.requireNpc3.x - 10,
         duration: 100,
-        ease: 'Linear',
+        ease: "Linear",
         repeat: 3,
         yoyo: true,
       });
@@ -701,7 +701,7 @@ class Delivery2 extends Phaser.Scene {
 
   init() {
     this.playerMoveTemple = playerMoveTemple;
-    this.sound.stopByKey('drown');
+    this.sound.stopByKey("drown");
     deliverToChest = true;
     readyToCollectMilk = false;
   }
@@ -768,7 +768,7 @@ class Delivery2 extends Phaser.Scene {
     if (isMobile || tablet) {
       this.playerMoveTemple(
         player,
-        500,
+        350,
         false,
         true,
         isLeftPressed,
@@ -776,7 +776,7 @@ class Delivery2 extends Phaser.Scene {
         isUpPressed
       );
     } else {
-      this.playerMoveTemple(player, 1000, false, false, null, null, null);
+      this.playerMoveTemple(player, 350, false, false, null, null, null);
     }
 
     //camera follow player
@@ -803,7 +803,7 @@ class Delivery2 extends Phaser.Scene {
       deliverToChest = !chest.satisfied;
       if (!deliverToChest) {
         // * play animation 'opening chest'
-        this.anims.play('chest-rotate', chest.gameObj);
+        this.anims.play("chest-rotate", chest.gameObj);
         // * spawn milk after 2.3s (duration of animation)
         this.time.delayedCall(2300, () => {
           milk.gameObj.setVisible(true);
@@ -835,9 +835,9 @@ class Delivery2 extends Phaser.Scene {
     if (CND_Milk_Task._completed && !ToGate_Task._completed) {
       let gateBox = ToGate_Task._inventoryBox[0];
       let gate = ToGate_Task._items[0];
-      gate.gameObj.setTexture('gate-active');
+      gate.gameObj.setTexture("gate-active");
       if (gate.isOverlapWithPlayer(player)) {
-        this.scene.start('Delivery3');
+        this.scene.start("Delivery3");
       } else {
         this.updateItemOpacity(gateBox, gate.gameObj);
       }
