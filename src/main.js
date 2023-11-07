@@ -24,7 +24,7 @@ const debug = Text === "t";
 
 const config = {
   type: Phaser.AUTO,
-  pixelArt: true,
+  pixelArt: true,   
   roundPixels: true,
   parent: "content",
   width: debug ? 3840 : 1280,
@@ -56,6 +56,7 @@ const config = {
   ],
   scale: {
     mode: Phaser.Scale.NONE, // Disable Phaser's scaling
+
   },
 };
 
