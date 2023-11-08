@@ -218,7 +218,7 @@ class LoadScene extends Phaser.Scene {
     this.load.image("City", path.join(BACKGROUND_TEMPLE_PATH, "City.png"));
     this.load.image(
       "fuji",
-      path.join(BACKGROUND_TEMPLE_PATH, "Volcano fuji.png")
+      path.join(BACKGROUND_TEMPLE_PATH, "VolcanoFuji.png")
     );
     this.load.image(
       "peddlerCar",
@@ -250,10 +250,6 @@ class LoadScene extends Phaser.Scene {
     );
 
     //load foreground temple
-    this.load.image(
-      "tree",
-      path.join(FOREGROUND_TEMPLE_PATH, "Sakura Tree.png")
-    );
     this.load.spritesheet(
       "water-sprite",
       path.join("assets", "anim", "water.png"),
