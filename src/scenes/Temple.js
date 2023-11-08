@@ -41,7 +41,7 @@ let grounds;
 let sky;
 let sky2;
 let sky3;
-
+let count = 0;
 //npc
 let npcTemple;
 let npcDummyForHandleInteract;
@@ -535,58 +535,61 @@ class Temple extends Phaser.Scene {
   // ! modify func when interact with npcTemple here
   // TODO replace this.npcTempleMessage with another message obj
   bindFnToTarget() {
-    npcTemple.gameObj.fn = () => {
-      this.tweens.add({
-        targets: this.text01,
-        alpha: 1,
-        duration: 1000,
-        onComplete: () => {
-          this.tweens.add({
-            targets: this.text01,
-            alpha: 0,
-            duration: 1000,
-            delay: 2000,
-            onComplete: () => {
-              this.tweens.add({
-                targets: this.text02,
-                alpha: 1,
-                duration: 1000,
-                onComplete: () => {
-                  this.tweens.add({
-                    targets: this.text02,
-                    alpha: 0,
-                    duration: 1000,
-                    delay: 2000,
-                    onComplete: () => {
-                      this.tweens.add({
-                        targets: this.text03,
-                        alpha: 1,
-                        duration: 1000,
-                        onComplete: () => {
-                          this.tweens.add({
-                            targets: this.text03,
-                            alpha: 0,
-                            duration: 1000,
-                            onComplete: () => {
-                              this.time.addEvent({
-                                delay: 2000,
-                                callback: () => {
-                                  readyToChangeScene = true;
-                                },
-                              });
-                            },
-                          });
-                        },
-                      });
-                    },
-                  });
-                },
-              });
-            },
-          });
-        },
-      });
-    };
+    if (count === 0) {
+      this.count++;
+      npcTemple.gameObj.fn = () => {
+        this.tweens.add({
+          targets: this.text01,
+          alpha: 1,
+          duration: 1000,
+          onComplete: () => {
+            this.tweens.add({
+              targets: this.text01,
+              alpha: 0,
+              duration: 1000,
+              delay: 2000,
+              onComplete: () => {
+                this.tweens.add({
+                  targets: this.text02,
+                  alpha: 1,
+                  duration: 1000,
+                  onComplete: () => {
+                    this.tweens.add({
+                      targets: this.text02,
+                      alpha: 0,
+                      duration: 1000,
+                      delay: 2000,
+                      onComplete: () => {
+                        this.tweens.add({
+                          targets: this.text03,
+                          alpha: 1,
+                          duration: 1000,
+                          onComplete: () => {
+                            this.tweens.add({
+                              targets: this.text03,
+                              alpha: 0,
+                              duration: 1000,
+                              onComplete: () => {
+                                this.time.addEvent({
+                                  delay: 2000,
+                                  callback: () => {
+                                    readyToChangeScene = true;
+                                  },
+                                });
+                              },
+                            });
+                          },
+                        });
+                      },
+                    });
+                  },
+                });
+              },
+            });
+          },
+        });
+      };
+    }
   }
 
   create() {
@@ -634,7 +637,7 @@ class Temple extends Phaser.Scene {
     if (isMobile || tablet) {
       this.playerMoveTemple(
         player,
-        350,
+        250,
         false,
         true,
         isLeftPressed,
@@ -643,7 +646,7 @@ class Temple extends Phaser.Scene {
         750
       );
     } else {
-      this.playerMoveTemple(player, 350, false, false, null, null, null, 750);
+      this.playerMoveTemple(player, 250, false, false, null, null, null, 750);
     }
 
     //camera follow player
@@ -667,6 +670,7 @@ class Temple extends Phaser.Scene {
     // * This works with the function binded to target at bindFnToTarget()
     if (readyToChangeScene) {
       console.log("change scene");
+      //make this fade out and change scene
       this.scene.start("Delivery");
     }
 

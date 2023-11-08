@@ -15,27 +15,55 @@ import {
 } from "../../utils/mapPath";
 import { CUTSCENE_PATH } from "../../utils/cutScenePath";
 let words = [
-  "word1",
-  "word2",
-  "word3",
-  "word4",
-  "word5",
-  "word6",
-  "word7",
-  "word8A",
+  "s-word1", //0
+  "s-word2", //1
+  "s-word3", //2
+  "s-word4", //3
+  "s-word5", //4
+  "s-word6", //5
+  "s-word7", //6
+  "word8A-1", //7
+  "word8A-2", //8
+  "word8B-1", //9
+  "word8B-2", //10
+  "word9A-1", //11
+  "word9B-1", //12
+  "GameDev1", //13
+  "GameDev2", //14
+  "GameDev3", // ! 15
+  "DevOps1", //16
+  "DevOps2", //17
+  "DevOps3", // ! 18
+  "FrontEnd1", //19
+  "FrontEnd2", //20
+  "FrontEnd3", //21
+  "FrontEnd4", //! 22
+  "WebDesign1", //23
+  "WebDesign2", //24
+  "WebDesign3", //25
+  "WebDesign4", //! 26
 ];
+
+let lastFrames = [15, 18, 22, 26];
+
 let currentFrameIndex = 0;
 let delayText = 1;
 let frame;
+
+let buttons;
 
 let bg;
 let cloundLayer1;
 let cloundLayer2;
 
+let codingPath = false;
+let designPath = false;
+
 class Summarize extends Phaser.Scene {
   constructor() {
     super({ key: "Summarize" });
     this.currentTween = null;
+    this.buttons = null;
     this.isSkipping = false;
   }
 
@@ -43,18 +71,61 @@ class Summarize extends Phaser.Scene {
     //assets
     this.load.image("frame", path.join(CUTSCENE_PATH, "frame.png"));
     //text
-    this.load.image("word1", path.join(CUTSCENE_PATH, "2-1.png"));
-    this.load.image("word2", path.join(CUTSCENE_PATH, "2-2.png"));
-    this.load.image("word3", path.join(CUTSCENE_PATH, "2-3.png"));
-    this.load.image("word4", path.join(CUTSCENE_PATH, "2-4.png"));
-    this.load.image("word5", path.join(CUTSCENE_PATH, "2-5.png"));
-    this.load.image("word6", path.join(CUTSCENE_PATH, "2-6.png"));
-    this.load.image("word7", path.join(CUTSCENE_PATH, "2-1.png"));
+    this.load.image("s-word1", path.join(CUTSCENE_PATH, "2-1.png"));
+    this.load.image("s-word2", path.join(CUTSCENE_PATH, "2-2.png"));
+    this.load.image("s-word3", path.join(CUTSCENE_PATH, "2-3.png"));
+    this.load.image("s-word4", path.join(CUTSCENE_PATH, "2-4.png"));
+    this.load.image("s-word5", path.join(CUTSCENE_PATH, "2-5.png"));
+    this.load.image("s-word6", path.join(CUTSCENE_PATH, "2-6.png"));
+
+    //7
+    this.load.image("s-word7", path.join(CUTSCENE_PATH, "H_2-7.png"));
     this.load.image("button1", path.join(CUTSCENE_PATH, "T_2-7.png"));
     this.load.image("button2", path.join(CUTSCENE_PATH, "B_2-7.png"));
+
+    //8A
+    this.load.image("word8A-1", path.join(CUTSCENE_PATH, "2-8A.1.png"));
+    this.load.image("word8A-2", path.join(CUTSCENE_PATH, "2-8A.2.png"));
+
+    //8B
+    this.load.image("word8B-1", path.join(CUTSCENE_PATH, "2-8B.1.png"));
+    this.load.image("word8B-2", path.join(CUTSCENE_PATH, "2-8B.2.png"));
+
+    //9A
+    this.load.image("word9A-1", path.join(CUTSCENE_PATH, "H_2-9A.png"));
+    this.load.image("button3", path.join(CUTSCENE_PATH, "T_2-9A.png"));
+    this.load.image("button4", path.join(CUTSCENE_PATH, "B_2-9A.png"));
+
+    //9B
+    this.load.image("word9B-1", path.join(CUTSCENE_PATH, "H_2-9B.png"));
+    this.load.image("button5", path.join(CUTSCENE_PATH, "T_2-9B.png"));
+    this.load.image("button6", path.join(CUTSCENE_PATH, "B_2-9B.png"));
+
+    //9A-Game Dev
+    this.load.image("GameDev1", path.join(CUTSCENE_PATH, "2-9A_GDev1.png"));
+    this.load.image("GameDev2", path.join(CUTSCENE_PATH, "2-9A_GDev2.png"));
+    this.load.image("GameDev3", path.join(CUTSCENE_PATH, "2-9A_GDev3.png"));
+
+    //9A-DevOps
+    this.load.image("DevOps1", path.join(CUTSCENE_PATH, "2-9A_DevOps1.png"));
+    this.load.image("DevOps2", path.join(CUTSCENE_PATH, "2-9A_DevOps2.png"));
+    this.load.image("DevOps3", path.join(CUTSCENE_PATH, "2-9A_DevOps3.png"));
+
+    //9B-Front End
+    this.load.image("FrontEnd1", path.join(CUTSCENE_PATH, "2-9B_FD1.png"));
+    this.load.image("FrontEnd2", path.join(CUTSCENE_PATH, "2-9B_FD2.png"));
+    this.load.image("FrontEnd3", path.join(CUTSCENE_PATH, "2-9B_FD3.png"));
+    this.load.image("FrontEnd4", path.join(CUTSCENE_PATH, "2-9B_FD4.png"));
+
+    //9B-Web Design
+    this.load.image("WebDesign1", path.join(CUTSCENE_PATH, "2-9B_WD1.png"));
+    this.load.image("WebDesign2", path.join(CUTSCENE_PATH, "2-9B_WD2.png"));
+    this.load.image("WebDesign3", path.join(CUTSCENE_PATH, "2-9B_WD3.png"));
+    this.load.image("WebDesign4", path.join(CUTSCENE_PATH, "2-9B_WD4.png"));
   }
 
   create() {
+    this.cameras.main.fadeIn(1000);
     this.setupBackground();
     this.setupText();
     this.startTextSequence();
@@ -115,6 +186,7 @@ class Summarize extends Phaser.Scene {
   setupText() {
     // Create an array to hold your text objects
     this.textObjects = words.map((word, index) => {
+      console.log(word);
       return this.add
         .image(
           this.sys.game.canvas.width / 2,
@@ -129,9 +201,9 @@ class Summarize extends Phaser.Scene {
   }
 
   startTextSequence() {
-    currentFrameIndex = 6;
+    currentFrameIndex = 0;
     this.showNextFrame();
-    this.input.on("pointerdown", this.skipFrame, this);
+    // this.input.on("pointerdown", this.skipFrame, this);
   }
 
   showNextFrame() {
@@ -148,19 +220,27 @@ class Summarize extends Phaser.Scene {
         alpha: 1,
         duration: 1000,
         onComplete: () => {
-          this.time.delayedCall(delayText, () => {
+          this.delayedCallEvent = this.time.delayedCall(delayText, () => {
             this.tweens.add({
               targets: currentText,
               alpha: 0,
               duration: 1000,
               onComplete: () => {
                 currentFrameIndex++;
-                if (currentFrameIndex === 7) {
-                  this.displayButtons();
-                } else if (currentFrameIndex < this.textObjects.length) {
+                if (currentFrameIndex === 6) {
+                  this.displayChoiceButtons();
+                } else if (currentFrameIndex === 9) {
+                  this.displayCodingPathButtons();
+                } else if (currentFrameIndex === 10) {
+                  this.displayDesignPathButtons();
+                } else if (
+                  currentFrameIndex < this.textObjects.length &&
+                  !lastFrames.includes(currentFrameIndex)
+                ) {
                   this.showNextFrame();
-                } else {
-                  // this.scene.start("Temple"); // Replace "Temple" with the key of your next scene
+                } else if (lastFrames.includes(currentFrameIndex)) {
+                  console.log(currentFrameIndex);
+                  this.textObjects[currentFrameIndex].setAlpha(1);
                 }
               },
             });
@@ -170,52 +250,189 @@ class Summarize extends Phaser.Scene {
     }
   }
 
-  skipFrame() {
-    if (currentFrameIndex !== 7) {
-      console.log("skip");
-      console.log(currentFrameIndex);
-      if (this.currentTween) {
-        this.currentTween.stop();
-      }
-      this.tweens.add({
-        targets: this.textObjects,
-        alpha: 0,
-        duration: 1000,
-        onComplete: () => {
-          currentFrameIndex++;
-          if (currentFrameIndex === 7) {
-            this.displayButtons();
-          } else if (currentFrameIndex < this.textObjects.length) {
-            this.showNextFrame();
-          } else {
-            // this.scene.start("Temple");
-          }
-        },
-      });
+  displayChoiceButtons() {
+    //display text "word7"
+    this.showText(currentFrameIndex);
+    this.createButton(
+      "button1",
+      () => {
+        console.log("coding path");
+        currentFrameIndex = 7; // continue with coding path
+        this.textObjects[currentFrameIndex].setAlpha(0);
+        this.showNextFrame();
+      },
+      true,
+      currentFrameIndex
+    );
+
+    this.createButton(
+      "button2",
+      () => {
+        console.log("design path");
+        currentFrameIndex = 9; // continue with design path
+        this.textObjects[currentFrameIndex].setAlpha(0);
+        this.showNextFrame();
+      },
+      false,
+      currentFrameIndex
+    );
+  }
+
+  // Called when reaching frame index 11
+  displayCodingPathButtons() {
+    this.showText(currentFrameIndex);
+    this.createButton(
+      "button3",
+      () => {
+        console.log("Game Dev path");
+        currentFrameIndex = 13; // continue with Game Dev path
+        this.textObjects[currentFrameIndex].setAlpha(0);
+        this.showNextFrame();
+      },
+      true,
+      currentFrameIndex
+    );
+
+    this.createButton(
+      "button4",
+      () => {
+        console.log("DevOps path");
+        currentFrameIndex = 16; // continue with DevOps path
+        this.textObjects[currentFrameIndex].setAlpha(0);
+        this.showNextFrame();
+      },
+      false,
+      currentFrameIndex
+    );
+  }
+
+  // Called when reaching frame index 12
+  displayDesignPathButtons() {
+    this.showText(currentFrameIndex);
+    this.createButton(
+      "button5",
+      () => {
+        console.log("Front End path");
+        currentFrameIndex = 19; // continue with Front End path
+        this.textObjects[currentFrameIndex].setAlpha(0);
+        this.showNextFrame();
+      },
+      true,
+      currentFrameIndex
+    );
+
+    this.createButton(
+      "button6",
+      () => {
+        console.log("Web Design path");
+        currentFrameIndex = 23; // continue with Web Design path
+        this.textObjects[currentFrameIndex].setAlpha(0);
+        this.showNextFrame();
+      },
+      false,
+      currentFrameIndex
+    );
+  }
+
+  showText(index) {
+    if (index >= 0 && index < this.textObjects.length) {
+      let text = this.textObjects[index];
+      text.setAlpha(1);
+      text.y -= 100;
     }
   }
 
-  displayButtons() {
+  createButton(key, onClick, isTop, currentTextIndex) {
     const width = this.sys.game.canvas.width;
     const height = this.sys.game.canvas.height;
-    let button1 = this.add
-      .image(width / 2, height / 2, "button1")
-      .setScale(0.5)
+
+    let buttonYpos = isTop ? height / 2 + 100 : height / 2 + 200;
+
+    let button = this.add
+      .image(width / 2, buttonYpos, key)
+      .setScale(0.4)
       .setInteractive()
-      .setDepth(1000);
-    let button2 = this.add
-      .image(width / 2, height / 2 + 150, "button2")
-      .setScale(0.5)
-      .setInteractive()
+      .setAlpha(0)
       .setDepth(1000);
 
-    button1.on("pointerdown", () => {
-      console.log("Button 1 clicked");
+    this.tweens.add({
+      targets: button,
+      alpha: { from: 0, to: 1 },
+      duration: 1000,
+      ease: "Linear",
     });
 
-    button2.on("pointerdown", () => {
-      console.log("Button 2 clicked");
+    if (!this.buttons) {
+      this.buttons = this.add.group();
+    }
+    this.buttons.add(button);
+    const allButtons = this.buttons.getChildren();
+
+    button.on("pointerdown", () => {
+      this.buttons.getChildren().forEach((child) => {
+        this.tweens.add({
+          targets: child,
+          alpha: 0,
+          duration: 500,
+          onComplete: () => {
+            child.destroy();
+          },
+        });
+      });
+
+      // Also fade out the current text if it is visible
+      if (this.textObjects[currentTextIndex].alpha > 0) {
+        this.tweens.add({
+          targets: this.textObjects[currentTextIndex],
+          alpha: 0,
+          duration: 500,
+          onComplete: () => {
+            // Now perform the onClick action after the fade out completes
+            onClick();
+          },
+        });
+      } else {
+        // If the text isn't visible, just perform the onClick action
+        onClick();
+      }
     });
+  }
+
+  skipFrame() {
+    if (this.currentTween) {
+      this.currentTween.remove();
+      this.currentTween = null;
+    }
+
+    if (this.delayedCallEvent) {
+      this.delayedCallEvent.remove();
+      this.delayedCallEvent = null;
+    }
+
+    if (currentFrameIndex < this.textObjects.length) {
+      this.textObjects[currentFrameIndex].setAlpha(0);
+    }
+
+    currentFrameIndex++;
+
+    if (
+      currentFrameIndex === 7 &&
+      currentFrameIndex === 12 &&
+      currentFrameIndex === 13
+    ) {
+      console.log("donothing");
+    } else if (currentFrameIndex === 6) {
+      this.displayChoiceButtons();
+    } else if (currentFrameIndex === 11) {
+      this.displayCodingPathButtons();
+    } else if (currentFrameIndex === 12) {
+      this.displayDesignPathButtons();
+    } else if (currentFrameIndex < this.textObjects.length) {
+      this.showNextFrame();
+    } else {
+      // If we've reached the end of the frames, you might want to restart or end
+      // this.scene.start("Temple"); // Or handle the end of the sequence appropriately
+    }
   }
 }
 

@@ -46,15 +46,16 @@ class CutScene1 extends Phaser.Scene {
   create() {
     this.cameras.main.fadeIn(500);
     const width = this.sys.game.canvas.width;
+    const height = this.sys.game.canvas.height;
     const self = this;
     currentFrame = this.add
-      .image(width / 3.5, 0, scenes[currentFrameIndex])
-      .setOrigin(0, 0)
+      .image(width / 2, height / 2, scenes[currentFrameIndex])
+      .setOrigin(0.5, 0.5)
       .setScale(0.5)
       .setAlpha(0);
     const currentWord = this.add
-      .image(400, 100, words[currentFrameIndex])
-      .setOrigin(0, 0)
+      .image(width / 2, height / 3.67, words[currentFrameIndex])
+      .setOrigin(0.5, 0.5)
       .setScale(0.5)
       .setAlpha(0);
 
