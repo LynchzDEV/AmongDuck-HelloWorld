@@ -681,7 +681,7 @@ class Delivery extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.fadeIn(500);
+    this.cameras.main.fadeIn(800);
     //config
     const { width, height } = this.scale;
     // main scale
@@ -754,10 +754,10 @@ class Delivery extends Phaser.Scene {
         isLeftPressed,
         isRightPressed,
         isUpPressed,
-        250
+        750
       );
     } else {
-      this.playerMoveTemple(player, 350, false, false, null, null, null, 250);
+      this.playerMoveTemple(player, 350, false, false, null, null, null, 750);
     }
 
     // camera follow player
@@ -796,13 +796,7 @@ class Delivery extends Phaser.Scene {
       let gate = ToGate_Task._items[0];
       gate.gameObj.setTexture("gate-active");
       if (gate.isOverlapWithPlayer(player)) {
-        this.cameras.main.fadeOut(500, 0, 0, 0);
-        this.cameras.main.once(
-          Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
-          () => {
-            this.scene.start("Delivery2");
-          }
-        );
+        this.scene.start("Delivery2");
       } else {
         this.updateItemOpacity(gateBox, gate.gameObj);
       }

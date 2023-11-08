@@ -798,13 +798,7 @@ class Delivery3 extends Phaser.Scene {
         ],
         npc: [npc4, npc5],
       };
-      this.cameras.main.fadeOut(500, 0, 0, 0);
-      this.cameras.main.once(
-        Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
-        () => {
-          this.scene.start("Delivery4", gameContext);
-        }
-      );
+      this.scene.start("Delivery4", gameContext);
     };
 
     npc4.gameObj.fn = () => {
@@ -1046,7 +1040,7 @@ class Delivery3 extends Phaser.Scene {
 
   update(delta, time) {
     //dev skip the scene
-    // this.scene.start("Delivery4"); // ! comment for working in event_handling branch
+    // this.scene.start("Summarize"); // ! comment for working in event_handling branch
 
     bg.tilePositionX += 0.03;
     cloundLayer1.tilePositionX += 0.07;
@@ -1185,7 +1179,7 @@ class Delivery3 extends Phaser.Scene {
       let gate = this.ToGate_Task._items[0];
       gate.gameObj.setTexture("gate-active");
       if (gate.isOverlapWithPlayer(player)) {
-        this.scene.start("Temple");
+        this.scene.start("Summarize");
       } else {
         this.updateItemOpacity(gateBox, gate.gameObj);
       }
