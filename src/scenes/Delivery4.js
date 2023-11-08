@@ -428,6 +428,7 @@ class Delivery4 extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.fadeIn(500);
     //config
     const { width, height } = this.scale;
     // main scale
