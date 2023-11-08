@@ -47,7 +47,7 @@ let words = [
 let lastFrames = [15, 18, 22, 26];
 
 let currentFrameIndex = 0;
-let delayText = 1;
+let delayText = 4500;
 let frame;
 
 let buttons;
